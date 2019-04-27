@@ -4,39 +4,44 @@
         <div class="form">
             <div class="form1">
             <div  class="divline">
-                <text class="text">客户</text>
+                <text class="text">客户:</text>
                 <div class="btn" @click="handleClick(2)">
                     <text class="btn-text">{{customer.customer}}</text>
+                    <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
             </div>
 
             <div  class="divline">
-                <text class="text">发货仓库</text>
+                <text class="text">发货仓库:</text>
                 <div class="btn" @click="handleClick(2)">
                     <text class="btn-text">{{Department.Department}}</text>
+                    <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
             </div>
 
             <div  class="divline">
-                <text class="text">类型</text>
+                <text class="text">类型:</text>
                 <div class="btn" @click="handleClick(2)">
                     <text class="btn-text">{{billType}}</text>
+                    <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
             </div>
             <div  class="divline">
-            <text class="text">经手人</text>
+            <text class="text">经手人:</text>
 
             <div class="btn" @click="handleClick(1)">
                 <text class="btn-text" :style="{'color':colorName}">{{emp.Name}}</text>
+                <image src="root:img/input_bg.png" class="input_bg"></image>
             </div>
 
         </div>
 
             <div class="divline">
-                <text class="text">品牌</text>
+                <text class="text">品牌:</text>
 
                 <div class="btn" @click="handleClick(1)">
                     <text class="btn-text" :style="{'color':colorName}">{{Brand.Brand}}</text>
+                    <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
 
             </div>
@@ -45,7 +50,7 @@
         </div>
 
         <div style="flex-direction: row;justify-content:flex-start;align-items: center">
-            <text class="text">数量</text>
+            <text class="text">数量:</text>
             <input class="input1" type="text" v-model="iqty"/>
         </div>
 
@@ -56,6 +61,7 @@
                 <input class="input2" type="number" v-model="barcode" v-if="!cs" @return="search" return-key-type="search" />
                 <div class="btn" @click="handleClick(5)" v-else>
                     <text class="btn-text" :style="{'color':colorName}">{{goods.Name}}</text>
+                    <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
                 <text class="iconfont bar-ic" @click="qrclick" v-if="!cs">&#xe69a;</text>
                 <text class="iconfont bar-ic" @click="qrclick" v-if="cs && !mult">&#xe603;</text>
@@ -64,16 +70,18 @@
 
 
             <div style="flex-direction: row;justify-content:flex-start;align-items: center" v-if="cs && !mult">
-                <text class="text">颜色</text>
+                <text class="text">颜色:</text>
                 <div class="input"  @click="handleClick(3)">
                     <text class="btn-text" :style="{'color':colorName}">{{color.color}}</text>
+                    <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
 
 
 
-                    <text class="text">尺码</text>
+                    <text class="text">尺码:</text>
                 <div class="input" @click="handleClick(4)">
                     <text class="btn-text" :style="{'color':colorName}">{{size.size}}</text>
+                    <image src="root:img/input_bg.png" style="width:10;height:40;position: absolute;right: 0px;bottom: 0px"></image>
                 </div>
             </div>
 
@@ -128,14 +136,14 @@
          </scroller>
      </scroller>
         <div  class="tabbar">
-            <div style="flex-direction: row;justify-content:flex-start;align-items: center;">
+          <!--  <div style="flex-direction: row;justify-content:flex-start;align-items: center;">
                 <text class="size">折让</text><input type="number"  v-model="discountMoney" style="width: 300px;height: 70px;border-bottom-width:1px;"/>
                 <text class="size">实付</text><input type="number"  v-model="AmountSum" style="width: 300px;height: 70px;border-bottom-width:1px;">
             </div>
             <div style="flex-direction: row;justify-content:flex-start;align-items: center;">
                 <text class="size">积分</text><input type="number"  v-model="Point" style="width: 300px;height: 70px;border-bottom-width:1px;"/>
                 <text class="size">抵扣</text><input type="number" :disabled="true" v-model="exchange_amount" style="width: 300px;height: 70px;border-bottom-width:1px;">
-            </div>
+            </div> -->
             <div style="flex-direction: row; background-color: #1EA5FC; position: fixed;bottom: 0;left: 0;right: 0;height: 80px;align-items: center;justify-content:flex-start;">
                 <text class="size">合计：</text><text class="size">{{QuantitySum}}</text><text style="margin-left: 100px" class="size">￥{{AmountSum}}</text>
                 <div  v-if="show" style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 250px;height: 80px;align-items: center;justify-content:center"><text @click="save" class="size">{{savetitle}}</text></div>
@@ -717,11 +725,11 @@
       margin-left: 20px;
   }
     .size{
-        font-size: 30px;
+        font-size: 35px;
     }
   .wrapper{
 
-      background-color:#eeeeee;
+  /*    background-color:#eeeeee; */
       display: block;
       position: absolute;
       top: 0;
@@ -741,10 +749,13 @@
   .cellitem{
       width: 120px;
       line-height: 70px;
-      font-size: 30px
+      font-size: 35px
   }
     .cell:active{ /*按下的样式*/
         background-color: #0085ee;
+    }
+    .input_bg{
+        width:10;height:40;position: absolute;right: 0px;bottom: 0px
     }
   .input {
       padding-top: 20px;
@@ -754,7 +765,7 @@
       border-bottom-width: 1px;
       margin-bottom: 10px;
       height: 70px;
-      width: 280px;
+      width: 260px;
       background-color: #FFF;
      /* background: url(img/input_bg.png) no-repeat right bottom; */
   }
@@ -805,16 +816,20 @@
       align-items: flex-start;
   }
   .btn-text {
-      font-size: 30px;
+      font-size: 35px;
   }
   .tabbar{
       display: block;
-      height: 230px;width: 750px; position: fixed;bottom: 0;left: 0;right: 0;
+     /* height: 230px; */
+      width: 750px;
+      position: fixed;bottom: 0;left: 0;right: 0;
       background-color: #1EA5FC;
   }
   .text{
       width:100px;
      direction: ltr;
-      font-size: 30px
+      font-size: 35px;
+      border-bottom-width: 1px;
+
   }
 </style>
