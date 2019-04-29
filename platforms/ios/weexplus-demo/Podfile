@@ -69,6 +69,7 @@ def mypod
     pod ‘LMTowDatePicker’, :path => 'LMTowDatePicker’
  
  
+    pod 'alipay', :path => 'alipay'
 end
 
 
@@ -85,4 +86,5 @@ end
 
  
  
+
 

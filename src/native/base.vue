@@ -21,16 +21,32 @@
       data(){
           return {  name: "base",
               list:[],
-              text:''
+              text:'',
+              cmap:{}//查询条件
           }
       },   methods: {
             onLoad(p){
-
 
                 var self=this
 
                 self.list.splice(0,self.list.length)
                 send =p.send
+                self.cmap.send=p.send  //存起来
+                if(p.send==='Type') {
+                    var ls=["批发", "订货", "配货", "补货"]
+                    var lskey=["PriceType", "OrderPriceType", "AllotPriceType", "ReplenishType"]
+                  for(var i=0;i<ls.length;++i) {
+                      var map={}
+                      map.Name=ls[i]
+                      map.id=lskey[i]
+                      self.list.push(map)
+                  }
+                    return
+                }
+
+
+
+
 
                 //self.alert(self.list.length)
                 //self.list.splice(0,self.list.length);
@@ -83,6 +99,24 @@
                            map.x=array[i].x
                            self.list.push(map);
 
+                       } else if (p.send==='getCustomer'){
+                           map.id=array[i].CustomerID
+                           map.Name =array[i].Name
+                           map.DiscountRate=array[i].DiscountRate
+                           map.DistrictID=array[i].DistrictID
+                           map.OrderDiscount=array[i].OrderDiscount
+                           map.AllotDiscount=array[i].AllotDiscount
+                           map.ReplenishDiscount=array[i].ReplenishDiscount
+                           self.list.push(map);
+                       } else if(p.send==='getWarehouse'){
+                           map.id=array[i].DepartmentID
+                           map.Name=array[i].Name
+                           map.MustExistsGoodsFlag=array[i].MustExistsGoodsFlag
+                           self.list.push(map);
+                       } else if (p.send==='getBrand'){
+                           map.id=array[i].BrandID
+                           map.Name=array[i].Name
+                           self.list.push(map);
                        }
                     }
 
@@ -101,8 +135,10 @@
                 nav.backFull(lst,false);
             },search(){
                 if(this.text!=''){
-                   let self=this
-                    const net = weex.requireModule('net');
+                   let self=this  //简化写法
+                    self.cmap.condition=self.text
+                    self.onLoad(self.cmap)
+                /*    const net = weex.requireModule('net');
                     net.post(pref.getString('ip')+'/select.do?'+send,{"currPage":"1","param":this.text},{},function(){
                         //start
                     },function(e){
@@ -147,6 +183,24 @@
                                 map.Code=array[i].SizeCode
                                 self.list.push(map);
 
+                            }else if (p.send==='getCustomer'){
+                                map.id=array[i].CustomerID
+                                map.Name =array[i].Name
+                                map.DiscountRate=array[i].DiscountRate
+                                map.DistrictID=array[i].DistrictID
+                                map.OrderDiscount=array[i].OrderDiscount
+                                map.AllotDiscount=array[i].AllotDiscount
+                                map.ReplenishDiscount=array[i].ReplenishDiscount
+                                self.list.push(map);
+                            } else if(p.send==='getWarehouse'){
+                                map.DepartmentID=array[i].DepartmentID
+                                map.Name=array[i].Name
+                                map.MustExistsGoodsFlag=array[i].MustExistsGoodsFlag
+                                self.list.push(map);
+                            } else if (p.send==='getBrand'){
+                                map.BrandID=array[i].BrandID
+                                map.Name=array[i].Name
+                                self.list.push(map);
                             }
                         }
 
@@ -155,7 +209,7 @@
 
                     },function(){
                         //exception
-                    });
+                    });  */
                 }
             },
             showGroupCity () {

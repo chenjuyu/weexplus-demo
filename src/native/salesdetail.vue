@@ -5,15 +5,15 @@
             <div class="form1">
             <div  class="divline">
                 <text class="text">客户:</text>
-                <div class="btn" @click="handleClick(2)">
+                <div class="btn" @click="handleClick(6)">
                     <text class="btn-text">{{customer.customer}}</text>
                     <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
             </div>
 
             <div  class="divline">
-                <text class="text">发货仓库:</text>
-                <div class="btn" @click="handleClick(2)">
+                <text class="text">仓库:</text>
+                <div class="btn" @click="handleClick(7)">
                     <text class="btn-text">{{Department.Department}}</text>
                     <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
@@ -21,13 +21,13 @@
 
             <div  class="divline">
                 <text class="text">类型:</text>
-                <div class="btn" @click="handleClick(2)">
-                    <text class="btn-text">{{billType}}</text>
+                <div class="btn" @click="handleClick(8)">
+                    <text class="btn-text">{{billType.Name}}</text>
                     <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
             </div>
             <div  class="divline">
-            <text class="text">经手人:</text>
+            <text class="text">经手:</text>
 
             <div class="btn" @click="handleClick(1)">
                 <text class="btn-text" :style="{'color':colorName}">{{emp.Name}}</text>
@@ -39,7 +39,7 @@
             <div class="divline">
                 <text class="text">品牌:</text>
 
-                <div class="btn" @click="handleClick(1)">
+                <div class="btn" @click="handleClick(9)">
                     <text class="btn-text" :style="{'color':colorName}">{{Brand.Brand}}</text>
                     <image src="root:img/input_bg.png" class="input_bg"></image>
                 </div>
@@ -174,6 +174,10 @@
                 imgurl:'root:img/logo.png',
                 cs:false,
                 mult:false,
+                billType:{  //单据类别
+                    id:'',
+                    Name:''
+                },
                 color:{
                     colorid:'',
                     color:''
@@ -316,6 +320,16 @@
                     condition ='@'+self.goods.goodsid+'@'
                 } else if(id===5){
                     wherestr= "getPosSalesGoods"
+                } else if (id===6){
+                      // 客户
+                    wherestr ='getCustomer'
+                } else if (id===7){
+                    wherestr ='getWarehouse'
+                } else if(id===8){
+                    //单据类别
+                    wherestr="Type"
+                } else if(id===9){
+                    wherestr ='getBrand'
                 }
 
                 nav.pushFull({url:'root:base.js',param: {"send": wherestr,"condition":condition,"id":id},
@@ -367,6 +381,22 @@
                             this.size.sizeid=res.id
                             this.size.size=res.Name
                             this.size.x=res.x
+                        } else if(id===6){
+                            this.customer.customerid=res.id
+                            this.customer.customer =res.Name
+
+                        } else if(id===7){
+                            this.Department.DepartmentID=res.id
+                            this.Department.Department =res.Name
+
+                        }else if(id===8){ //单据类别
+                            this.billType.id=res.id
+                            this.billType.Name =res.Name
+
+                        }else if(id===9){
+                            //表头品牌
+                            this.Brand.BrandID=res.id
+                            this.Brand.Brand =res.Name
                         }
 
                     }
@@ -502,6 +532,14 @@
                 {
                     self.alert('请先选择售货员')
                     return
+                }
+                if (self.customer.customerid ===''){
+                    self.alert('请先选择客户')
+                    return;
+                }
+                if (self.billType.id ===''){
+                    self.alert('请先选择客户的单据类型')
+                    return;
                 }
                 if(self.barlable==='货号' && self.barcode !=''){
                     self.handleClick(5)
@@ -829,7 +867,7 @@
       width:100px;
      direction: ltr;
       font-size: 35px;
-      border-bottom-width: 1px;
+
 
   }
 </style>

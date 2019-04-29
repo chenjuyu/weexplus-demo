@@ -84,4 +84,5 @@ dependencies {
     api "org.androidannotations:androidannotations-api:$AAVersion"
     api project(':farwolf.weex')
     api project(':qr')
+    api project(':alipay')
 }

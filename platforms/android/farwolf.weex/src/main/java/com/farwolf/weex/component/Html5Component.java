@@ -154,16 +154,16 @@ public class Html5Component extends WXComponent<WebView> {
     /*为weex界面提供的调用h5中js方法的接口*/
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @JSMethod
-    public void executeJsFunction(String functionName, String param, final JSCallback callback){
+    public void JavatoHtml(String functionName, String param, final JSCallback callback){
         System.out.println("已经执行到这个方法了！！");
-   /*     if (!mLoadFinish){
+     if (!mLoadFinish){
             return;
         }
         if (!TextUtils.isEmpty(functionName)) {
             System.out.println("weex页面的点击："+param);
 
-            webView.evaluateJavascript("javascript:save();", new ValueCallback<String>() {
-           // webView.evaluateJavascript("javascript:"+functionName, new ValueCallback<String>() {
+
+           webView.evaluateJavascript("javascript:"+functionName+"("+param+")", new ValueCallback<String>() {
                 @Override
                 public void onReceiveValue(String value) {
                     //此处为 js 返回的结果
@@ -175,6 +175,6 @@ public class Html5Component extends WXComponent<WebView> {
                     }
                 }
             });
-        } */
+        }
     }
 }
