@@ -32,17 +32,20 @@ Mixins.install = (Vue, options) => {
       getScreenHeight() {
         return 750 / weex.config.env.deviceWidth * weex.config.env.deviceHeight
       },
-	  log(msg){
+        log(msg,level){
+          if(!level){
+              level='info'
+          }
             let type = typeof msg
             let log = weex.requireModule('log')
             if (type == 'object') {
                 msg = JSON.stringify(msg)
             }
-            log.log(this.timestamp() + '    ' + msg + '')
+            log.log({msg:this.timestamp() + '    ' + msg + '',level:level})
         },
 
         timestamp() {
-            var date = new Date();//Ê±¼ä´ÁÎª10Î»Ğè*1000£¬Ê±¼ä´ÁÎª13Î»µÄ»°²»Ğè³Ë1000
+            var date = new Date();//æ—¶é—´æˆ³ä¸º10ä½éœ€*1000ï¼Œæ—¶é—´æˆ³ä¸º13ä½çš„è¯ä¸éœ€ä¹˜1000
             var Y = date.getFullYear() + '-';
             var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
             var D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
@@ -51,7 +54,6 @@ Mixins.install = (Vue, options) => {
             var s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
             return Y + M + D + h + m + s;
         }
-
 
     },
     created()
@@ -66,10 +68,11 @@ Mixins.install = (Vue, options) => {
         if (this.onLoad != undefined)
           this.onLoad(p)
 
-          if (WXEnvironment.platform === 'android') {
-              let keyboard = weex.requireModule('keyboard')
-              keyboard.setKeyboardMode('adjust_pan')
-          }
+        if (WXEnvironment.platform === 'android') {
+          let keyboard = weex.requireModule('keyboard')
+          keyboard.setKeyboardMode('adjust_pan')
+        }
+
 
       });
 

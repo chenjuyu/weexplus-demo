@@ -20,7 +20,6 @@ import com.farwolf.weex.adapter.UriAdapter;
 import com.farwolf.weex.adapter.WXHttpAdapter;
 import com.farwolf.weex.adapter.display.DefaultWebSocketAdapterFactory;
 import com.farwolf.weex.bean.Config;
-import com.farwolf.weex.component.Html5Component;
 import com.farwolf.weex.component.WXArc;
 import com.farwolf.weex.component.WXChild;
 import com.farwolf.weex.component.WXDrawerLayout;
@@ -41,7 +40,6 @@ import com.farwolf.weex.component.WXSlidComponent;
 import com.farwolf.weex.component.WXWheelView;
 import com.farwolf.weex.core.PluginManager;
 import com.farwolf.weex.core.local.Local;
-import com.farwolf.weex.module.TextModule;
 import com.farwolf.weex.module.WXAddressBookModule;
 import com.farwolf.weex.module.WXCenterPopModule;
 import com.farwolf.weex.module.WXDeviceModule;
@@ -224,7 +222,7 @@ public class Weex extends ServiceBase{
             WXSDKEngine.registerModule("rsa", WXRsaModule.class);
             WXSDKEngine.registerModule("keyboard", WXKeyboardModule.class);
             WXSDKEngine.registerModule("log", WXFLogModule.class);
-            WXSDKEngine.registerModule("test",TextModule.class);//这是新加的测试内容
+
 
             registerComponent("image",WXFImage.class);
             registerComponent("web",WXFWeb.class);
@@ -246,7 +244,6 @@ public class Weex extends ServiceBase{
             registerComponent("input",WXFInput.class);
             registerComponent("arc",WXArc.class);
             registerComponent("video",WXFVideo.class);
-            registerComponent("webView",Html5Component.class); //扩展的webview
 
             PluginManager.init(application);
 

@@ -85,4 +85,5 @@ dependencies {
     api project(':farwolf.weex')
     api project(':qr')
     api project(':alipay')
+	api project(':mytools')
 }

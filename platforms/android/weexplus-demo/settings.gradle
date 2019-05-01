@@ -54,3 +54,6 @@ project(':qr').projectDir = new File('../qr')
 
 include ':alipay'
 project(':alipay').projectDir = new File('../alipay')
+
+include ':mytools'
+project(':mytools').projectDir = new File('../mytools')

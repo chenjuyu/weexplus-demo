@@ -1,13 +1,11 @@
 <template>
     <div style="width:750px">
         <head :rightText="rightText" title="多颜色"  @rightClick="rightClick"></head>
-        <webView ref="myWeb" @newEvent="newEvent" path="http://192.168.1.104:8080/FPOS/common.do?testwebview&test=asssssss" @finish="htmlFinish" style="width: 720px; height:600px;align-items: center;justify-content:center">
+        <webView ref="myWeb" @newEvent="newEvent" :path="url" @finish="htmlFinish" style="width: 720px; height:600px;align-items: center;justify-content:center">
         </webView>
-        <div>
-            <richText tel="12305" style="width:200;height:100">12305</richText>
-        </div>
-     <div style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 750px;height: 80px;align-items: center;justify-content:center">
-         <text style="font-size: 30px" @click="excuJS">提交</text>
+
+     <div @click="excuJS" style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 750px;height: 80px;align-items: center;justify-content:center">
+         <text style="font-size: 30px" >提交</text>
      </div>
 
     </div>
@@ -21,7 +19,7 @@
         data() {
          return {
              name: "webView",
-             url:'http://192.168.1.104:8080/FPOS/common.do?testwebview&test=asssssss',
+             url:'http://192.168.1.107:8080/FPOS/common.do?testwebview&test=asssssss',
              msg:'rrrr'
 
          }
@@ -37,10 +35,10 @@
             },
             newEvent(e){
                 //e.data即为HTML传来的值
-                this.msg=e
-                modal.alert({message:e});
+                //this.msg=e
+                modal.alert({message:e.data});
             },excuJS(e){//第二个参数 传到HTML的数据
-                this.$refs.myWeb.executeJSFunction('save','',
+                this.$refs.myWeb.JavatoHtml('save','',
               (res)=>{
                     //执行完成的回调
                   //this.alert(res)
