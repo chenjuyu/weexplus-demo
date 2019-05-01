@@ -156,7 +156,7 @@
 
 <script>
     const  pref=weex.requireModule('pref');
-    const saveMethod="/salesTicket.do?saveSalesTicket"
+    const saveMethod="/sales.do?saveSales"
     const url ='root:img/input_bg.png'
     import { WxcDialog ,WxcPopover} from 'weex-ui';
     export default {
@@ -170,12 +170,17 @@
                     height:'70px',
                     backgroundcolor:'red'
                 },
-
-                imgurl:'root:img/logo.png',
+                direction:'',
+                SalesID:'',
+                discountRateSum:'', //发货单 整单折扣
+                lastARAmount:'',
+                orderAmount:'',
+                privilegeAmount:'',
+                imgurl:'root:img/logo.png',  //先做新增
                 cs:false,
                 mult:false,
                 billType:{  //单据类别
-                    id:'',
+                    id:0.00,
                     Name:''
                 },
                 color:{
@@ -229,10 +234,16 @@
                 qty:0,
                 emp:{
                     employeeId:'',
-                    Name :'请选择经手人'
+                    Name :'请选择经手人',
+                    BusinessDeptID:''
                 },customer:{
                     customerid:'',
-                    customer:''
+                    customer:'',
+                    DiscountRate:0.00,
+                    DistrictID:'',
+                    OrderDiscount:0.00,
+                    AllotDiscount:0.00,
+                    ReplenishDiscount:0.00
                 },Department:{
                     DepartmentID:'',
                     Department:''
@@ -384,6 +395,11 @@
                         } else if(id===6){
                             this.customer.customerid=res.id
                             this.customer.customer =res.Name
+                            this.customer.DiscountRate=res.DiscountRate
+                            this.customer.DistrictID=res.DistrictID
+                            this.OrderDiscount=res.OrderDiscount
+                            this.AllotDiscount=res.AllotDiscount
+                            this.ReplenishDiscount=res.ReplenishDiscount
 
                         } else if(id===7){
                             this.Department.DepartmentID=res.id
@@ -451,7 +467,7 @@
             },
             qrclick(){
                 const self=this
-                if(self.cs ){
+                if(self.cs ){ //手输货号
                  if (self.goods.goodsid ==='' && self.color.colorid ==='' && self.size.sizeid ==='')
                      return;
 
@@ -468,16 +484,14 @@
                     map.UnitPrice =self.goods.UnitPrice;
                     map.RetailSales = self.goods.RetailSales;
 
-                    map.Discount = self.vip.DiscountRate==0?self.goods.Discount:Number(self.vip.DiscountRate);
-                    map.DiscountRate=self.vip.DiscountRate==0?self.goods.Discount:Number(self.vip.DiscountRate);
+                    map.Discount = self.getPriceByType(self.goods.UnitPrice).DiscountRate
+                    map.DiscountRate=self.getPriceByType(self.goods.UnitPrice).DiscountRate
 
                     map.Quantity=self.iqty==0?1:self.iqty
 
-                    if (map.DiscountRate !=null) {
-                        map.DiscountPrice =Number(map.UnitPrice) * Number(map.DiscountRate)/10.0
-                    }else{
-                        map.DiscountPrice=null
-                    }
+
+                    map.DiscountPrice=self.getPriceByType(self.goods.UnitPrice).price
+
 
 
                     let  mapData =self.getList(map)  //返回是否存在
@@ -580,8 +594,10 @@
                                map.ColorName = array.ColorName;
                                map.SizeName = array.SizeName;
                                map.GoodsCode = array.GoodsCode;
-                               map.Discount = self.vip.DiscountRate==0?array.Discount:Number(self.vip.DiscountRate);
-                               map.DiscountRate=self.vip.DiscountRate==0?array.Discount:Number(self.vip.DiscountRate);
+
+                               map.Discount = self.getPriceByType(self.goods.UnitPrice).DiscountRate
+                               map.DiscountRate=self.getPriceByType(self.goods.UnitPrice).DiscountRate
+
                                map.GoodsID = array.GoodsID;
                                map.ColorID = array.ColorID;
                                map.SizeID = array.SizeID;
@@ -594,11 +610,9 @@
 
 
 
-                              if (map.DiscountRate !=null) {
-                                  map.DiscountPrice =Number(map.UnitPrice) * Number(map.DiscountRate)/10.0
-                              }else{
-                                  map.DiscountPrice=null
-                              }
+
+                               map.DiscountPrice=self.getPriceByType(self.goods.UnitPrice).price
+
                              //  map.Amount=self.iqty==0?1:parseFloat(self.iqty * array.UnitPrice).toFixed(2) //先单价* 数量，后台促销后面再算
                         //  self.list.push(map); //最后面
                         //   self.alert(map.Amount)
@@ -630,7 +644,27 @@
 
 
 
-            },countTotal(){
+            },getPriceByType(unitprice){ //得到客户价格类型的折扣，即折后价, 参数为单价
+               var map={}
+               var price =0.00
+                if(this.billType.Name==='批发'){
+                    price=Number(unitprice) *Number(this.customer.DiscountRate)/10
+                    map.DiscountRate=this.customer.DiscountRate
+               }else if(this.billType.Name==='订货'){
+                    price=Number(unitprice) *Number(this.customer.OrderDiscount)/10
+                    map.DiscountRate=this.customer.OrderDiscount
+                }else if(this.billType.Name==='配货'){
+                    price=Number(unitprice) *Number(this.customer.AllotDiscount)/10
+                    map.DiscountRate=this.customer.AllotDiscount
+                }else if(this.billType.Name==='补货'){
+                    price=Number(unitprice) *Number(this.customer.ReplenishDiscount)/10
+                    map.DiscountRate=this.customer.ReplenishDiscount
+                }
+                map.price=parseFloat(price).toFixed(2)
+                return map
+
+            },
+            countTotal(){
                 //统计合计与金额 this.vip.DiscountRate !=0.0 &&
                 let sumAmt=0.00
                 let sumQty=0
@@ -678,7 +712,7 @@
                 return null;
             },save(){
                 const self=this
-
+                self.direction=1
                 if(self.savetitle==='新增'){
                     var page=weex.requireModule("page")
                     page.reload();
@@ -689,25 +723,38 @@
                 const net = weex.requireModule('net');
                 const progress =weex.requireModule('progress')
                 var map={}
-                map.data=self.list;
-                map.vipId=self.vip.vipId;
-                map.vipCode= self.vip.vipCode;
-                map.employeeId= self.emp.employeeId;
-                map.amount= self.AmountSum;
-                map.retailAmount =Number(self.AmountSum)-Number(self.discountMoney) -Number(self.exchange_amount) //exchange_amount 积分兑换的金额
-                map.discountMoney=self.discountMoney
-                map.vipPointRate=1
-              //  map.put("retailAmount", retailAmount);
-               // map.put("discountMoney", String.valueOf(exchangeMoney + Double.parseDouble(discountMoney)));
+                map.SalesID=''
 
-              //  map.put("vipPointRate", String.valueOf(vipPointRate));
-              //  map.put("vipDiscount", String.valueOf(vipDiscount));
-              //  map.put("posBackAudit", String.valueOf(posBackAudit));
+                map.customerid=self.customer.customerid;
+                map.discountRateSum= self.discountRateSum;
+                map.lastARAmount= self.lastARAmount;
+                map.orderAmount= self.orderAmount;
+                map.privilegeAmount =self.privilegeAmount
+                map.discountMoney=self.discountMoney
+                map.departmentid=self.Department.DepartmentID
+                map.employeeId=self.emp.employeeId
+                map.brandId=self.Brand.BrandID
+                map.businessDeptId=self.emp.BusinessDeptID
+                map.paymentTypeId=''
+                map.memo='wx生成'
+                map.type=self.billType.Name
+                map.direction=self.direction
+                map.typeEName=self.billType.id
+                map.notUseNegativeInventoryCheck=false
+                map.data=self.list;
+
+                map.wxflag=true
+
+
+
+              /*
                 map.qty= self.QuantitySum;
                 map.memo='demo生成====';
                 map.type=self.type
                 map.exchangedPoint='0'
                 map.posBackAudit=false
+
+               */
 
 
                 net.post(pref.getString('ip')+saveMethod,map,{},function(){
