@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 整体透明画布 -->
+    <SurfaceView
+        android:id="@+id/preview_view1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+    <!-- 扫描取景框 -->
+    <com.cjy.mytools.qr.zxing.view.ViewfinderView
+        android:id="@+id/viewfinder_view1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+    <!--
+     <com.farwolf.view.TitleBar
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@+id/title"
+         /> -->
+
+    <TextView
+        android:id="@+id/sunline"
+        android:text="开灯"
+        android:textStyle="bold"
+        android:textColor="#FFF"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="bottom|left"
+        android:layout_marginLeft="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        />
+    <TextView
+        android:id="@+id/xiangce"
+        android:text="相册"
+        android:textStyle="bold"
+        android:textColor="#FFF"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        />
+
+
+</merge>
