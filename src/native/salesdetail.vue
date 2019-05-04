@@ -158,6 +158,7 @@
     const  pref=weex.requireModule('pref');
     const saveMethod="/sales.do?saveSales"
     const url ='root:img/input_bg.png'
+    let nav=weex.requireModule('navigator');
     import { WxcDialog ,WxcPopover} from 'weex-ui';
     export default {
         components: { WxcDialog ,WxcPopover},
@@ -282,6 +283,8 @@
                 // this.alert("接收参数"+p);
                 // this.alert("No的值："+p.No+",madeby的值："+p.madeby);
                 //console.log(p)
+                nav.setRoot('sd')
+                nav.setPageId('sd')
             },
             focus() {
                 this.$refs.widget.focus();
@@ -304,7 +307,7 @@
             input(){
             },handleClick(id){
                 let self=this
-                let nav=weex.requireModule('navigator');
+
                 let wherestr="";
                 let condition=""
                 if (id===1){
@@ -342,8 +345,10 @@
                 } else if(id===9){
                     wherestr ='getBrand'
                 }
+                //self.mult 多颜色录入标志
 
-                nav.pushFull({url:'root:base.js',param: {"send": wherestr,"condition":condition,"id":id},
+
+                nav.pushFull({url:'root:base.js',param: {"send": wherestr,"condition":condition,"id":id,'mult':self.mult},
                     animate:true,
                     isPortrait:true},(res)=>{
                     this.colorName = '#000'
@@ -365,7 +370,16 @@
                             this.vip.VIPTypeID =res.VIPTypeID
 
                         } else if(id===5){
-                            this.alert(res)
+
+
+                            const chen = new BroadcastChannel('sizelist')
+                            debugger
+                            chen.onmessage=(event)=> {
+                               // this.alert('event:'+JSON.stringify(event.data))
+                                console.log(event.data)
+                                modal.alert({message:JSON.stringify(event.data)})
+                            }
+                            this.alert('list:'+JSON.stringify(res))
                             this.goods.goodsid=res.id
                             this.goods.Name=res.Name
                             this.goods.code=res.Code
@@ -375,13 +389,14 @@
                             this.goods.Discount=res.Discount
                             this.goods.DiscountFlag=res.DiscountFlag
                             this.goods.sizIndex=res.sizIndex
+
                             //重新选择货号，要重新选择颜色与尺码
                             this.color.colorid =''
                             this.color.color=''
                             this.size.sizeid=''
                             this.size.size=''
                             this.size.x=''
-
+                           if(this.cs && !this.mult)
                             self.handleClick(3)
 
                         }else if(id===3){
@@ -436,9 +451,10 @@
                       self.barlable='货号'
                       map.text='条码录入'
                   }
-              }else if(obj.key==='key-qrcode'){
+              }else if(obj.key==='key-qrcode'){ //多颜色录入
                   self.cs=true
                   self.mult =true
+                  self.barlable='货号'
               }
             },
             handleLongPress(ls,index){

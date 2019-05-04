@@ -22,7 +22,9 @@
           return {  name: "base",
               list:[],
               text:'',
-              cmap:{}//查询条件
+              cmap:{},//查询条件
+              mult:false, //多颜色录入标志
+
           }
       },   methods: {
             onLoad(p){
@@ -30,7 +32,8 @@
                 var self=this
 
                 self.list.splice(0,self.list.length)
-                send =p.send
+                self.mult=p.mult
+              //  self.send =p.send
                 self.cmap.send=p.send  //存起来
                 if(p.send==='Type') {
                     var ls=["批发", "订货", "配货", "补货"]
@@ -131,12 +134,18 @@
 
             },
             onSelected(lst,index){
-
-                nav.backFull(lst,false);
+                if(this.mult && this.cmap.send==='getPosSalesGoods')
+                {
+                 let param={'GoodsID':lst.id}
+                 nav.pushParam('root:multiselect.js',param)
+                }else {
+                    nav.backFull(lst, false);
+                }
             },search(){
                 if(this.text!=''){
                    let self=this  //简化写法
                     self.cmap.condition=self.text
+                    self.cmap.mult=self.mult
                     self.onLoad(self.cmap)
                 /*    const net = weex.requireModule('net');
                     net.post(pref.getString('ip')+'/select.do?'+send,{"currPage":"1","param":this.text},{},function(){
