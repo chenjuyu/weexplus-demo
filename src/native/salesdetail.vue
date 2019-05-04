@@ -348,7 +348,7 @@
                 //self.mult 多颜色录入标志
 
 
-                nav.pushFull({url:'root:base.js',param: {"send": wherestr,"condition":condition,"id":id,'mult':self.mult},
+                nav.pushFull({url:'root:base.js',param: {"send": wherestr,"condition":condition,"id":id},
                     animate:true,
                     isPortrait:true},(res)=>{
                     this.colorName = '#000'
@@ -371,15 +371,20 @@
 
                         } else if(id===5){
 
-
+                           /*
                             const chen = new BroadcastChannel('sizelist')
                             debugger
                             chen.onmessage=(event)=> {
                                // this.alert('event:'+JSON.stringify(event.data))
                                 console.log(event.data)
                                 modal.alert({message:JSON.stringify(event.data)})
-                            }
-                            this.alert('list:'+JSON.stringify(res))
+                            } */
+                          /*  const notify = weex.requireModule('notify');
+                            var sizelist=[]
+                            notify.regist("key",function (result) {
+                                sizelist = result.sizelist;
+                            }); */
+
                             this.goods.goodsid=res.id
                             this.goods.Name=res.Name
                             this.goods.code=res.Code
@@ -389,6 +394,38 @@
                             this.goods.Discount=res.Discount
                             this.goods.DiscountFlag=res.DiscountFlag
                             this.goods.sizIndex=res.sizIndex
+
+
+                            if(this.mult)
+                            {
+                                let param={'GoodsID':this.goods.goodsid}
+                                nav.pushFull({url:'root:multiselect.js',param: param,
+                                    animate:true,
+                                    isPortrait:true},(result)=>{
+                                   // this.alert(JSON.stringify(result.sizelist))
+                                    for (let i=0;i<result.sizelist.length;i++){
+                                        let map=result.sizelist[i]
+                                        this.alert(map)
+                                        let mapdata=this.getList(map)
+                                        if(mapdata===null){
+                                            this.list.unshift(map)
+                                        }else{
+                                            mapdata.Quantity=Number(mapdata.Quantity)+Number(map.Quantity)
+                                        }
+
+                                    }
+
+                                    //this.list=
+                                   // this.alert('list:'+JSON.stringify(result))
+                                })
+
+
+                                return
+                            }
+
+
+
+
 
                             //重新选择货号，要重新选择颜色与尺码
                             this.color.colorid =''

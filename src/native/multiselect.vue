@@ -228,14 +228,21 @@
                 ls.Quantity =Number(ls.Quantity)+1
                 this.total()
             },submit(){
-               // nav.backFull(this.sizelist,false)
+                var p={}
+                p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
+               nav.backFull(p,false)
                 //this.alert(this.sizelist.filter(item=>Number(item.Quantity)>0))
                 //return https://weex.apache.org/zh/docs/api/broadcast-channel.html#%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B
               //  const cjy = new BroadcastChannel('sizelist')
                // let list=this.sizelist.filter(item=>Number(item.Quantity)>0)
                // cjy.postMessage({list})
-               // nav.backTo('sd')
-                nav.backFull(this.sizelist.filter(item=>Number(item.Quantity)>0),false)
+              //  var p={};
+              /*  p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)>0)
+                var notify=weex.requireModule("notify")
+                notify.send('key',p)
+              */
+              //  nav.backTo('sd')
+             //   nav.backFull(this.sizelist.filter(item=>Number(item.Quantity)>0),false)
             },
             onSelect (res,{selectIndex, checked, checkedList }) {
                 let _this=this

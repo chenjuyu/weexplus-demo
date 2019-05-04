@@ -134,13 +134,8 @@
 
             },
             onSelected(lst,index){
-                if(this.mult && this.cmap.send==='getPosSalesGoods')
-                {
-                 let param={'GoodsID':lst.id}
-                 nav.pushParam('root:multiselect.js',param)
-                }else {
+
                     nav.backFull(lst, false);
-                }
             },search(){
                 if(this.text!=''){
                    let self=this  //简化写法
