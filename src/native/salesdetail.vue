@@ -146,7 +146,7 @@
             </div> -->
             <div style="flex-direction: row; background-color: #1EA5FC; position: fixed;bottom: 0;left: 0;right: 0;height: 80px;align-items: center;justify-content:flex-start;">
                 <text class="size">合计：</text><text class="size">{{QuantitySum}}</text><text style="margin-left: 100px" class="size">￥{{AmountSum}}</text>
-                <div  v-if="show" style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 250px;height: 80px;align-items: center;justify-content:center"><text @click="save" class="size">{{savetitle}}</text></div>
+                <div  v-if="show" @click="save" style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 250px;height: 80px;align-items: center;justify-content:center"><text  class="size">{{savetitle}}</text></div>
             </div>
 
 
@@ -333,7 +333,8 @@
                     wherestr="getSizeByGoodsCode"
                     condition ='@'+self.goods.goodsid+'@'
                 } else if(id===5){
-                    wherestr= "getPosSalesGoods"
+                    wherestr= "getSalesGoods"
+                    condition=self.customer.customerid
                 } else if (id===6){
                       // 客户
                     wherestr ='getCustomer'
@@ -348,7 +349,7 @@
                 //self.mult 多颜色录入标志
 
 
-                nav.pushFull({url:'root:base.js',param: {"send": wherestr,"condition":condition,"id":id},
+                nav.pushFull({url:'root:base.js',param: {"send": wherestr,"condition":condition,"Type":this.billType.Name,"id":id},
                     animate:true,
                     isPortrait:true},(res)=>{
                     this.colorName = '#000'
@@ -405,19 +406,33 @@
                                    // this.alert(JSON.stringify(result.sizelist))
                                     for (let i=0;i<result.sizelist.length;i++){
                                         let map=result.sizelist[i]
-                                        this.alert(map)
+                                        map.UnitPrice=this.goods.UnitPrice
+                                        map.Discount=this.goods.Discount
+                                        map.Amount=Number(map.Quantity) * Number(map.UnitPrice) * Number(map.Discount===''?10:map.Discount)/10
+                                        // this.alert(map)
                                         let mapdata=this.getList(map)
                                         if(mapdata===null){
                                             this.list.unshift(map)
                                         }else{
                                             mapdata.Quantity=Number(mapdata.Quantity)+Number(map.Quantity)
+                                            mapdata.Amount=Number(mapdata.Amount)+Number(map.Amount)
                                         }
 
                                     }
+                                    if(result.sizelist.length>0){
+
+                                        this.countTotal()
+
+                                        if(this.list.length>0) {
+                                            this.show=true
+                                        }
+                                    }
+
 
                                     //this.list=
                                    // this.alert('list:'+JSON.stringify(result))
                                 })
+
 
 
                                 return

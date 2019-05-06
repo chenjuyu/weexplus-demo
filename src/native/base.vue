@@ -54,7 +54,11 @@
                 //self.alert(self.list.length)
                 //self.list.splice(0,self.list.length);
 
-                net.post(pref.getString('ip')+'/select.do?'+p.send,{"currPage":"1","param":p.condition},{},function(){
+                var Type=p.Type
+                var customerid=p.customerid
+
+
+                net.post(pref.getString('ip')+'/select.do?'+p.send,{"currPage":"1","param":p.condition,"Type":Type,"customerid":customerid},{},function(){
                     //start
                 },function(e){
                     //success
@@ -79,7 +83,7 @@
                            map.PointRate=array[i].PointRate
                            map.UsablePoint=array[i].UsablePoint
                            self.list.push(map);
-                       } else if(p.send==='getPosSalesGoods'){
+                       } else if(p.send==='getPosSalesGoods' || p.send==='getSalesGoods'){
                            map.id=array[i].GoodsID;
                            map.Name = array[i].Name;
                            map.Code=array[i].Code
