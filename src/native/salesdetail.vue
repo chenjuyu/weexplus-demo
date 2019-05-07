@@ -122,8 +122,8 @@
             <text class="cellitem">单价</text>
             <text class="cellitem">金额</text>
         </div>
-         <scroller>
-        <div class="cell" v-for="(ls,index) in list" @longpress="handleLongPress(ls,index)">
+         <list>
+        <cell class="cell" v-for="(ls,index) in list" @longpress="handleLongPress(ls,index)">
             <text class="cellitem">{{ls.Barcode}}</text>
             <text class="cellitem">{{ls.GoodsCode}}</text>
             <text class="cellitem">{{ls.ColorName}}</text>
@@ -132,8 +132,8 @@
             <text class="cellitem">{{ls.Discount|numFilter}}</text>
             <text class="cellitem">{{ls.UnitPrice|numFilter}}</text>
             <text class="cellitem">{{ls.Amount}}</text>
-        </div>
-         </scroller>
+        </cell>
+         </list>
      </scroller>
         <div  class="tabbar">
           <!--  <div style="flex-direction: row;justify-content:flex-start;align-items: center;">

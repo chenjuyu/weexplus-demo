@@ -1,5 +1,7 @@
 <!-- CopyRight (C) 2017-2022 Alibaba Group Holding Limited. -->
-<!-- Created by 南麓 on 2017/8/10. -->
+<!-- Created by 南麓 on 2017/8/10.  {marginTop: index >= cols ? lineSpacing : null}
+dList.length >= cols ? lineSpacing : null
+-->
 
 <template>
     <div class="grid-select">
@@ -8,14 +10,14 @@
                 v-bind="Object.assign({}, customStyles, item)"
                 :key="index"
                 :index="index"
-                :style="{marginTop: index >= cols ? lineSpacing : null}"
+                :style="{marginTop: lineSpacing }"
                 @select="onSelect(index)"></option>
-
         <option
                 v-for="(item, index) in cHackList"
                 v-bind="Object.assign({}, customStyles, item)"
                 :key="id + index"
-                :style="{opacity: 0, marginTop: dList.length >= cols ? lineSpacing : null}"></option>
+                :style="{opacity: 0, marginTop:lineSpacing }"></option>
+
     </div>
 </template>
 
@@ -82,7 +84,7 @@
         },
         created () {
             // 行间距
-            this.lineSpacing = this.customStyles.lineSpacing || '12px';
+            this.lineSpacing =  this.customStyles.lineSpacing || '12px';
         },
         methods: {
             onSelect (index) {
@@ -98,7 +100,7 @@
                     });
 
                 }//JSON.stringify(this.dList)
-              //  modal.alert({message:JSON.stringify(this.dList)})
+               // modal.alert({message:JSON.stringify(this.dList)})
             },
             initList () {
                 const single = this.single;

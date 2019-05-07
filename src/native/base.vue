@@ -2,11 +2,11 @@
     <div class="wxc-demo">
         <head></head>
         <div> <input class="input" type="text" placeholder="search" return-key-type="search" @return="search" v-model="text" /></div>
-        <scroller>
-        <div class="cell" v-for="(lst,index) in list" @click="onSelected(lst,index)">
+        <list>
+        <cell class="cell" v-for="(lst,index) in list" @click="onSelected(lst,index)">
             <text class="item">{{lst.Name}}</text>
-        </div>
-        </scroller>
+        </cell>
+        </list>
     </div>
 </template>
 

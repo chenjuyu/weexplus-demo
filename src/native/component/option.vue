@@ -10,7 +10,7 @@
        @click="onClick"
        :accessible="true"
        :aria-label="`${title},${checked?'已选中':'未选中'}`">
-	
+
     <text v-if="title" class="text-title" :style="cTitleStyle">{{title}}</text>
 
     <text v-if="tipqty" class="divright">{{tipqty}}</text>
@@ -138,18 +138,14 @@
     border-width: 2px ;
     padding-left: 6px;
     padding-right: 6px;
-
   }
-
   .text-title {
     lines: 2;
     line-height: 30px;
     text-overflow: ellipsis;
     text-align: center;
     font-size: 35px;
-
   }
-
   .image-checked {
     position: absolute;
     right: 0;
@@ -174,5 +170,4 @@
     height: 45px;
     overflow: visible;
   }
-
 </style>

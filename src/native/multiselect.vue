@@ -1,5 +1,5 @@
 <template>
-    <div class="wxc-demo">
+    <div class="wrapper">
         <head rightText="" title="多颜色多尺码" rightButton=""></head>
         <div class="goodsimg">
         <image style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
@@ -59,31 +59,40 @@
             </div>
 
 
-            <div class="sizelist" >
 
-             <div class="cellTitle"> <text class="text">尺码</text><text class="text2">采购数/可发数</text><text class="text3">输入数</text></div>
-                <scroller class="scroller">
-             <div class="cell"  v-for="(ls,index) in sizefilter(sizelist,colorid)">
-                <div class="text"><text class="size">{{ls.Size}}</text></div><!-- v-focus="true"  blur(ls)-->
-                <div class="text2"><text class="size">{{ls.Size}}/{{ls.Size}}</text> </div><!-- v-focus="true"  blur(ls)-->
-               <div class="inputdiv"><text class="iconfont bar-ic" @click="jian(ls)">&#xe605;</text>
-                   <input type="text" v-model="ls.Quantity" class="input" return-key-type="next"  @input="input(ls)">
-                   <text class="iconfont bar-ic2" @click="add(ls)">&#xe604;</text> </div>
+
+             <div class="cellTitle">
+                 <text class="text">尺码</text><text class="text2">采购数/可发数</text><text class="text3">输入数</text>
+             </div>
+
+             <list style="height: 490px;margin-bottom: 5px">
+             <cell class="cell"  v-for="(ls,index) in sizefilter(sizelist,colorid)">
+               <text class="cellitem">{{ls.Size}}</text><!-- v-focus="true"  blur(ls)-->
+               <text class="cellitem">{{ls.Size}}/{{ls.Size}}</text><!-- v-focus="true"  blur(ls)-->
+               <div class="inputdiv">
+                   <text class="iconfont bar-ic" @click="jian(ls)">&#xe605;</text>
+                   <input type="text" v-model="ls.Quantity" class="input" return-key-type="next"  @input="input(ls)"/>
+                   <text class="iconfont bar-ic2" @click="add(ls)">&#xe604;</text>
+               </div>
+            </cell>
+             </list>
+
+
+        <div class="bottom">
+            <div class="heji">
+                <text class="size" style="color: #FFFFFF">合计:</text>
+                <text class="size" style="margin-left: 20px; color: #FFFFFF">{{qtytotal}}</text>
+                <text class="size" style="margin-left: 20px; color: #FFFFFF">￥{{Amttotal}}</text>
+                <div class="submit" @click="submit"><text class="size" style="color: #FFFFFF">确认</text> </div>
             </div>
-                </scroller>
-            </div>
+
+        </div>
 
 
 
 
 
 
-     <div class="bottom">
-         <div class="heji"><text class="size" style="color: #FFFFFF">合计:</text>
-         <text class="size" style="margin-left: 20px;width: 100px; color: #FFFFFF">{{qtytotal}}</text>
-         <text class="size" style="margin-left: 20px; width: 100px;color: #FFFFFF">￥{{Amttotal}}</text>
-         </div>
-         <div class="submit" @click="submit"><text class="size" style="color: #FFFFFF">确认</text> </div></div>
     </div>
 </template>
 
@@ -153,6 +162,30 @@
                         'ColorID':'0BC',
                         'title': '白色',
                         'tipqty':''
+                    },
+                    {
+                        'title': '合肥'
+                    },
+                    {
+                        'title': '武汉'
+                    },
+                    {
+                        'title': '长沙'
+                    },
+                    {
+                        'title': '南昌'
+                    },
+                    {
+                        'title': '太原'
+                    },
+                    {
+                        'title': '西安'
+                    },
+                    {
+                        'title': '郑州'
+                    },
+                    {
+                        'title': '福州'
                     }
 
 
@@ -190,14 +223,14 @@
         },
         methods: {
             onLoad(p){
-            var param={}
+           var param={}
              param.GoodsID=p.GoodsID
              param.DeptID='007'
              param.onLineId='0000-0000'
              param.userId=1
              let  _this=this
-             //   _this.colorid='0BA'
-                net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
+               // _this.colorid='0BA'
+               net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
 
                     //start
                 },function (res) {
@@ -371,7 +404,8 @@
 
 <style scoped>
 
-    .wxc-demo {
+    .wrapper {
+        display: block;
         position: absolute;
         top: 0;
         bottom: 0;
@@ -402,9 +436,9 @@
         padding-top: 24px;
         padding-right: 24px;
         padding-left: 24px;
-        height: auto;
         border-bottom-width:1px;
         border-color: #eeeeee;
+
 
     }
     .res {
@@ -414,12 +448,20 @@
         line-height: 36px;
     }.cell{
              flex-direction: row;
-             height: 60px;
+             top: 0;
+             left: 0;
+             right: 0;
+
+
+
 
          }
     .cellTitle{
         flex-direction: row;
-
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 70px;
 
     }
 
@@ -428,7 +470,7 @@
         align-items: center;
         text-align: center;
         font-size: 35px;
-        width:200px;
+        width:230px;
         flex-direction: row;
 
 
@@ -448,15 +490,16 @@
         text-align: center;
         font-size: 35px;
         width:320px;
-        height: 70px;
+
 
     }
     .inputdiv{
-     flex-direction: row;
+        flex-direction: row;
         width:320px;
         justify-content: center;
         align-items: center;
         text-align: center;
+        font-size: 35px;
     }
 
     .input{
@@ -496,20 +539,16 @@
 
       }
        .bottom{
-           position: absolute;
+           display: block;
+           position: fixed;
            bottom:0;
            left:0;
            right: 0;
            width: 750px;
-           height: 70px;
-           flex-direction: row;
            background-color: #0085ee;
        }
        .heji{
-            flex-direction: row;
-           justify-content: flex-start;
-           align-items:center;
-
+           flex-direction: row; background-color: #1EA5FC; position: fixed;bottom: 0;left: 0;right: 0;height: 80px;align-items: center;justify-content:flex-start;
 
 
        }
@@ -517,7 +556,7 @@
         position: absolute;
         bottom:0;
         right: 0;
-        height: 70px;
+        height: 80px;
         width: 200px;
         justify-content: center;
         align-items: center;
@@ -530,5 +569,12 @@
         font-size: 35px;
 
     }
-
+    .cellitem{
+        width: 230px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        line-height: 70px;
+        font-size: 35px
+    }
 </style>

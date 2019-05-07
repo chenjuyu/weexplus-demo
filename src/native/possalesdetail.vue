@@ -80,8 +80,8 @@
             <text class="cellitem">单价</text>
             <text class="cellitem">金额</text>
         </div>
-         <scroller>
-        <div class="cell" v-for="(ls,index) in list" @longpress="handleLongPress(ls,index)">
+         <list>
+        <cell class="cell" v-for="(ls,index) in list" @longpress="handleLongPress(ls,index)">
             <text class="cellitem">{{ls.Barcode}}</text>
             <text class="cellitem">{{ls.GoodsCode}}</text>
             <text class="cellitem">{{ls.ColorName}}</text>
@@ -90,10 +90,10 @@
             <text class="cellitem">{{ls.Discount|numFilter}}</text>
             <text class="cellitem">{{ls.UnitPrice|numFilter}}</text>
             <text class="cellitem">{{ls.Amount}}</text>
-        </div>
-         </scroller>
+        </cell>
+         </list>
      </scroller>
-        <div  class="tabbar">
+        <div  v-bind:class="[isIPhoneX ?'tabbarxr':'tabbar']">
             <div style="flex-direction: row;justify-content:flex-start;align-items: center;">
                 <text class="size">折让</text><input type="number"  v-model="discountMoney" style="width: 300px;height: 70px;border-bottom-width:1px;"/>
                 <text class="size">实付</text><input type="number"  v-model="AmountSum" style="width: 300px;height: 70px;border-bottom-width:1px;">
@@ -115,11 +115,12 @@
 <script>
     const  pref=weex.requireModule('pref');
     const saveMethod="/salesTicket.do?saveSalesTicket"
-    import { WxcDialog ,WxcPopover} from 'weex-ui';
+    import { WxcDialog ,WxcPopover,Utils} from 'weex-ui';
     export default {
         components: { WxcDialog ,WxcPopover},
         data() {
             return {
+                isIPhoneX:false,
                 cs:false,
                 mult:false,
                 color:{
@@ -206,6 +207,9 @@
                 // this.alert("接收参数"+p);
                 // this.alert("No的值："+p.No+",madeby的值："+p.madeby);
                 //console.log(p)
+                this.isIPhoneX =Utils.env.isIPhoneX()
+
+                this.alert(this.isIPhoneX)
             },
             focus() {
                 this.$refs.widget.focus();
@@ -741,6 +745,11 @@
       height: 230px;width: 750px; position: fixed;bottom: 0;left: 0;right: 0;
       background-color: #1EA5FC;
   }
+    .tabbarxr{
+        display: block;
+        height: 230px;width: 750px; position: fixed;bottom: 44px;left: 0;right: 0;
+        background-color: #1EA5FC;
+    }
   .text{
       width:100px;
      direction: ltr;
