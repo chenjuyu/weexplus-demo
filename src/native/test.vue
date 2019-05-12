@@ -9,6 +9,7 @@
 
 <script>
     const  pref=weex.requireModule('pref')
+    const modal = weex.requireModule('modal')
     export default {
         data(){
             return {
@@ -22,6 +23,18 @@
                 // this.alert(p);
                 //this.name=p.name;
                 this.ip=pref.getString('ip');
+                var GoodsID=p.GoodsID
+                var ActivityName=p.ActivityName
+                modal.toast({
+                    message: ActivityName,
+                    duration: 0.3
+                })
+                modal.toast({
+                    message: 'GoodsID的值：'+ GoodsID,
+                    duration: 0.3
+                })
+
+
             },
             save(){
                 pref.setString('ip',this.ip);
@@ -32,6 +45,21 @@
         },
         created(e){
             //alert(e)
+           // this.navigator = weex.requireModule('navigator')
+
+            var globalEvent = weex.requireModule('globalEvent');
+            globalEvent.addEventListener("onPageInit", (param) => {
+                let p = param
+                if (param && p.param && p.bubbles)
+                    p = p.param
+                if (this.onLoad != undefined)
+                    this.onLoad(p)
+
+
+
+
+            });
+
         }
     }
 </script>

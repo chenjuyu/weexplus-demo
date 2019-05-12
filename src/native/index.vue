@@ -47,7 +47,7 @@
             },
             gonext(){
                 //  debugger
-                //  this.push('test.js',{name:"中文内容"})
+                  this.push('test.js',{name:"中文内容"})
             },
             scan(){
                 var qr=weex.requireModule('qr')

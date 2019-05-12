@@ -447,6 +447,8 @@ public class WeexActivity extends TitleActivityBase implements IWXRenderListener
             else
             {
                 String s= Weex.loadLocal(url, this);
+                System.out.println("loadLocal的Rult:"+s);
+                System.out.println("loadLocal的url:"+url);
 //                mWXSDKInstance.render("farwolf",s, null, null, WXRenderStrategy.APPEND_ASYNC);
                 this.renderPage(s,url);
             }

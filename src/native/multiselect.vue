@@ -229,6 +229,12 @@
              param.onLineId='0000-0000'
              param.userId=1
              let  _this=this
+
+                modal.toast({
+                    message: 'GoodsID的值：'+ param.GoodsID,
+                    duration: 0.3
+                })
+
                // _this.colorid='0BA'
                net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
 
@@ -263,7 +269,8 @@
             },submit(){
                 var p={}
                 p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
-               nav.backFull(p,false)
+                pref._SendN(this.sizelist.filter(item=>Number(item.Quantity)!==0))
+              //  nav.backFull(p,false)
                 //this.alert(this.sizelist.filter(item=>Number(item.Quantity)>0))
                 //return https://weex.apache.org/zh/docs/api/broadcast-channel.html#%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B
               //  const cjy = new BroadcastChannel('sizelist')
