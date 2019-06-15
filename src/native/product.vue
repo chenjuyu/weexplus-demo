@@ -535,7 +535,7 @@
     .bar-ic{
         /*  padding-top: 14px; */
         font-size: 60px;
-        color:#FFFFFF;
+        color:black;
         /*  margin-left: 50px; */
         justify-content: center;
         align-items: center;
@@ -546,7 +546,7 @@
     } .bar-ic2{
           /*  padding-top: 14px; */
           font-size: 60px;
-          color: #FFF;
+          color: black;
           background-color: #eeeeee;
           justify-content: center;
           align-items: center;
