@@ -8,12 +8,12 @@
                 <text class="size" style="height: 60px;">货品编码:{{goods.productNo}}</text>
                 <text class="size" style="height: 60px;">零售价￥:{{retailsales}}</text>
                 <div class="unitprice">
-                    <text class="size" style="height:60px;">单价:</text><input type="number" disabled="true" style="width: 150px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee;font-size: 35px;" v-model.number="unitprice">
-                    <text class="size" style="height: 60px;">折扣:</text><input type="number" disabled="true" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee;font-size: 35px;" v-model.number="discountrate">
+                    <text class="size" style="height:60px;">单价:</text><input type="number"  @input="change(1)"  style="width: 150px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee;font-size: 35px;" v-model.number="unitprice">
+                    <text class="size" style="height: 60px;">折扣:</text><input type="number" @input="change(2)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee;font-size: 35px;" v-model.number="discountrate">
                 </div>
             </div>
         </div>
-
+     <!--disabled="true"   -->
 
         <!--   <title title="wxc-grid-select"></title>
            <category title="单选"></category>
@@ -131,9 +131,9 @@
                 checkedList:[],
                 qtysum :0,//单个颜色尺码数量和
                 sizelist:[
-              /*
-                    {"productID":7749,"colorID":37,"sizesID":37,"Quantity":"","Amount":"","stock":-1,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"025","sizesName":"025","retailPrice":299.00,"unitPrice":280.00,"discount":0.88},{"productID":7749,"colorID":37,"sizesID":38,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"026","sizesName":"026","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":39,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"027","sizesName":"027","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":40,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"028","sizesName":"028","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":41,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"029","sizesName":"029","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":42,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"030","sizesName":"030","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":43,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"031","sizesName":"031","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":44,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"032","sizesName":"032","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":45,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"033","sizesName":"033","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":46,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"034","sizesName":"034","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":47,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"035","sizesName":"035","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":48,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"036","sizesName":"036","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":49,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"037","sizesName":"037","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":50,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"038","sizesName":"038","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":51,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"039","sizesName":"039","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":52,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"040","sizesName":"040","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":53,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"041","sizesName":"041","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":54,"Quantity":"","Amount":"","stock":-10,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"042","sizesName":"042","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":37,"sizesID":55,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"1000","colorName":"红色","sizesNo":"043","sizesName":"043","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":37,"Quantity":"","Amount":"","stock":11,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"025","sizesName":"025","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":38,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"026","sizesName":"026","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":39,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"027","sizesName":"027","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":40,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"028","sizesName":"028","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":41,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"029","sizesName":"029","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":42,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"030","sizesName":"030","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":43,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"031","sizesName":"031","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":44,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"032","sizesName":"032","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":45,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"033","sizesName":"033","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":46,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"034","sizesName":"034","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":47,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"035","sizesName":"035","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":48,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"036","sizesName":"036","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":49,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"037","sizesName":"037","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":50,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"038","sizesName":"038","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":51,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"039","sizesName":"039","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":52,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"040","sizesName":"040","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":53,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"041","sizesName":"041","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":54,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"042","sizesName":"042","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":1,"sizesID":55,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"8000","colorName":"白色","sizesNo":"043","sizesName":"043","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":37,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"025","sizesName":"025","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":38,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"026","sizesName":"026","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":39,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"027","sizesName":"027","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":40,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"028","sizesName":"028","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":41,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"029","sizesName":"029","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":42,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"030","sizesName":"030","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":43,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"031","sizesName":"031","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":44,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"032","sizesName":"032","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":45,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"033","sizesName":"033","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":46,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"034","sizesName":"034","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":47,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"035","sizesName":"035","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":48,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"036","sizesName":"036","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":49,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"037","sizesName":"037","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":50,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"038","sizesName":"038","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":51,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"039","sizesName":"039","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":52,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"040","sizesName":"040","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":53,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"041","sizesName":"041","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":54,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"042","sizesName":"042","retailPrice":299.00,"unitPrice":0.00,"discount":0.00},{"productID":7749,"colorID":24,"sizesID":55,"Quantity":"","Amount":"","stock":0,"productNo":"A73360","productName":"皮鞋","colorNo":"7000","colorName":"黑色","sizesNo":"043","sizesName":"043","retailPrice":299.00,"unitPrice":0.00,"discount":0.00}
-             */
+                 /*
+                    {"productID":37541,"colorID":5594,"sizesID":52,"Quantity":"","Amount":"","stock":16,"productNo":"CD711201","productName":"小坐狗","colorNo":"5000","colorName":"蓝色","sizesNo":"00","sizesName":"均码","retailPrice":48.00,"price":23.00,"unitPrice":23.00,"discount":1.00},{"productID":37541,"colorID":4979,"sizesID":52,"Quantity":"","Amount":"","stock":0,"productNo":"CD711201","productName":"小坐狗","colorNo":"1204","colorName":"粉色","sizesNo":"00","sizesName":"均码","retailPrice":48.00,"price":23.00,"unitPrice":23.00,"discount":1.00}
+                */
                 ],
                 testData3: [
                   /*  {   'productID':'00AQ',
@@ -152,9 +152,12 @@
                         'title': '白色',
                         'tipqty':''
                     }
-                    {"productID":7749,"colorID":37,"colorNo":"1000","colorName":"红色","title":"红色","tipqty":"","checked":true},{"productID":7749,"colorID":1,"colorNo":"8000","colorName":"白色","title":"白色","tipqty":""},{"productID":7749,"colorID":24,"colorNo":"7000","colorName":"黑色","title":"黑色","tipqty":""}
-                        */
+
+                    {"productID":37541,"colorID":5594,"colorNo":"5000","colorName":"蓝色","title":"蓝色","tipqty":"","checked":true},{"productID":37541,"colorID":4979,"colorNo":"1204","colorName":"粉色","title":"粉色","tipqty":""}
+
+                     */
                 ]
+
             }
         },directives: {
             trigger: {
@@ -255,7 +258,7 @@
                 let _this=this
                 if(Number(ls.Quantity)>0) {
                     ls.Quantity = Number(ls.Quantity) - 1
-                    this.total()
+
                     let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
                     for (let i = 0; i < dList.length; i++) {
                         let map = dList[i]
@@ -264,6 +267,20 @@
                             map.tipqty = '99+'
                         }
                     }
+
+                    for(let i=0;i < _this.sizelist.length;i++){
+                        let map = _this.sizelist[i]
+                        map.unitprice = _this.unitprice
+                        if(Number(map.price)==0){
+                            map.price=Number(_this.unitprice)
+                        }
+                        map.discount =parseFloat(_this.discountrate).toFixed(2)
+                        map.Amount=parseFloat(Number(map.price) * Number(map.Quantity) * Number(map.discount)).toFixed(2)
+                    }
+
+                    this.total()
+
+
                 }
             },add(ls){
                 let _this=this
@@ -271,7 +288,7 @@
                 if(Number(ls.stock)>0 && Number(ls.Quantity)< Number(ls.stock) ) {
                     ls.Quantity = Number(ls.Quantity) + 1
                     ls.Amount=Number(ls.Quantity) * Number(ls.unitPrice)
-                    this.total()
+
                     let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
                     for (let i = 0; i < dList.length; i++) {
                         let map = dList[i]
@@ -281,6 +298,22 @@
                             map.tipqty = '99+'
                         }
                     }
+
+                    for(let i=0;i < _this.sizelist.length;i++){
+                        let map = _this.sizelist[i]
+                        map.unitprice = _this.unitprice
+                        if(Number(map.price)==0){
+                            map.price=Number(_this.unitprice)
+                        }
+                        map.discount =parseFloat(_this.discountrate).toFixed(2)
+                        map.Amount=parseFloat(Number(map.price) * Number(map.Quantity) * Number(map.discount)).toFixed(2)
+                    }
+
+                    this.total()
+
+
+
+
                 }else {
                     modal.alert({message:'输入数不能大于库存数'})
 
@@ -290,6 +323,35 @@
 
 
 
+
+            },change(id){
+                let _this=this
+                    //  debugger
+                if(id===1){//单价
+                    if(Number(_this.sizelist[0].price)===0){
+                        _this.discountrate =Number(1)
+
+                    }else if(Number(_this.sizelist[0].price) !==0) {
+                       // _this.alert(_this.unitprice)
+                      //  _this.alert( _this.sizelist[0].price)
+                        _this.discountrate =parseFloat(Number(_this.unitprice)/Number(_this.sizelist[0].price)).toFixed(2)
+
+                    }
+
+
+                //    _this.alert(_this.discountrate)
+
+
+                }else if (id===2){//折扣
+                if(Number(_this.discountrate) !==0){
+                    _this.unitprice = parseFloat(Number(_this.sizelist[0].price) * Number(_this.discountrate)).toFixed(2)
+
+                    _this.discountrate =parseFloat(_this.discountrate).toFixed(2)
+
+                }
+
+
+                }
 
             },submit(){
                 var p={}
