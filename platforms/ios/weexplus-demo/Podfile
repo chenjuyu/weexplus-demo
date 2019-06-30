@@ -71,6 +71,20 @@ def mypod
  
     pod 'alipay', :path => 'alipay'
     pod 'swipback', :path => 'swipback'
+    pod 'timepicker', :path => '../../../plugins/timepicker/ios/timepicker'
+    pod 'wechat', :path => '../../../plugins/wechat/ios/wechat'
+    pod 'shot', :path => '../../../plugins/shot/ios/shot'
+    pod 'umshare', :path => '../../../plugins/umshare/ios/umshare'
+    pod 'zvideo', :path => '../../../plugins/zvideo/ios/zvideo'
+    pod 'audio', :path => '../../../plugins/audio/ios/audio'
+    pod 'amap', :path => '../../../plugins/amap/ios/amap'
+    pod 'NIMKit', :path => '../../../plugins/NIMKit/ios/NIMKit'
+    pod 'umanalyse', :path => '../../../plugins/umanalyse/ios/umanalyse'
+    pod 'record', :path => '../../../plugins/record/ios/record'
+    pod 'lottie', :path => '../../../plugins/lottie/ios/lottie'
+    pod 'seekbar', :path => '../../../plugins/seekbar/ios/seekbar'
+    pod 'jpush', :path => '../../../plugins/jpush/ios/jpush'
+    pod 'zoomImage', :path => '../../../plugins/zoomImage/ios/zoomImage'
 end
 
 
@@ -87,6 +101,22 @@ end
 
  
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

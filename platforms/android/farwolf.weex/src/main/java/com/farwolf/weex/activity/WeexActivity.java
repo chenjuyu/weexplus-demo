@@ -28,6 +28,7 @@ import com.farwolf.util.AppTool;
 import com.farwolf.util.DateTool;
 import com.farwolf.util.KeyBoardTool;
 import com.farwolf.util.ScreenTool;
+import com.farwolf.util.StatusBar;
 import com.farwolf.util.StringUtil;
 import com.farwolf.view.FreeDialog;
 import com.farwolf.weex.R;
@@ -47,6 +48,7 @@ import com.farwolf.weex.view.ToolPop;
 import com.farwolf.weex.view.ToolPop_;
 import com.taobao.weex.IWXRenderListener;
 import com.taobao.weex.WXEnvironment;
+import com.taobao.weex.WXSDKEngine;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.bridge.JSCallback;
 import com.taobao.weex.common.WXRenderStrategy;
@@ -106,6 +108,7 @@ public class WeexActivity extends TitleActivityBase implements IWXRenderListener
 
 
     public String url;
+    public static String statuBarColor;
 
 
     @ViewById
@@ -186,7 +189,9 @@ public class WeexActivity extends TitleActivityBase implements IWXRenderListener
         }
 
         super.onCreate(arg0);
-
+        if(statuBarColor!=null){
+          StatusBar.setStatusBarStyle(statuBarColor,this);
+        }
 //        mReloadReceiver = new BroadcastReceiver() {
 //            @Override
 //            public void onReceive(Context context, Intent intent) {
@@ -447,8 +452,6 @@ public class WeexActivity extends TitleActivityBase implements IWXRenderListener
             else
             {
                 String s= Weex.loadLocal(url, this);
-                System.out.println("loadLocal的Rult:"+s);
-                System.out.println("loadLocal的url:"+url);
 //                mWXSDKInstance.render("farwolf",s, null, null, WXRenderStrategy.APPEND_ASYNC);
                 this.renderPage(s,url);
             }
@@ -638,6 +641,9 @@ public class WeexActivity extends TitleActivityBase implements IWXRenderListener
     }
 
 
+
+
+
     @Override
     protected void onResume() {
 
@@ -650,6 +656,7 @@ public class WeexActivity extends TitleActivityBase implements IWXRenderListener
 
         Log.e("stack",WXNavgationModule.stacks.get(rootid)+"");
     }
+
 
 
     @Override
@@ -724,6 +731,17 @@ public class WeexActivity extends TitleActivityBase implements IWXRenderListener
         String url=in.getStringExtra("url");
         if(!StringUtil.isNullOrEmpty(url))
         {
+            if(url.contains("_wx_devtool"))
+            {
+                String debugurl=url.split("_wx_devtool=")[1];
+                WXEnvironment.sDebugServerConnectable = true;
+                WXEnvironment.sRemoteDebugMode = true;
+                WXEnvironment.sRemoteDebugProxyUrl = debugurl;
+                WXSDKEngine.reload();
+                return;
+            }
+
+
             String temp=url;
             if(url.contains("_wx_tpl=")){
                 url=url.split("_wx_tpl=")[1];

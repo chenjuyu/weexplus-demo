@@ -30,6 +30,11 @@ public class WXFWeb extends WXWeb {
 //        super(instance, dom, parent, isLazy);
 //    }
 
+//    @JSMethod
+//    public void excuteJs(String js){
+//        WebView web=(WebView)mWebView.getView();
+//        web.loadUrl("javascript:"+js);
+//    }
 
     @Override
     public void setUrl(String url) {

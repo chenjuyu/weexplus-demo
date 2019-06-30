@@ -230,7 +230,9 @@ public class WXNavgationModule extends WXModuleBase {
     public void goNext(String url,JSONObject param,JSCallback callback,Class c,boolean isroot,boolean isPortrait,boolean preload )
     {
 
+       String className= mWXSDKInstance.getContext().getClass().getName();
 
+       System.out.println("当前的className的类名:"+className);
 
         WeexFactory w= WeexFactory_.getInstance_(mWXSDKInstance.getContext());
         if(!isPortrait)

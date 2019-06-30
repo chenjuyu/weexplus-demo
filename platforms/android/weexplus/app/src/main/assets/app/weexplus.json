@@ -1,6 +1,8 @@
 {
   "schema":"js",
   "debug":true,
+  "loglevel":"info",
+  "logfiler":"",
   "showerror":true,
   "isPortrait":true,
   "jsVersion":2,

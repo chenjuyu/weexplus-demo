@@ -113,7 +113,6 @@ public class SplashActivity extends WeexActivity {
 
 
             this.mWXSDKInstance.setBundleUrl(entry);
-            System.out.println("entry的entry："+entry);
             gotoMain();
         }
 
@@ -135,7 +134,7 @@ public class SplashActivity extends WeexActivity {
 
     public void gotoMain()
     {
-        System.out.println("getEntryUrl()的值:"+getEntryUrl());
+
 
         weexFactory.preRender(getEntryUrl(), new WeexFactory.OnRenderFinishListener() {
             @Override

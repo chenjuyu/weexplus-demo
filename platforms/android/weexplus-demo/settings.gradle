@@ -18,13 +18,9 @@ project (':sdk').projectDir = new File('../sdk')
 //include ':umeng'
 //project(':umeng').projectDir = new File('../umeng')
 
-//include ':jpush'
-//project(':jpush').projectDir = new File('../jpush')
 
 
 
-//include ':wechat'
-//project(':wechat').projectDir = new File('../wechat')
 
 //include ':oss'
 //project(':oss').projectDir = new File('../oss')
@@ -35,8 +31,6 @@ project (':sdk').projectDir = new File('../sdk')
 //include ':netIm'
 //project(':netIm').projectDir = new File('../../../../weexplus-plugins/android/netIm')
 
-//include ':zoomImage'
-//project(':zoomImage').projectDir = new File('../../../../weexplus-plugins/android/zoomImage')
 
 //include ':oss'
 //project(':oss').projectDir = new File('../../../../weexplus-plugins/android/oss')
@@ -57,3 +51,63 @@ project(':alipay').projectDir = new File('../alipay')
 
 include ':mytools'
 project(':mytools').projectDir = new File('../mytools')
+
+
+
+
+include ':timepicker'
+project(':timepicker').projectDir = new File('../../../plugins/timepicker/android/timepicker')
+
+
+include ':wechat'
+project(':wechat').projectDir = new File('../../../plugins/wechat/android/wechat')
+
+
+//include ':shot'
+//project(':shot').projectDir = new File('../../../plugins/shot/android/shot')
+
+
+//include ':umshare'
+//project(':umshare').projectDir = new File('../../../plugins/umshare/android/umshare')
+
+
+//include ':zvideo'
+//project(':zvideo').projectDir = new File('../../../plugins/zvideo/android/zvideo')
+
+
+//include ':audio'
+//project(':audio').projectDir = new File('../../../plugins/audio/android/audio')
+
+
+//include ':amap'
+//project(':amap').projectDir = new File('../../../plugins/amap/android/amap')
+
+
+//include ':NIMKit'
+//project(':NIMKit').projectDir = new File('../../../plugins/NIMKit/android/NIMKit')
+
+
+//include ':umanalyse'
+//project(':umanalyse').projectDir = new File('../../../plugins/umanalyse/android/umanalyse')
+
+
+
+
+//include ':record'
+//project(':record').projectDir = new File('../../../plugins/record/android/record')
+
+
+//include ':lottie'
+//project(':lottie').projectDir = new File('../../../plugins/lottie/android/lottie')
+
+
+//include ':seekbar'
+//project(':seekbar').projectDir = new File('../../../plugins/seekbar/android/seekbar')
+
+
+//include ':jpush'
+//project(':jpush').projectDir = new File('../../../plugins/jpush/android/jpush')
+
+
+//include ':zoomImage'
+//project(':zoomImage').projectDir = new File('../../../plugins/zoomImage/android/zoomImage')

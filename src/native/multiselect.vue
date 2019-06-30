@@ -107,6 +107,7 @@
         components: {gridselect},
         data(){
             return{
+                isPDA:false,
                 goods:{},
                 retailsales:99.00,
                 unitprice:80.00,
@@ -269,8 +270,11 @@
             },submit(){
                 var p={}
                 p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
-                pref._SendN(this.sizelist.filter(item=>Number(item.Quantity)!==0))
-              //  nav.backFull(p,false)
+              if(this.isPDA) {
+                  pref._SendN(this.sizelist.filter(item => Number(item.Quantity) !== 0))
+              }else {
+                  nav.backFull(p, false)
+              }
                 //this.alert(this.sizelist.filter(item=>Number(item.Quantity)>0))
                 //return https://weex.apache.org/zh/docs/api/broadcast-channel.html#%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B
               //  const cjy = new BroadcastChannel('sizelist')

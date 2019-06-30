@@ -106,13 +106,8 @@ const webConfig = {
   module: {
     // webpack 2.0 
     rules: [
-
       {
-        test: /\.css$/,
-        use:['style-loader','css-loader']
-      },
-      {
-        test: /\.(png|jpg|gif|svg|ttf|eot|woff|woff2)$/,
+        test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {
           name: '[name].[ext]'

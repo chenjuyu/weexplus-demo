@@ -192,6 +192,12 @@ public class WXWeb extends WXComponent {
             fireEvent(Constants.Event.ERROR, params);
         }
     }
+    //zjr add
+    @JSMethod
+    public void excuteJs(String js){
+        WXWebView web=(WXWebView)mWebView;
+        web.getWebView().loadUrl("javascript:"+js);
+    }
 
     //zjr
     public void loadUrl(String url) {

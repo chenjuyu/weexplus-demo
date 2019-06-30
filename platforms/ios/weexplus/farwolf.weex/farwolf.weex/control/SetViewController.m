@@ -79,13 +79,16 @@
     [nav.navigationBar setHidden:false];
     vc.scanSuccess=^(NSString* s){
         
-//        if([s startWith:@"app"])
-//        {
-//            NSURL *nl=  [[NSBundle mainBundle] URLForResource:[s replace:@".js" withString:@""]  withExtension:@"js"];
-//            [Weex setBaseUrl:nl.absoluteString];
-//        }
-//        else
-//            [Weex setBaseUrl:s];
+        if([s contains:@"_wx_devtool"])
+        {
+            NSString *debugurl=[s split:@"_wx_devtool="][1];
+            [WXLog setLogLevel:WXLogLevelLog];
+            [WXDevTool setDebug:YES];
+            [WXDevTool launchDevToolDebugWithUrl:debugurl];
+            [self.TopViewController dismiss:true completion:nil];
+            return;
+        }
+ 
         if([s contains:@"_wx_tpl="]){
             s=[s split:@"_wx_tpl="][1];
 //            NSString *result = [(NSString *)s stringByReplacingOccurrencesOfString:@"+" withString:@" "];
@@ -152,7 +155,7 @@
      if(![WXDevTool isDebug])
      {
          NSString *ip=[Weex getDebugIp];
-         [Weex startDebug:ip port:@"8088"];
+         [Weex startDebug:ip port:@"8089"];
           [self dismissViewControllerAnimated:true completion:nil];
  
          
