@@ -67,11 +67,14 @@
     </div> </cell><!--master 结束 border-radius:25px   v-for="num in lists" <list style="height: 200px"> </list>-->
 
 
-             <cell v-for="(ls,index) in detaillist" style="height: 290px;border-bottom-width: 1px;justify-content: center;border-color: #dddddd">
-               <div style="flex-direction: row"><text style="font-size: 30px;color: red;">{{ls.Code}}</text> <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text></div>
+             <cell ref="skid" v-for="(ls,i) in detaillist" @click="onNodeClick(ls, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + ls.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, ls, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, ls, i)" @touchend="(e) => onPanEnd(e, ls, i)">
+                 <!-- 整体包1-->
+                 <div :style='styles' class="swipe-action-center border">
+
+                     <div style="flex-direction: row"><text style="font-size: 30px;color: red;">{{ls.Code}}</text> <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text></div>
                  <!-- 图片与显示-->
                <div style="flex-direction: row">
-                   <text style="font-size: 30px;color:#000000;">{{Number(index)+1}}</text>
+                   <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text>
                    <image src="https://www.baidu.com/img/bd_logo1.png" style="width: 150px;height: 150px"></image>
                    <div>
                    <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
@@ -92,6 +95,11 @@
                  <text style="font-size: 30px;color:#000000;margin-left: 10px;width: 60px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
                  </div>
 
+                 </div>  <!-- 整体包1结束-->
+                 <!-- 菜单-->
+                 <div class="swipe-action-right">
+                     <text class="swipe-action-child swipe-action-text" @click="onRightNode(ls, child, i)" v-for="(child, childIdx) of ls.right" :style="Object.assign({lineHeight: height + 'px'}, child.style || {})" :key="'child-' + childIdx">{{child.text}}</text>
+                 </div>
 
              </cell>
 
@@ -135,6 +143,25 @@
          </div>
        </template>
        <style scoped>
+           .wxc-skid{
+               flex-direction: row;
+               border-bottom-width: 1px;
+               justify-content: center;
+               border-color: #dddddd
+           }
+           .swipe-action-center {
+               width: 750px;
+           }
+           .swipe-action-child {
+               width: 100px;
+               text-align: center;
+               color: #FFFFFF;
+               background-color: #dddddd;
+               line-height: 90px;
+           }
+           .swipe-action-text {
+               font-size: 30px;
+           }
            .search{
                flex-direction: row;
                width: 750px;
@@ -169,14 +196,40 @@
 
        </style>
        <script>
+           import Binding from "weex-bindingx/lib/index.weex.js";
+           const animation = weex.requireModule("animation");
            import { WxcCell ,WxcMask,WxcRadio  ,Utils } from 'weex-ui';
+           const modal =weex.requireModule('modal')
+           var lodash = require('lodash');
+           var nav = weex.requireModule('navigator') ;
            import module1 from './jstools/mytool'//引用方式
            let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
            export default {
                components: { WxcCell,WxcMask,WxcRadio   }
+               ,props: {
+                   data: {
+                       type: Array,
+                       default: []
+                   },
+                   height: {
+                       type: Number,
+                       default: 290
+                   },
+                   styles: {
+                       type: Object,
+                       default: {}
+                   }
+               }
                ,data() {
                    return {
-                     DateStr:timestr
+                       submitmap:{}
+                       ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
+                       {GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
+                       ,mobileX: 0,
+                       webStarX: 0,
+                       saveIdx: null,
+                       isAndroid: Utils.env.isAndroid()
+                     ,DateStr:timestr
                      ,show:false
                      ,hasAnimation:false
                      ,totalQty:0
@@ -195,8 +248,29 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BA',x_1:1,Quantity:1,SizeID:'00A'},{GoodsID:'00AG',ColorID:'0BA',x_2:2,Quantity:1,SizeID:'00A'}]
-                           }
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BA',x:'x_1',Quantity:1,SizeID:'00A'},{GoodsID:'00AG',ColorID:'0BA',x:'x_2',Quantity:1,SizeID:'00A'}]
+                             ,right: [
+                               /*  {
+                                     text: "置顶",
+                                     onPress: function() {
+                                         modal.toast({
+                                             message: "置顶",
+                                             duration: 0.3
+                                         });
+                                     }
+                                 }, */
+                                 {
+                                     text: "删除",
+                                     onPress: () => {
+                                         modal.toast({
+                                             message: "删除",
+                                             duration: 0.3
+                                         });
+                                     },
+                                     style: { backgroundColor: "#F4333C", color: "white" }
+                                 }
+                             ]
+                         }
                            ,{GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BB',Color:'白色',
                                Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
                                sizetitle:[
@@ -205,7 +279,28 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BB',x_1:1,Quantity:1,SizeID:'00A'},{GoodsID:'00AG',ColorID:'0BB',x_2:2,Quantity:2,SizeID:'00B'}]
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BB',x:'x_1',Quantity:1,SizeID:'00A'},{GoodsID:'00AG',ColorID:'0BB',x:'x_2',Quantity:2,SizeID:'00B'}]
+                               ,right: [
+                                   /*  {
+                                         text: "置顶",
+                                         onPress: function() {
+                                             modal.toast({
+                                                 message: "置顶",
+                                                 duration: 0.3
+                                             });
+                                         }
+                                     }, */
+                                   {
+                                       text: "删除",
+                                       onPress: () => {
+                                           modal.toast({
+                                               message: "删除",
+                                               duration: 0.3
+                                           });
+                                       },
+                                       style: { backgroundColor: "#F4333C", color: "white" }
+                                   }
+                               ]
                            }
                            ,{GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BC',Color:'黄色',
                                Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
@@ -215,7 +310,29 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BC',x_1:1,SizeID:'00B',Quantity:1},{GoodsID:'00AG',ColorID:'0BC',x_2:2,SizeID:'00C',Quantity:2}]
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BC',x:'x_1',Size:'均码',SizeID:'00B',Quantity:1},
+                                   {GoodsID:'00AG',ColorID:'0BC',x:'x_2',SizeID:'00C',Size:'XS',Quantity:2}]
+                               ,right: [
+                                  /*  {
+                                         text: "置顶",
+                                         onPress: function() {
+                                             modal.toast({
+                                                 message: "置顶",
+                                                 duration: 0.3
+                                             });
+                                         }
+                                     }, */
+                                   {
+                                       text: "删除",
+                                       onPress: () => {
+                                           modal.toast({
+                                               message: "删除",
+                                               duration: 0.3
+                                           });
+                                       },
+                                       style: { backgroundColor: "#F4333C", color: "white" }
+                                   }
+                               ]
                            }
                            ,{GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BD',Color:'绿色',
                                Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
@@ -225,8 +342,30 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BD',x_1:1,SizeID:'00A',Quantity:1},{GoodsID:'00AG',ColorID:'0BD',x_2:2,SizeID:'00D',Quantity:2}]
-                           }
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BD',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
+                                   {GoodsID:'00AG',ColorID:'0BD',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
+                               ,right: [
+                                   /*  {
+                                         text: "置顶",
+                                         onPress: function() {
+                                             modal.toast({
+                                                 message: "置顶",
+                                                 duration: 0.3
+                                             });
+                                         }
+                                     }, */
+                                   {
+                                       text: "删除",
+                                       onPress: () => {
+                                           modal.toast({
+                                               message: "删除",
+                                               duration: 0.3
+                                           });
+                                       },
+                                       style: { backgroundColor: "#F4333C", color: "white" }
+                                   }
+                               ]
+                       }
                       ]
                      ,list: [
                            { title: '批发', value: '批发' },
@@ -249,7 +388,38 @@
                       }
                    }
                    ,wxcCellClicked(e){
-                       this.alert('点击了')
+                   // var obj=   lodash.pick(this.testlist,['GoodsID','ColorID','Quantity'])
+                       var obj=this.testlist.map(function(obj){
+                           return {GoodsID:obj.GoodsID,ColorID:obj.ColorID,Quantity:obj.Quantity,tipqty:obj.Quantity,title:obj.Color}
+                       })
+                      var arr=[]
+                       for(var i=0;i<obj.length;i++){
+                           var map={}
+                           map.GoodsID=obj[i].GoodsID
+                           map.ColorID=obj[i].ColorID
+                           map.Quantity= obj[i].Quantity
+                           map.tipqty =obj[i].tipqty
+                           map.title =obj[i].title
+                         if(arr.length >0){
+                             for(var j=0;j<arr.length ;j++){
+                              if(arr[j].GoodsID == obj[i].GoodsID &&arr[j].ColorID == obj[i].ColorID ){
+                                  arr[j].Quantity =Number(arr[j].Quantity)+ Number(obj[i].Quantity)
+                                  arr[j].tipqty =Number(arr[j].tipqty)+ Number(obj[i].tipqty)
+                              }else {
+                                  arr.push(map)
+                              }
+                             }
+                         }else{
+
+                             arr.push(map)
+                         }
+
+
+                         }
+                       arr[0].checked=true
+                       this.submitmap.colorlist =arr
+                       this.submitmap.sizelist =this.testlist
+                       this.alert('挑选元素对象：'+JSON.stringify(arr))
                    }
                   ,selectType(e){
                       // var pop=weex.requireModule("centerpop")
@@ -266,6 +436,7 @@
                        this.show=false
                    }
                   , wxcRadioListChecked (e) {
+
                        this.alert("e的值："+JSON.stringify(e))
 
                        this.checkedInfo = e;
@@ -275,6 +446,105 @@
                        this.Type =e.value
                        this.show=false
                    }
+                   //左滑方法开始
+                   ,special(dom, styles) {
+                       animation.transition(dom, {
+                           styles,
+                           duration: 200, //ms
+                           timingFunction: "ease",
+                           delay: 100 //ms
+                       });
+                   },
+                   onRightNode(pNode, node, i) {
+                       node.onPress();
+                       if (pNode.autoClose)
+                           this.special(this.$refs.skid[i], {
+                               transform: `translate(0, 0)`
+                           });
+                   },
+                   onNodeClick(node, i) {
+                       if (this.mobileX < 0) {
+                           this.mobileX = 0;
+                           this.special(this.$refs.skid[this.saveIdx], {
+                               transform: `translate(0, 0)`
+                           });
+                           this.isAndroid &&
+                           this.special(this.$refs.skid[i], {
+                               transform: `translate(0, 0)`
+                           });
+                       } else {
+                          // this.$emit("onNodeClick", node, i);
+                           nav.pushFull({url: 'root:multiselect.js',param:this.submitmap,animate:true}
+                               , (e) => {
+                                   if (e != undefined){
+                                       this.alert('返回的数据')
+                                   }
+                                      // self.callbackdata = e.ok;
+                               })
+                       }
+                   },
+
+                   onPanEnd(e, node, i) {
+                       if (Utils.env.isWeb()) {
+                           const webEndX = e.changedTouches[0].pageX;
+                           this.movingDistance(webEndX - this.webStarX, node, this.$refs.skid[i]);
+                       }
+                   },
+                   onPanStart: function(e, node, i) {
+                       const { saveIdx } = this;
+                       if (saveIdx !== i && saveIdx !== null) {
+                           this.special(this.$refs.skid[saveIdx], {
+                               transform: `translate(0, 0)`
+                           });
+                           this.mobileX = 0;
+                       }
+                       this.saveIdx = i;
+                       !Utils.env.isWeb() ? this.mobile(e, node, i) : this.web(e, node, i);
+                       e.stopPropagation();
+                   },
+                   web(e, node, i) {
+                       this.webStarX = e.changedTouches[0].pageX;
+                   },
+                   mobile(e, node, i) {
+                       var el = this.$refs["skid"][i];
+                       Binding.bind(
+                           {
+                               anchor: el.ref,
+                               eventType: "pan",
+                               props: [
+                                   {
+                                       element: el.ref,
+                                       property: "transform.translateX",
+                                       expression: `x+${this.isAndroid ? 0 : this.mobileX}`
+                                   }
+                               ]
+                           },
+                           e => {
+                               const { state, deltaX } = e;
+                               if (state === "end") {
+                                   this.mobileX += deltaX;
+                                   this.movingDistance(this.mobileX, node, el);
+                               }
+                           }
+                       );
+                   },
+                   movingDistance(scope, node, el) {
+                       const len = node.right ? node.right.length : 0;
+                       const distance = len * -100;
+                       if (scope < -30) {
+                           this.special(el, {
+                               transform: `translate(${distance}px, 0)`
+                           });
+                           this.mobileX = distance;
+                       } else {
+                           this.special(el, {
+                               transform: `translate(0, 0)`
+                           });
+                           this.mobileX = 0;
+                       }
+                   }
+                   //左滑方法结束
+
                }
            }
        </script>

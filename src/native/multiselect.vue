@@ -235,9 +235,10 @@
                     message: 'GoodsID的值：'+ param.GoodsID,
                     duration: 0.3
                 })
-
-               // _this.colorid='0BA'
-               net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
+                _this.testData3 =p.colorlist
+                _this.sizelist =p.sizelist
+                _this.colorid=(_this.testData3.filter(map=>map.checked))[0].ColorID
+            /*   net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
 
                     //start
                 },function (res) {
@@ -257,7 +258,7 @@
                 },function (res){//compelete
 
                     },function (res){//exception
-                })
+                })  */
 
 
 
