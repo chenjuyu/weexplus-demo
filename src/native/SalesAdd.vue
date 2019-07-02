@@ -223,8 +223,8 @@
                ,data() {
                    return {
                        submitmap:{}
-                       ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
-                       {GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
+                      // ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
+                     //  {GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
                        ,mobileX: 0,
                        webStarX: 0,
                        saveIdx: null,
@@ -240,7 +240,7 @@
                      ,Customer:{Customer:'',CustomerID:'',lastAmt:''}
                      ,Emp:{Name:'',EmpID:''}
                      ,detaillist:[
-                         {GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BA',Color:'黑色',
+                         {GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorID:'0BA',Color:'黑色',
                                Discount:0.0,DiscountRate:8.0,Quantity:2,Amount:34.5,
                                sizetitle:[
                                    {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
@@ -248,7 +248,8 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BA',x:'x_1',Quantity:1,SizeID:'00A'},{GoodsID:'00AG',ColorID:'0BA',x:'x_2',Quantity:1,SizeID:'00A'}]
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_1',Quantity:1,SizeID:'00A',Size:'均码',Amount:''},
+                                   {GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_2',Quantity:1,SizeID:'00A',Size:'XS',Amount:''}]
                              ,right: [
                                /*  {
                                      text: "置顶",
@@ -279,7 +280,8 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BB',x:'x_1',Quantity:1,SizeID:'00A'},{GoodsID:'00AG',ColorID:'0BB',x:'x_2',Quantity:2,SizeID:'00B'}]
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BB',x:'x_1',Quantity:1,SizeID:'00A',Color:'白色',Size:'37',Amount:''},
+                                   {GoodsID:'00AG',ColorID:'0BB',Color:'白色',x:'x_2',Quantity:2,SizeID:'00B',Size:'38',Amount:''}]
                                ,right: [
                                    /*  {
                                          text: "置顶",
@@ -310,8 +312,8 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BC',x:'x_1',Size:'均码',SizeID:'00B',Quantity:1},
-                                   {GoodsID:'00AG',ColorID:'0BC',x:'x_2',SizeID:'00C',Size:'XS',Quantity:2}]
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BC',x:'x_1',Size:'均码',Color:'黄色',SizeID:'00B',Quantity:1,Amount:''},
+                                   {GoodsID:'00AG',ColorID:'0BC',Color:'黄色',x:'x_2',SizeID:'00C',Size:'XS',Quantity:2,Amount:''}]
                                ,right: [
                                   /*  {
                                          text: "置顶",
@@ -342,8 +344,8 @@
                                    {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
                                    ,{filed:'x_10',title:'5L'}
                                ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BD',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
-                                   {GoodsID:'00AG',ColorID:'0BD',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
+                               sizeData:[{GoodsID:'00AG',ColorID:'0BD',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
+                                   {GoodsID:'00AG',ColorID:'0BD',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
                                ,right: [
                                    /*  {
                                          text: "置顶",
@@ -389,37 +391,7 @@
                    }
                    ,wxcCellClicked(e){
                    // var obj=   lodash.pick(this.testlist,['GoodsID','ColorID','Quantity'])
-                       var obj=this.testlist.map(function(obj){
-                           return {GoodsID:obj.GoodsID,ColorID:obj.ColorID,Quantity:obj.Quantity,tipqty:obj.Quantity,title:obj.Color}
-                       })
-                      var arr=[]
-                       for(var i=0;i<obj.length;i++){
-                           var map={}
-                           map.GoodsID=obj[i].GoodsID
-                           map.ColorID=obj[i].ColorID
-                           map.Quantity= obj[i].Quantity
-                           map.tipqty =obj[i].tipqty
-                           map.title =obj[i].title
-                         if(arr.length >0){
-                             for(var j=0;j<arr.length ;j++){
-                              if(arr[j].GoodsID == obj[i].GoodsID &&arr[j].ColorID == obj[i].ColorID ){
-                                  arr[j].Quantity =Number(arr[j].Quantity)+ Number(obj[i].Quantity)
-                                  arr[j].tipqty =Number(arr[j].tipqty)+ Number(obj[i].tipqty)
-                              }else {
-                                  arr.push(map)
-                              }
-                             }
-                         }else{
 
-                             arr.push(map)
-                         }
-
-
-                         }
-                       arr[0].checked=true
-                       this.submitmap.colorlist =arr
-                       this.submitmap.sizelist =this.testlist
-                       this.alert('挑选元素对象：'+JSON.stringify(arr))
                    }
                   ,selectType(e){
                       // var pop=weex.requireModule("centerpop")
@@ -474,17 +446,141 @@
                            });
                        } else {
                           // this.$emit("onNodeClick", node, i);
-                           nav.pushFull({url: 'root:multiselect.js',param:this.submitmap,animate:true}
+                         //  this.alert(JSON.stringify(node))
+                           if(node.sizeData.length>0) {
+                               var obj =(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
+                                   return {
+                                       GoodsID: obj.GoodsID,
+                                       ColorID: obj.ColorID,
+                                       Quantity: obj.Quantity,
+                                       tipqty: obj.Quantity,
+                                       title: obj.Color,
+                                       Amount:obj.Amount,
+                                       sizeData :obj.sizeData
+
+
+                                   }
+                               })
+
+                               this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
+                               var arr = [] ,   sizearr=[]
+                               for (var i = 0; i < obj.length; i++) {
+                                   var map = {}
+                                   map.GoodsID = obj[i].GoodsID
+                                   map.ColorID = obj[i].ColorID
+                                   map.Quantity = obj[i].Quantity
+                                   map.tipqty = obj[i].tipqty
+                                   map.title = obj[i].title
+                                   if(arr.length>0) {
+                                    var  m=this.hasmap(arr,map)
+                                     if(m==null || m==undefined){
+
+                                         arr.push(map)
+                                     }
+
+                                   }else {
+                                       arr.push(map)
+                                   }
+
+                                   //尺码集体
+                                   var sizeMap= obj[i]
+
+                                   for(var k=0;k <sizeMap.sizeData.length; k++){
+                                       //这里不存在重复尺码与颜色的
+                                       sizearr.push(sizeMap.sizeData[k])
+
+
+                                   }
+
+                               }
+
+
+
+
+
+                               }
+
+
+
+
+                               arr[0].checked = true
+                               this.submitmap.colorlist = arr
+                               this.submitmap.sizelist = sizearr//node.sizeData//this.testlist
+                               this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
+                              this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
+
+                           }
+
+                           nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
                                    if (e != undefined){
-                                       this.alert('返回的数据')
+                                       this.alert('返回的数据:'+JSON.stringify(e))
+                                       if(e.detaillist.length >0) {
+
+                                        for(var i=0;i<e.detaillist.length ;i++){
+                                            var backdata=e.detaillist[i]
+                                            if(this.detaillist.length>0){
+
+                                              for(var j=0 ;j<this.detaillist.length;j++){
+                                                   var list=this.detaillist[j]
+                                                  if(backdata.GoodsID == list.GoodsID && backdata.ColorID==list.ColorID){
+                                                      //Number(list.Quantity)+
+                                                      list.Quantity=Number(backdata.Quantity)
+                                                      list.Amount=Number(backdata.Amount)
+
+                                                      for(var k=0; k< backdata.sizeData.length ;k++){
+                                                           var backsizedata=backdata.sizeData[k]
+                                                          for(var l=0;l<list.sizeData.length;l++){
+                                                              var sizedata=list.sizeData[l]
+                                                            if(backsizedata.GoodsID ==sizedata.GoodsID && backsizedata.ColorID ==sizedata.ColorID && backsizedata.SizeID ==sizedata.SizeID){
+                                                                sizedata.Quantity =Number(backsizedata.Quantity)
+                                                                sizedata.Amount =Number(backsizedata.Amount)
+                                                            }else{ //不存在
+                                                                list.sizeData.unshift(backsizedata)
+
+                                                            }
+
+
+                                                          }
+
+
+
+                                                      }
+
+
+
+                                                  }else{ //不存在
+                                                      this.detaillist.unshift(backdata)
+
+                                                  }
+
+
+
+                                              }
+                                            }else{
+                                                this.detaillist.unshift(backdata)
+                                            }
+
+
+
+                                        }
+
+
+                                       }
                                    }
                                       // self.callbackdata = e.ok;
                                })
-                       }
-                   },
 
-                   onPanEnd(e, node, i) {
+                   }, hasmap(arr,map){
+                 for (var j = 0; j < arr.length; j++) {
+                    var m =arr[j]
+                  if (m.GoodsID == map.GoodsID && m.ColorID == map.ColorID) {
+                      m.Quantity = Number(m.Quantity) + Number(obj[i].Quantity)
+                      m.tipqty = Number(m.tipqty) + Number(obj[i].tipqty)
+                   return m
+                  }else return null
+                 }}
+                  , onPanEnd(e, node, i) {
                        if (Utils.env.isWeb()) {
                            const webEndX = e.changedTouches[0].pageX;
                            this.movingDistance(webEndX - this.webStarX, node, this.$refs.skid[i]);
