@@ -222,7 +222,7 @@
 
             }
         },
-        methods: {
+       methods: {
             onLoad(p){
                 var param={}
                 param.GoodsID=p.GoodsID
@@ -271,7 +271,17 @@
             },add(ls){
                 ls.Quantity =Number(ls.Quantity)+1
                 this.total()
-            },submit(){
+            },hascolor(arr,map){
+               for (var j = 0; j < arr.length; j++) {
+                   var m=arr[j]
+                   if (m.GoodsID == map.GoodsID && m.ColorID == map.ColorID) {
+                       m.Quantity = Number(m.Quantity) + Number(map.Quantity)
+                       m.Amount = Number(m.Amount) + Number(map.Amount)
+                       return m
+                   }else return undefined
+               }
+           }
+            ,submit(){
                var _that=this
                 var p={}
                // p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
@@ -279,65 +289,102 @@
                 if(this.isPDA) {
                     pref._SendN(this.sizelist.filter(item => Number(item.Quantity) !== 0))
                 }else {
-                  if(templist.length>0){
-                      var obj = templist.map(function (obj) {
-                          return {
-                              GoodsID: obj.GoodsID,
-                              Code:_that.goods.Code,
-                              Name:_that.goods.Name,
-                              ColorID: obj.ColorID,
-                              Quantity: obj.Quantity,
-                              Color: obj.Color,
-                              Amount:obj.Amount
-                          }
-                      })
-                    var temparr=[] //货品 颜色 总集合
-                      for (var i = 0; i < obj.length; i++) { //这个是代码到每个尺码的
-                          var map={}
-                          map.GoodsID=obj[i].GoodsID
-                          map.Code=obj[i].Code
-                          map.Name=obj[i].Name
-                          map.ColorID=obj[i].ColorID
-                          map.Quantity =obj[i].Quantity
-                          map.Color =obj[i].Color
-                          map.Amount =obj[i].Amount
-                          map.sizetitle=[ {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
-                              ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
-                              {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
-                              ,{filed:'x_10',title:'5L'}]
+                    if (templist.length > 0) {
+                        var obj = templist.map(function (obj) {
+                            return {
+                                GoodsID: obj.GoodsID,
+                                Code: _that.goods.Code,
+                                Name: _that.goods.Name,
+                                ColorID: obj.ColorID,
+                                Quantity: obj.Quantity,
+                                Color: obj.Color,
+                                Amount: obj.Amount
+                            }
+                        })
+                        var temparr = [] //货品 颜色 总集合
+                        for (var i = 0; i < obj.length; i++) { //这个是代码到每个尺码的
+                            var map = {}
+                            map.GoodsID = obj[i].GoodsID
+                            map.Code = obj[i].Code
+                            map.Name = obj[i].Name
+                            map.ColorID = obj[i].ColorID
+                            map.Quantity = obj[i].Quantity
+                            map.Color = obj[i].Color
+                            map.Amount = obj[i].Amount
+                            map.sizetitle = [{field: 'x_1', title: '均码'}, {field: 'x_2', title: 'XS'}, {
+                                filed: 'x_3',
+                                title: 'S'
+                            }
+                                , {filed: 'x_4', title: 'M'}, {filed: 'x_5', title: 'L'}, {filed: 'x_6', title: '1L'},
+                                {filed: 'x_7', title: '2L'}, {filed: 'x_8', title: '3L'}, {filed: 'x_9', title: '4L'}
+                                , {filed: 'x_10', title: '5L'}]
 
-                           if(temparr.length >0){
-                               for (var j = 0; j < temparr.length; j++) {
-                                   if (temparr[j].GoodsID == obj[i].GoodsID && temparr[j].ColorID == obj[i].ColorID) {
-                                       temparr[j].Quantity = Number(temparr[j].Quantity) + Number(obj[i].Quantity)
-                                       temparr[j].Amount = Number(temparr[j].Amount) + Number(obj[i].Amount)
-                                   } else {
-                                       temparr.push(map)
-                                   }
-                               }
-                           }else{
-                               temparr.push(map)
-                           }
-                      }
+                            if (temparr.length > 0) {
+                                var m = this.hascolor(temparr, map)
+                                if (m == undefined) {
+                                    temparr.unshift(map)
+                                }
 
-                      //再加入尺码
-                     if(temparr.length >0){
+                            } else {
+                                temparr.unshift(map)
 
-                      for(var i=0 ;i< temparr.length;i++){
-                          var map=temparr[i]
-                          var sizeDatalist=[]
-                         for(var j=0;j<this.sizelist.length ;j++){
 
-                              if(map.GoodsID ==this.sizelist[j].GoodsID && map.ColorID==this.sizelist[j].ColorID){
-                                  sizeDatalist.unshift(this.sizelist[j])
-                               }
+                            }
+                        } //for 结束 货品 颜色 总集合
 
-                         }
-                         if(sizeDatalist.length>0){
-                             map.sizeData =sizeDatalist
-                         }
-                         var right = [  //添加菜单
-                              /*  {
+                        temparr.unshift({GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BE',Color:'本色色',
+                            Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
+                            sizetitle:[
+                            {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
+                            ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
+                            {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
+                            ,{filed:'x_10',title:'5L'}
+                        ],
+                            sizeData:[{GoodsID:'00AG',ColorID:'0BE',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
+                            {GoodsID:'00AG',ColorID:'0BE',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
+                            ,right: [
+                            /*  {
+                                  text: "置顶",
+                                  onPress: function() {
+                                      modal.toast({
+                                          message: "置顶",
+                                          duration: 0.3
+                                      });
+                                  }
+                              }, */
+                            {
+                                text: "删除",
+                                onPress: () => {
+                                    modal.toast({
+                                        message: "删除",
+                                        duration: 0.3
+                                    });
+                                },
+                                style: { backgroundColor: "#F4333C", color: "white" }
+                            }
+                        ]
+                        })
+
+
+
+                            //再加入尺码
+                            if (temparr.length > 0) {
+
+                                for (var i = 0; i < temparr.length; i++) {
+                                    var map = temparr[i]
+                                    var sizeDatalist = []
+                                    for (var j = 0; j < this.sizelist.length; j++) {
+
+                                        if (map.GoodsID == this.sizelist[j].GoodsID && map.ColorID == this.sizelist[j].ColorID) {
+                                            sizeDatalist.unshift(this.sizelist[j])
+                                        }
+
+                                    }
+                                    if (sizeDatalist.length > 0) {
+                                        map.sizeData = sizeDatalist
+                                    }
+                                    var right = [  //添加菜单
+                                        /*  {
                                     text: "置顶",
                                     onPress: function() {
                                         modal.toast({
@@ -346,53 +393,28 @@
                                         });
                                     }
                                 }, */
-                              {
-                                  text: "删除",
-                                  onPress: () => {
-                                      modal.toast({
-                                          message: "删除",
-                                          duration: 0.3
-                                      });
-                                  },
-                                  style: { backgroundColor: "#F4333C", color: "white" }
-                              }
-                          ]
-                          map.right=right
+                                        {
+                                            text: "删除",
+                                            onPress: () => {
+                                                modal.toast({
+                                                    message: "删除",
+                                                    duration: 0.3
+                                                });
+                                            },
+                                            style: {backgroundColor: "#F4333C", color: "white"}
+                                        }
+                                    ]
+                                    map.right = right
 
-                      }
-
-
-
-
+                                }
+                            }
+                            this.alert("返回的数组："+JSON.stringify(temparr)+",temparr的长度："+temparr.length)
 
 
-                     }
-
-
-
-                     p.detaillist=temparr
-
-                      nav.backFull(p, false)
-
-                  }
-
-
-
-
-
+                       p.detaillist =temparr
+                        nav.backFull(p,false)
+                    }
                 }
-                //this.alert(this.sizelist.filter(item=>Number(item.Quantity)>0))
-                //return https://weex.apache.org/zh/docs/api/broadcast-channel.html#%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B
-                //  const cjy = new BroadcastChannel('sizelist')
-                // let list=this.sizelist.filter(item=>Number(item.Quantity)>0)
-                // cjy.postMessage({list})
-                //  var p={};
-                /*  p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)>0)
-                  var notify=weex.requireModule("notify")
-                  notify.send('key',p)
-                */
-                //  nav.backTo('sd')
-                //   nav.backFull(this.sizelist.filter(item=>Number(item.Quantity)>0),false)
             },
             onSelect (res,{selectIndex, checked, checkedList }) {
                 let _this=this

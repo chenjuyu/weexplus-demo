@@ -462,9 +462,10 @@
                                    }
                                })
 
-                               this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
+                            //   this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
                                var arr = [] ,   sizearr=[]
                                for (var i = 0; i < obj.length; i++) {
+                                   debugger
                                    var map = {}
                                    map.GoodsID = obj[i].GoodsID
                                    map.ColorID = obj[i].ColorID
@@ -472,8 +473,9 @@
                                    map.tipqty = obj[i].tipqty
                                    map.title = obj[i].title
                                    if(arr.length>0) {
-                                    var  m=this.hasmap(arr,map)
-                                     if(m==null || m==undefined){
+
+                                    var  m=this.hasmap(arr,map,0)
+                                     if(JSON.stringify(m)=='{}' || m==undefined){
 
                                          arr.push(map)
                                      }
@@ -506,57 +508,30 @@
                                arr[0].checked = true
                                this.submitmap.colorlist = arr
                                this.submitmap.sizelist = sizearr//node.sizeData//this.testlist
-                               this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
-                              this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
+                               //this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
+                            //  this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
 
                            }
 
                            nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
-                                   if (e != undefined){
-                                       this.alert('返回的数据:'+JSON.stringify(e))
+                                   if (e != undefined){ //返回结果
+                                      // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                                        if(e.detaillist.length >0) {
 
                                         for(var i=0;i<e.detaillist.length ;i++){
+
                                             var backdata=e.detaillist[i]
                                             if(this.detaillist.length>0){
-
-                                              for(var j=0 ;j<this.detaillist.length;j++){
-                                                   var list=this.detaillist[j]
-                                                  if(backdata.GoodsID == list.GoodsID && backdata.ColorID==list.ColorID){
-                                                      //Number(list.Quantity)+
-                                                      list.Quantity=Number(backdata.Quantity)
-                                                      list.Amount=Number(backdata.Amount)
-
-                                                      for(var k=0; k< backdata.sizeData.length ;k++){
-                                                           var backsizedata=backdata.sizeData[k]
-                                                          for(var l=0;l<list.sizeData.length;l++){
-                                                              var sizedata=list.sizeData[l]
-                                                            if(backsizedata.GoodsID ==sizedata.GoodsID && backsizedata.ColorID ==sizedata.ColorID && backsizedata.SizeID ==sizedata.SizeID){
-                                                                sizedata.Quantity =Number(backsizedata.Quantity)
-                                                                sizedata.Amount =Number(backsizedata.Amount)
-                                                            }else{ //不存在
-                                                                list.sizeData.unshift(backsizedata)
-
-                                                            }
-
-
-                                                          }
-
-
-
-                                                      }
-
-
-
-                                                  }else{ //不存在
-                                                      this.detaillist.unshift(backdata)
-
-                                                  }
-
-
-
-                                              }
+                                             var m=this.hasmap(this.detaillist,backdata,1) //已经累加到货品颜色的值
+                                             if(JSON.stringify(m) !=='{}') {
+                                                 for(var j=0;j<backdata.sizeData.length;j++) {
+                                                     var sizemap=backdata.sizeData[j]
+                                                     var n = this.hasSize(m.sizeData, sizemap)
+                                                 }
+                                             }else if(JSON.stringify(m) =='{}'){
+                                                 this.detaillist.unshift(backdata)
+                                             }
                                             }else{
                                                 this.detaillist.unshift(backdata)
                                             }
@@ -565,21 +540,42 @@
 
                                         }
 
+                                           this.alert(JSON.stringify(this.detaillist))
 
                                        }
                                    }
                                       // self.callbackdata = e.ok;
                                })
 
-                   }, hasmap(arr,map){
-                 for (var j = 0; j < arr.length; j++) {
-                    var m =arr[j]
-                  if (m.GoodsID == map.GoodsID && m.ColorID == map.ColorID) {
-                      m.Quantity = Number(m.Quantity) + Number(obj[i].Quantity)
-                      m.tipqty = Number(m.tipqty) + Number(obj[i].tipqty)
-                   return m
-                  }else return null
-                 }}
+                   }, hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
+                       var m={}
+                  for (var j = 0; j < arr.length; j++) {
+                     if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==0 ) {
+                         arr[j].Quantity = Number(arr[j].Quantity) + Number(map.Quantity)
+                         arr[j].tipqty = Number(arr[j].tipqty) + Number(map.tipqty)
+                         m=arr[j]
+                   }else  if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==1 ) {
+                         arr[j].Quantity = Number(map.Quantity)
+                         arr[j].tipqty =  Number(map.tipqty)
+                         m=arr[j]
+                     }
+                 }
+                      return m
+
+
+                 },hasSize(arr,map){
+                       var m={}
+                       for (var j = 0; j < arr.length; j++) {
+
+                           if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID) {
+                               arr[j].Quantity = map.Quantity
+                               arr[j].Amount =map.Amount
+                                 m  = arr[j]
+
+                           }
+                       }
+                       return m
+                   }
                   , onPanEnd(e, node, i) {
                        if (Utils.env.isWeb()) {
                            const webEndX = e.changedTouches[0].pageX;
