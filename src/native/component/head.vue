@@ -23,13 +23,13 @@
         </scroller>
     </div>
 </template>
-<script>
+<script>//https://img.alicdn.com/tfs/TB1j39Uc0fJ8KJjy0FeXXXKEXXa-160-128.png
     import { WxcMinibar } from 'weex-ui';
     export default {
         components: { WxcMinibar },
         props: {
             leftButton:{default:'root:img/back.png'},
-            rightButton:{default:'https://img.alicdn.com/tfs/TB1j39Uc0fJ8KJjy0FeXXXKEXXa-160-128.png'},
+            rightButton:{default:''},
             rightText:'',
             title: {
                 default: ''

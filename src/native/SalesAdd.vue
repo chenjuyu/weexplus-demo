@@ -544,7 +544,7 @@
 
                                        }
                                    }
-                                      // self.callbackdata = e.ok;
+
                                })
 
                    }, hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
