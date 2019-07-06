@@ -235,6 +235,9 @@
                     message: 'GoodsID的值：'+ param.GoodsID,
                     duration: 0.3
                 })
+                _this.testData3.splice(0,_this.testData3.length) //清空
+                _this.sizelist.splice(0,_this.sizelist.length)
+
                 _this.testData3 =p.colorlist
                 _this.sizelist =p.sizelist
                 _this.colorid=(_this.testData3.filter(map=>map.checked))[0].ColorID
@@ -331,7 +334,7 @@
 
                             }
                         } //for 结束 货品 颜色 总集合
-
+                     /*
                         temparr.unshift({GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BE',Color:'本色色',
                             Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
                             sizetitle:[
@@ -351,7 +354,7 @@
                                           duration: 0.3
                                       });
                                   }
-                              }, */
+                              },
                             {
                                 text: "删除",
                                 onPress: () => {
@@ -363,7 +366,7 @@
                                 style: { backgroundColor: "#F4333C", color: "white" }
                             }
                         ]
-                        })
+                        }) */
 
 
 
