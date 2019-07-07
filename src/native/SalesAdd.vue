@@ -61,7 +61,7 @@
         </wxc-cell>
      <div class="listbutton">
          <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-left: 5px;text-align: center">蓝牙增加</text>
-         <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;text-align: center">快速增加</text>
+         <text @click="addgoods" style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;text-align: center">快速增加</text>
          <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">扫码增加</text>
      </div>
     </div> </cell><!--master 结束 border-radius:25px   v-for="num in lists" <list style="height: 200px"> </list>-->
@@ -239,7 +239,7 @@
                      ,Department:{Department:'',DepartmentID:''}
                      ,Customer:{Customer:'',CustomerID:'',lastAmt:''}
                      ,Emp:{Name:'',EmpID:''}
-                     ,detaillist:[
+                     ,detaillist:[ /*
                          {GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorID:'0BA',Color:'黑色',
                                Discount:0.0,DiscountRate:8.0,Quantity:2,Amount:34.5,
                                sizetitle:[
@@ -251,7 +251,7 @@
                                sizeData:[{GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_1',Quantity:1,SizeID:'00A',Size:'均码',Amount:''},
                                    {GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_2',Quantity:1,SizeID:'00A',Size:'XS',Amount:''}]
                              ,right: [
-                               /*  {
+                                 {
                                      text: "置顶",
                                      onPress: function() {
                                          modal.toast({
@@ -259,7 +259,7 @@
                                              duration: 0.3
                                          });
                                      }
-                                 }, */
+                                 },
                                  {
                                      text: "删除",
                                      onPress: () => {
@@ -283,7 +283,7 @@
                                sizeData:[{GoodsID:'00AG',ColorID:'0BB',x:'x_1',Quantity:1,SizeID:'00A',Color:'白色',Size:'37',Amount:''},
                                    {GoodsID:'00AG',ColorID:'0BB',Color:'白色',x:'x_2',Quantity:2,SizeID:'00B',Size:'38',Amount:''}]
                                ,right: [
-                                   /*  {
+                                     {
                                          text: "置顶",
                                          onPress: function() {
                                              modal.toast({
@@ -291,7 +291,7 @@
                                                  duration: 0.3
                                              });
                                          }
-                                     }, */
+                                     },
                                    {
                                        text: "删除",
                                        onPress: () => {
@@ -315,7 +315,7 @@
                                sizeData:[{GoodsID:'00AG',ColorID:'0BC',x:'x_1',Size:'均码',Color:'黄色',SizeID:'00B',Quantity:1,Amount:''},
                                    {GoodsID:'00AG',ColorID:'0BC',Color:'黄色',x:'x_2',SizeID:'00C',Size:'XS',Quantity:2,Amount:''}]
                                ,right: [
-                                  /*  {
+                                   {
                                          text: "置顶",
                                          onPress: function() {
                                              modal.toast({
@@ -323,7 +323,7 @@
                                                  duration: 0.3
                                              });
                                          }
-                                     }, */
+                                     },
                                    {
                                        text: "删除",
                                        onPress: () => {
@@ -347,7 +347,7 @@
                                sizeData:[{GoodsID:'00AG',ColorID:'0BD',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
                                    {GoodsID:'00AG',ColorID:'0BD',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
                                ,right: [
-                                   /*  {
+                                    {
                                          text: "置顶",
                                          onPress: function() {
                                              modal.toast({
@@ -355,7 +355,7 @@
                                                  duration: 0.3
                                              });
                                          }
-                                     }, */
+                                     },
                                    {
                                        text: "删除",
                                        onPress: () => {
@@ -367,7 +367,7 @@
                                        style: { backgroundColor: "#F4333C", color: "white" }
                                    }
                                ]
-                       }
+                       } */
                       ]
                      ,list: [
                            { title: '批发', value: '批发' },
@@ -383,11 +383,13 @@
                      this.total()
                    }
                    ,total(){
-
+                     var  sumqty =0,sumamt=0
                       for(var i=0 ;i<this.detaillist.length;i++){
-                          this.totalQty =Number(this.totalQty)+Number(this.detaillist[i].Quantity)
-                          this.totalAmt =Number(this.totalAmt)+Number(this.detaillist[i].Amount)
+                          sumqty =Number(sumqty)+Number(this.detaillist[i].Quantity)
+                          sumamt =Number(sumamt)+Number(this.detaillist[i].Amount)
                       }
+                       this.totalQty=sumqty
+                       this.totalAmt=sumamt
                    }
                    ,wxcCellClicked(e){
                    // var obj=   lodash.pick(this.testlist,['GoodsID','ColorID','Quantity'])
@@ -515,7 +517,7 @@
 
                            nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
-                                   if (e != undefined){ //返回结果
+                                   if (e !== undefined){ //返回结果
                                       // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                                        if(e.detaillist.length >0) {
 
@@ -636,6 +638,20 @@
                        }
                    }
                    //左滑方法结束
+                   ,addgoods(e){ //如果有就是修改
+
+                       this.submitmap.detaillist=this.detaillist || []
+                       nav.pushFull({url: 'root:goodslist.js',param:this.submitmap,animate:true}
+                                    ,(e)=>{
+                                if(e.detaillist.length >0){
+
+                                  this.detaillist =e.detaillist
+                                  this.total()
+
+                                }
+                           })
+
+                   }
 
                }
            }

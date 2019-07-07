@@ -40,7 +40,7 @@
         <div style="position: absolute;bottom: 0;left:0;right: 0;flex-direction: row">
            <div @click="selectedgoods" style="width:375px;height: 100px;border-width: 5px;border-color: #0085ee;align-items: center;justify-content: center;border-radius:20px">
                <text style="font-size: 35px;">已选货品({{selectedQuanity}})</text></div>
-            <div style="width:375px;height: 100px;border-width: 5px;border-color: #0085ee;align-items: center;justify-content: center;border-radius:20px">
+            <div @click="goSalesAdd" style="width:375px;height: 100px;border-width: 5px;border-color: #0085ee;align-items: center;justify-content: center;border-radius:20px">
                 <text style="font-size: 35px;">下一步></text>
             </div>
         </div>
@@ -62,7 +62,68 @@
                 selectedlist:[],//已选列表，修改界面，点增加按扭进来，要保存单据已有的数据
                 selectedQuanity:0,//已选列表，总数，用于显示
                 goodslist:[
-                    {GoodsID:'00AG',Code:'192B1210088',Name:'外披',ColorID:'0BA',Color:'黑色',img:'root:img/logo.png',
+                    {GoodsID:'00AA',Code:'aaaaa',Name:'测试货号',ColorID:'0AA',Color:'红色',img:'root:img/logo.png',
+                        Discount:0.0,DiscountRate:8.0,Quantity:0,Amount:0,RetailSales:59.00,
+                        sizetitle:[
+                            {field:'x_1',title:'均码'},{field:'x_2',title:'34'}
+                        ],
+                        sizeData:[{GoodsID:'00AA',ColorID:'0AA',Color:'红色',x:'x_1',Quantity:0,SizeID:'00A',Size:'均码',Amount:''},
+                            {GoodsID:'00AA',ColorID:'0AA',Color:'红色',x:'x_2',Quantity:0,SizeID:'00B',Size:'34',Amount:''}]
+                        ,right: [
+                            /*  {
+                                  text: "置顶",
+                                  onPress: function() {
+                                      modal.toast({
+                                          message: "置顶",
+                                          duration: 0.3
+                                      });
+                                  }
+                              }, */
+                            {
+                                text: "删除",
+                                onPress: () => {
+                                    modal.toast({
+                                        message: "删除",
+                                        duration: 0.3
+                                    });
+                                },
+                                style: { backgroundColor: "#F4333C", color: "white" }
+                            }
+                        ]
+                    },
+                    {GoodsID:'00AA',Code:'aaaaa',Name:'测试货号',ColorID:'0AB',Color:'白色',img:'root:img/logo.png',
+                        Discount:0.0,DiscountRate:8.0,Quantity:0,Amount:0,RetailSales:59.00,
+                        sizetitle:[
+                            {field:'x_1',title:'均码'},{field:'x_2',title:'34'}
+                        ],
+                        sizeData:[{GoodsID:'00AA',ColorID:'0AB',Color:'白色',x:'x_1',Quantity:0,SizeID:'00A',Size:'均码',Amount:''},
+                            {GoodsID:'00AA',ColorID:'0AB',Color:'白色',x:'x_2',Quantity:0,SizeID:'00B',Size:'34',Amount:''}]
+                        , right: [
+                /*  {
+                      text: "置顶",
+                      onPress: function() {
+                          modal.toast({
+                              message: "置顶",
+                              duration: 0.3
+                          });
+                      }
+                  }, */
+                {
+                    text: "删除",
+                    onPress: () => {
+                        modal.toast({
+                            message: "删除",
+                            duration: 0.3
+                        });
+                    },
+                    style: { backgroundColor: "#F4333C", color: "white" }
+                }
+            ]
+                    }
+
+
+
+                    ,{GoodsID:'00AG',Code:'192B1210088',Name:'外披',ColorID:'0BA',Color:'黑色',img:'root:img/logo.png',
                         Discount:0.0,DiscountRate:8.0,Quantity:2,Amount:34.5,RetailSales:59.00,
                         sizetitle:[
                             {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
@@ -226,12 +287,30 @@
         },methods: {
             onLoad(p){
               //...this.goodslist
-                this.templist =this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist)))
 
-                this.selectedlist=JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
+               // this.goodslist =p.detaillist || []
+
+
+
+                this.selectedlist =p.detaillist || []//JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
 
                 this.totalSelectedQuantity()
 
+                if(this.goodslist.length>0 && this.selectedlist.length >0){
+                 for(var i=0;i<this.selectedlist.length ;i++){
+                      var m1=this.selectedlist[i]
+                     this.alert('执行次数：'+i)
+                      for(var j=0;j<this.goodslist.length ;j++){
+                          var m2=this.goodslist[j]
+                         if(m1.GoodsID==m2.GoodsID && m1.ColorID==m2.ColorID){
+                             m2.Quantity=m1.Quantity
+                             m2.sizeData =m1.sizeData
+                         }
+                      }
+                 }
+
+                }
+                this.templist =this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist)))
                 this.alert('经过方法过滤后的templist：'+JSON.stringify(this.templist))
                 this.alert('goodslist：'+JSON.stringify(this.goodslist))
 
@@ -380,7 +459,7 @@
 
                 nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                     , (e) => {
-                        if (e != undefined){ //返回结果
+                        if (e !== undefined){ //返回结果
                             // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                             if(e.detaillist.length >0) {
 
@@ -405,7 +484,27 @@
 
                                 }
                                 //goodslist 代表所有货品 ，不管有没数量 这里只有有数量 的都要 但不确定是否有问题
-                                this.selectedlist=JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !==''))))
+                                //this.selectedlist  这里是单据详情过来的，可能 有数据 ，也可能没有
+                                if(this.selectedlist.length<=0) {
+                                    this.selectedlist =JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
+                                }else if(this.selectedlist.length >0){
+                                    var arr =JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
+                                   if(arr.length>0) {
+                                       for(var i=0 ;i<arr.length;i++){
+                                           var map=arr[i]
+                                          var m= this.hasmap(this.selectedlist, map, 0)//0 表示累加 这里是比较到货品，颜色的
+                                           if(JSON.stringify(m) =='{}' || m==undefined){
+                                               this.selectedlist.unshift(map)
+                                           }else if(JSON.stringify(m) !=='{}' && m !==undefined){
+                                               for(var j=0;j<map.sizeData.length ;j++){
+                                                   var sizemap=map.sizeData[j]
+                                               this.hasSize(m.sizeData,sizemap,0)
+                                               }
+                                           }
+                                       }
+                                   }
+                                }
+                                this.alert('selectedlist:'+JSON.stringify(this.selectedlist))
                                 this.totalSelectedQuantity()
                                 this.templist =this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist)))
                                 this.alert(JSON.stringify(this.goodslist))
@@ -440,7 +539,7 @@
               return  returnlist;
               }
             },selectedgoods(){ //只作显示 从已选列表返回
-                this.selectedlist=JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !==''))))
+             //   this.selectedlist=JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !==''))))
                 this.submitmap.detaillist =this.selectedlist ||[] //this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='') )
                 nav.pushFull({url: 'root:selectedgoods.js',param:this.submitmap,animate:true}
                     , (e) => {
@@ -513,6 +612,10 @@
                     }
                         }
                 return m
+            },goSalesAdd(){ //返回单据详情
+                var p={}
+                p.detaillist= this.selectedlist || [] //已选列表
+                nav.backFull(p,false)
             }
             //搜索框
            , wxcSearchbarInputOnFocus () {

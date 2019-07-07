@@ -8,9 +8,9 @@
 
                         <div style="flex-direction: row"><text style="font-size: 30px;color: red;">{{ls.Code}}</text> <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text></div>
                         <!-- 图片与显示-->
-                        <div style="flex-direction: row">
+                        <div style="flex-direction: row;width: 750px">
                             <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text>
-                            <image src="https://www.baidu.com/img/bd_logo1.png" style="width: 150px;height: 150px"></image>
+                            <image src="https://www.baidu.com/img/bd_logo1.png" style="width: 150px;height: 150px;border-width: 3px"></image>
                             <div>
                                 <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
                                 <text style="font-size: 30px;color:#000000;height: 50px">折扣率:{{ls.Discount}}</text>
@@ -148,7 +148,7 @@
 
         nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
             , (e) => {
-                if (e != undefined){ //返回结果
+                if (e !== undefined){ //返回结果
                     // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                     if(e.detaillist.length >0) {
 
