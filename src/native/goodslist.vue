@@ -299,7 +299,7 @@
                 if(this.goodslist.length>0 && this.selectedlist.length >0){
                  for(var i=0;i<this.selectedlist.length ;i++){
                       var m1=this.selectedlist[i]
-                     this.alert('执行次数：'+i)
+                 //    this.alert('执行次数：'+i)
                       for(var j=0;j<this.goodslist.length ;j++){
                           var m2=this.goodslist[j]
                          if(m1.GoodsID==m2.GoodsID && m1.ColorID==m2.ColorID){
