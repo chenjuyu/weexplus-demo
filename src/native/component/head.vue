@@ -133,12 +133,12 @@
         created: function () {
           //  var font=weex.requireModule("font");
            // font.addFont('iconfont','root:font/iconfont.ttf')//阿里的 iconfont不用本地的，直接用外网的
-
+           /*
             let domModule = weex.requireModule('dom');
             domModule.addRule('fontFace',{
                 'fontFamily': "iconfont",
-               'src':"url('http://at.alicdn.com/t/font_1074303_5l709fjykdc.ttf')" // "url('root:font/iconfont.ttf')"//../ http://at.alicdn.com/t/font_1074303_e64s32fcc65.ttf
-            })
+               'src':"url('http://at.alicdn.com/t/font_1074303_donc9y7zr6f.ttf')" // "url('root:font/iconfont.ttf')"//../ http://at.alicdn.com/t/font_1074303_e64s32fcc65.ttf
+            }) */
 
             this.adjust();
 

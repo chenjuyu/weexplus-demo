@@ -41,7 +41,7 @@
              right: 0;
              bottom: 0;
              margin-top: 0;
-          /*  margin-bottom: 88px;*/
+            margin-bottom: 120px; /*88*/
          }
          .tabbar {
              flex-direction: row;
@@ -49,9 +49,9 @@
              bottom: 0;
              left: 0;
              right: 0;
-             height: 80px;
+             height: 120px; /*80px*/
              color: #ffffff;
-             background-color: red;
+             background-color:red;
          }
       </style>
 
@@ -64,7 +64,7 @@
              props:{
                  tabItems:{default:[]},
                  msg:{default:'ccc'},
-                 selectedColor: { default: '#ff0000' },
+                 selectedColor: { default: '#1EA5FC' },//#ff0000
                  unselectedColor: { default: '#000000' }
 
              },

@@ -3,12 +3,15 @@
             :style="{ backgroundColor: backgroundColor }"
             class="container"
             @click="onclickitem">
+        <!-- 原备份
         <image
                 src="http://gtms03.alicdn.com/tps/i3/TB1mdsiMpXXXXXpXXXXNw4JIXXX-640-4.png"
                 class="top-line"></image>
         <image
                 :src="icon"
                 class="tab-icon"></image>
+                -->
+        <text class="iconfont bar-ic" :style="{color: titleColor}">{{icon}}</text>
         <text
                 :style="{ color: titleColor }"
                 class="tab-text">{{title}}</text>
@@ -16,12 +19,21 @@
 </template>
 
 <style scoped>
+    .iconfont {
+        font-family:iconfont;  /*必须写哦！ ！ width: 100px;  margin-top: 5; */
+    }
+    .bar-ic{
+        font-size: 60px;
+        text-align: center;
+        width: 60px;
+        height: 60px;
+    }
     .container {
         flex: 1;
         flex-direction: column;
         align-items:center;
         justify-content:center;
-        height: 88;
+        height: 120; /*88*/
     }
     .top-line {
         position: absolute;
@@ -38,7 +50,7 @@
     .tab-text {
         margin-top: 5;
         text-align: center;
-        font-size: 20;
+        font-size: 30px;
     }
 </style>
 

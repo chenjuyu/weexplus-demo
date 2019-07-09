@@ -72,7 +72,12 @@ Mixins.install = (Vue, options) => {
           let keyboard = weex.requireModule('keyboard')
           keyboard.setKeyboardMode('adjust_pan')
         }
-
+         //阿里字库
+        let domModule = weex.requireModule('dom');
+        domModule.addRule('fontFace',{
+          'fontFamily': "iconfont",
+          'src':"url('http://at.alicdn.com/t/font_1074303_donc9y7zr6f.ttf')" // "url('root:font/iconfont.ttf')"//../ http://at.alicdn.com/t/font_1074303_e64s32fcc65.ttf
+        })
 
       });
 
