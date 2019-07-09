@@ -67,7 +67,7 @@
             </div>
               -->
 
-        </scroller>
+       </scroller>
     </div>
 </template>
 
@@ -118,10 +118,11 @@
                     {id:5,name:'费用单',img_src:'\ue609',url:''}
                 ],
                 possales:[
-                    {id:1,name:'销售',img_src:'\ueb4c',url:''},
-                    {id:2,name:'日结',img_src:'\ue6b7',url:''},
-                    {id:3,name:'缴费',img_src:'\ue601',url:''},
-                    {id:4,name:'报表',img_src:'\ue6af',url:''}
+                    {id:1,name:'销售',img_src:'\ueb4c'},
+                    {id:2,name:'日结',img_src:'\ue6b7'},
+                    {id:3,name:'缴费',img_src:'\ue601'},
+                    {id:4,name:'报表',img_src:'\ue6af'}
+
                 ]
             };
         },props:{
