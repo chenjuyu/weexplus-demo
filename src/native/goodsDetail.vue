@@ -5,7 +5,7 @@
             <image style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
             <div class="dec">
                 <text class="size" style="height: 60px;margin-top: 10px">货品名称:{{goods.Name}}</text>
-                <text class="size" style="height: 60px;">货品编码{{goods.Code}}</text>
+                <text class="size" style="height: 60px;">货品编码:{{goods.Code}}</text>
                 <text class="size" style="height: 60px;">零售价￥:{{goods.RetailSales}}</text>
                 <div class="unitprice">
                     <text class="size" style="height:60px;">单价:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.UnitPrice">
@@ -245,7 +245,7 @@
                 _this.goods.Name =(_this.testData3.filter(map=>map.checked))[0].Name
                 _this.goods.UnitPrice =(_this.testData3.filter(map=>map.checked))[0].UnitPrice
                 _this.goods.DiscountRate =(_this.testData3.filter(map=>map.checked))[0].DiscountRate
-
+                _this.goods.RetailSales=(_this.testData3.filter(map=>map.checked))[0].RetailSales
                 _this.alert("单价："+ (_this.testData3.filter(map=>map.checked))[0].UnitPrice)
                 _this.alert("折扣："+ (_this.testData3.filter(map=>map.checked))[0].DiscountRate)
                 this.total()
@@ -279,7 +279,7 @@
                     ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
                 }
                 if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
-                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)
+                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
                 }
                 this.total()
             },add(ls){
@@ -288,7 +288,7 @@
                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
                }
                if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
-                   ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)
+                   ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
                }
                 this.total()
             },hascolor(arr,map){
@@ -318,6 +318,9 @@
                                 Name: _that.goods.Name,
                                 ColorID: obj.ColorID,
                                 Quantity: obj.Quantity,
+                                RetailSales:_that.goods.RetailSales,
+                                UnitPrice:obj.UnitPrice,
+                                DiscountRate:obj.DiscountRate,
                                 Color: obj.Color,
                                 Amount: obj.Amount
                             }
@@ -330,6 +333,9 @@
                             map.Name = obj[i].Name
                             map.ColorID = obj[i].ColorID
                             map.Quantity = obj[i].Quantity
+                            map.RetailSales=obj[i].RetailSales
+                            map.UnitPrice =obj[i].UnitPrice
+                            map.DiscountRate=obj[i].DiscountRate
                             map.Color = obj[i].Color
                             map.Amount = obj[i].Amount
                             map.sizetitle =_that.testData3[0].sizetitle //显示的颜色尺码组

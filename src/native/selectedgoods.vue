@@ -89,6 +89,8 @@
                         RetailSales:obj.RetailSales,
                         ColorID: obj.ColorID,
                         Quantity: obj.Quantity,
+                        UnitPrice:obj.UnitPrice,
+                        DiscountRate:obj.DiscountRate,
                         tipqty: obj.Quantity,
                         title: obj.Color,
                         Amount:obj.Amount,
@@ -109,6 +111,8 @@
                     map.RetailSales=obj[i].RetailSales
                     map.ColorID = obj[i].ColorID
                     map.Quantity = obj[i].Quantity
+                    map.UnitPrice=obj[i].UnitPrice
+                    map.DiscountRate=obj[i].DiscountRate
                     map.tipqty = obj[i].tipqty
                     map.title = obj[i].title
                     if(arr.length>0) {

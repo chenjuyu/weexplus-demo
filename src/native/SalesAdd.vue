@@ -71,14 +71,17 @@
                  <!-- 整体包1-->
                  <div :style='styles' class="swipe-action-center border">
 
-                     <div style="flex-direction: row"><text style="font-size: 30px;color: red;">{{ls.Code}}</text> <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text></div>
+                     <div style="flex-direction: row">
+                         <text style="font-size: 30px;color: red;">{{ls.Code}}</text>
+                         <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text>
+                     </div>
                  <!-- 图片与显示-->
                <div style="flex-direction: row;width: 750px">
-                   <text style="font-size: 30px;color:#000000;justify-content: center;align-items: center">{{Number(i)+1}}</text>
+                  <div style="justify-content: center;align-items: center;height: 150px"> <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text> </div>
                    <image v-if="ls.img" :src="ls.img" style="width: 150px;height: 150px;"></image>
                    <image v-else  src="root:img/home_logo.png" style="width: 150px;height: 150px;"></image>
 
-                   <div>
+                   <div style="margin-left: 20px">
                    <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
                    <text style="font-size: 30px;color:#000000;height: 50px">折扣率:{{ls.Discount}}</text>
                    <text style="font-size: 30px;color:#000000;height: 50px">数量:{{ls.Quantity}}</text>
@@ -91,10 +94,10 @@
                </div>
                  <!-- 图片与显示-->
                 <div style="flex-direction: row">
-                 <text style="font-size: 30px;color:red;margin-left: 5px;width: 40px;text-align: center" v-for="(lst,index1) in ls.sizetitle">{{lst.title}}</text>
+                 <text style="font-size: 35px;color:red;margin-left: 5px;width: 45px;text-align: center" v-for="(lst,index1) in ls.sizetitle">{{lst.title}}</text>
                 </div>
                  <div style="flex-direction: row">
-                 <text style="font-size: 30px;color:#000000;margin-left: 5px;width: 40px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
+                 <text style="font-size: 35px;color:#000000;margin-left: 5px;width: 45px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
                  </div>
 
                  </div>  <!-- 整体包1结束-->
@@ -502,8 +505,13 @@
                                var obj =(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
                                    return {
                                        GoodsID: obj.GoodsID,
+                                       Code:obj.Code,
+                                       Name:obj.Name,
+                                       RetailSales:obj.RetailSales,
                                        ColorID: obj.ColorID,
                                        Quantity: obj.Quantity,
+                                       UnitPrice:obj.UnitPrice,
+                                       DiscountRate:obj.DiscountRate,
                                        tipqty: obj.Quantity,
                                        title: obj.Color,
                                        Amount:obj.Amount,
@@ -519,8 +527,13 @@
                                    debugger
                                    var map = {}
                                    map.GoodsID = obj[i].GoodsID
+                                   map.Code=obj[i].Code
+                                   map.Name=obj[i].Name
+                                   map.RetailSales=obj[i].RetailSales
                                    map.ColorID = obj[i].ColorID
                                    map.Quantity = obj[i].Quantity
+                                   map.UnitPrice =obj[i].UnitPrice
+                                   map.DiscountRate=obj[i].DiscountRate
                                    map.tipqty = obj[i].tipqty
                                    map.title = obj[i].title
                                    if(arr.length>0) {
@@ -566,7 +579,7 @@
 
                            nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
-                                   if (e !== undefined){ //返回结果
+                                   if (e !== undefined){ //返回结果是尺码集体的，要拆分
                                       // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                                        if(e.detaillist.length >0) {
 
@@ -604,10 +617,19 @@
                   for (var j = 0; j < arr.length; j++) {
                      if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==0 ) {
                          arr[j].Quantity = Number(arr[j].Quantity) + Number(map.Quantity)
+                         arr[j].Amount = Number(arr[j].Amount) + Number(map.Amount)
                          arr[j].tipqty = Number(arr[j].tipqty) + Number(map.tipqty)
                          m=arr[j]
                    }else  if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==1 ) {
                          arr[j].Quantity = Number(map.Quantity)
+                         arr[j].UnitPrice = Number(map.UnitPrice)
+                         arr[j].DiscountRate = Number(map.DiscountRate)
+                         if(Number(map.DiscountRate)!=0 && map.DiscountRate !=="" && map.DiscountRate !=undefined) {
+                             arr[j].Discount = Number(map.UnitPrice) * Number(map.Quantity) * Number(map.DiscountRate)/ 10.0 //增加一基折扣额
+                         }else{
+                             arr[j].Discount =''
+                         }
+                         arr[j].Amount = Number(map.Amount)
                          arr[j].tipqty =  Number(map.tipqty)
                          m=arr[j]
                      }
