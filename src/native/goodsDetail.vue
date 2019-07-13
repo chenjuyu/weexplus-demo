@@ -8,8 +8,8 @@
                 <text class="size" style="height: 60px;">货品编码{{goods.Code}}</text>
                 <text class="size" style="height: 60px;">零售价￥:{{goods.RetailSales}}</text>
                 <div class="unitprice">
-                    <text class="size" style="height:60px;">单价:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="unitprice">
-                    <text class="size" style="height: 60px;">折扣:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="discountrate">
+                    <text class="size" style="height:60px;">单价:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.UnitPrice">
+                    <text class="size" style="height: 60px;">折扣:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.DiscountRate">
                 </div>
             </div>
         </div>
@@ -243,8 +243,12 @@
                 _this.colorid=(_this.testData3.filter(map=>map.checked))[0].ColorID
                 _this.goods.Code=(_this.testData3.filter(map=>map.checked))[0].Code
                 _this.goods.Name =(_this.testData3.filter(map=>map.checked))[0].Name
-                _this.goods.RetailSales =(_this.testData3.filter(map=>map.checked))[0].RetailSales
+                _this.goods.UnitPrice =(_this.testData3.filter(map=>map.checked))[0].UnitPrice
+                _this.goods.DiscountRate =(_this.testData3.filter(map=>map.checked))[0].DiscountRate
 
+                _this.alert("单价："+ (_this.testData3.filter(map=>map.checked))[0].UnitPrice)
+                _this.alert("折扣："+ (_this.testData3.filter(map=>map.checked))[0].DiscountRate)
+                this.total()
                 /*   net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
 
                         //start
@@ -271,9 +275,21 @@
 
             },jian(ls){
                 ls.Quantity =Number(ls.Quantity)-1
+                if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
+                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
+                }
+                if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
+                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)
+                }
                 this.total()
             },add(ls){
                 ls.Quantity =Number(ls.Quantity)+1
+               if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
+                   ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
+               }
+               if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
+                   ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)
+               }
                 this.total()
             },hascolor(arr,map){
                for (var j = 0; j < arr.length; j++) {

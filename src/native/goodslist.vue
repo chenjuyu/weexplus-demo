@@ -301,7 +301,7 @@
 
                 this.totalSelectedQuantity()
 
-                net.post(pref.getString('ip') + url,{Code:this.Code,page:this.page},{},function(){
+                net.post(pref.getString('ip') + url,{Code:this.Code,page:this.page,CustomerID:p.CustomerID,Type:p.Type},{},function(){
                     //start
                 },function(e){
                     //success
@@ -414,7 +414,7 @@
                 });
             },onNodeClick(item2,i){
                 //this.goodslist.filter(item=>item.GoodsID ==item2.GoodsID))
-              //  this.alert('选 货品 的：'+JSON.stringify(this.goodslist))
+               // this.alert('选 货品 的：'+JSON.stringify(this.goodslist))
                var obj =(this.goodslist.filter(item=>item.GoodsID ==item2.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
                     return {
                         GoodsID: obj.GoodsID,
@@ -423,6 +423,8 @@
                         RetailSales:obj.RetailSales,
                         ColorID: obj.ColorID,
                         Quantity: obj.Quantity,
+                        UnitPrice:obj.UnitPrice,
+                        DiscountRate:obj.DiscountRate,
                         tipqty: obj.Quantity,
                         title: obj.Color,
                         Amount:obj.Amount,
@@ -432,7 +434,7 @@
 
                     }
                 })
-               // this.alert('颜色列表obj：'+JSON.stringify(obj))
+             //   this.alert('颜色列表obj：'+JSON.stringify(obj))
                 var arr = [] ,   sizearr=[]
                 for (var i = 0; i < obj.length; i++) {
                     debugger
@@ -443,6 +445,8 @@
                     map.RetailSales=obj[i].RetailSales
                     map.ColorID = obj[i].ColorID
                     map.Quantity = obj[i].Quantity
+                    map.UnitPrice =obj[i].UnitPrice
+                    map.DiscountRate=obj[i].DiscountRate
                     map.tipqty = obj[i].tipqty
                     map.title = obj[i].title
                     map.sizetitle=obj[i].sizetitle
@@ -471,7 +475,7 @@
                 }//颜色结果 for 结束
                 arr[0].checked = true
 
-                //this.alert('颜色列表：'+JSON.stringify(arr))
+                this.alert('颜色列表：'+JSON.stringify(arr.filter(map=>map.checked)))
 
                 this.submitmap.colorlist = arr
                 this.submitmap.sizelist = sizearr
@@ -636,6 +640,10 @@
                         }
                         if(e.res.success && e.res.msg=='暂无数据'){
                             that.toast(e.res.msg)
+                            return
+                        }
+                        if(!e.res.attributes.hasOwnProperty("goodslist")){
+                            that.toast('暂无数据')
                             return
                         }
                         if(e.res.attributes.goodslist.length>0) {

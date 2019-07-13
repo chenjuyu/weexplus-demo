@@ -27,12 +27,12 @@
                   :cell-style="{'height':'80px'}"
                   @wxcCellClicked="selectType"
                   :has-bottom-border="true"	>
-            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{Type}}</text>
+            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{billType.Name}}</text>
         </wxc-cell>
         <wxc-cell label="发货部门:"
                   :has-arrow="true"
                   :cell-style="{'height':'80px'}"
-                  @wxcCellClicked="wxcCellClicked"
+                  @wxcCellClicked="wxcCellClicked(1)"
                   :has-bottom-border="true"	>
             <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{Department.Department}}</text>
         </wxc-cell>
@@ -40,24 +40,24 @@
         <wxc-cell label="客户名称:"
                   :has-arrow="true"
                   :cell-style="{'height':'80px'}"
-                  @wxcCellClicked="wxcCellClicked"
+                  @wxcCellClicked="wxcCellClicked(2)"
                   :has-bottom-border="true"	>
-            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{Customer.Customer}}</text>
+            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{customer.customer}}</text>
         </wxc-cell>
+        <!--  @wxcCellClicked="wxcCellClicked"-->
         <wxc-cell label="应收余额:"
                   :has-arrow="true"
                   :cell-style="{'height':'80px'}"
-                  @wxcCellClicked="wxcCellClicked"
                   :has-bottom-border="true"	>
-            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{Customer.lastAmt}}</text>
+            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{customer.lastAmt}}</text>
         </wxc-cell>
 
         <wxc-cell label="经手人:"
                   :has-arrow="true"
                   :cell-style="{'height':'80px'}"
-                  @wxcCellClicked="wxcCellClicked"
+                  @wxcCellClicked="wxcCellClicked(3)"
                   :has-bottom-border="true"	>
-            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{Emp.Name}}</text>
+            <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{emp.Name}}</text>
         </wxc-cell>
      <div class="listbutton">
          <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-left: 5px;text-align: center">蓝牙增加</text>
@@ -84,9 +84,9 @@
                    <text style="font-size: 30px;color:#000000;height: 50px">数量:{{ls.Quantity}}</text>
                    </div>
                    <div style="position: absolute;right: 10px;">
-                       <text style="font-size: 30px;color:#000000;height: 50px;">单价:29.50</text>
-                       <text style="font-size: 30px;color:#000000;height: 50px;">折扣:9.0</text>
-                       <text style="font-size: 30px;color:#000000;height: 50px;">金额:29.50</text>
+                       <text style="font-size: 30px;color:#000000;height: 50px;">单价:{{ls.UnitPrice}}</text>
+                       <text style="font-size: 30px;color:#000000;height: 50px;">折扣:{{ls.DiscountRate}}</text>
+                       <text style="font-size: 30px;color:#000000;height: 50px;">金额:{{ls.Amount}}</text>
                    </div>
                </div>
                  <!-- 图片与显示-->
@@ -225,6 +225,7 @@
                ,data() {
                    return {
                        submitmap:{}
+                       ,billType:{Name:'批发'}
                       // ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
                      //  {GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
                        ,mobileX: 0,
@@ -237,10 +238,9 @@
                      ,totalQty:0
                      ,totalAmt:0.0
                      ,totalDiscount:0.00
-                     ,Type:'批发'
                      ,Department:{Department:'',DepartmentID:''}
-                     ,Customer:{Customer:'',CustomerID:'',lastAmt:''}
-                     ,Emp:{Name:'',EmpID:''}
+                     ,customer:{customer:'',customerid:'',lastAmt:''}
+                     ,emp:{Name:'',EmpID:''}
                      ,detaillist:[ /*
                          {GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorID:'0BA',Color:'黑色',
                                Discount:0.0,DiscountRate:8.0,Quantity:2,Amount:34.5,
@@ -393,8 +393,55 @@
                        this.totalQty=sumqty
                        this.totalAmt=sumamt
                    }
-                   ,wxcCellClicked(e){
+                   ,wxcCellClicked(id){
                    // var obj=   lodash.pick(this.testlist,['GoodsID','ColorID','Quantity'])
+                  // this.alert(JSON.stringify(e))
+                      var p={}
+                      if(id==1){//发货部门
+                         p.send='getWarehouse'
+                          p.condition=''
+                      }else if(id==2){//客户
+                         p.send ='getCustomer'
+                          p.condition=''
+
+                      }else if(id==3){ //经手人
+                         p.send ='getEmployee'
+                         p.condition=''
+                      }
+                      //{"send": p.send,"condition":p.condition,"id":id}
+                       nav.pushFull({url:'root:base.js',param: p,
+                           animate:true,
+                           isPortrait:true},(res)=>{
+
+                           if (res !=undefined) {
+                               if (id==1){ //发货部门
+
+                                   this.Department.DepartmentID=res.id
+                                   this.Department.Department =res.Name
+
+
+                               }else if(id===2){ //v客户
+                                   this.customer.customerid=res.id
+                                   this.customer.customer =res.Name
+                                   this.customer.DiscountRate=res.DiscountRate
+                                   this.customer.DistrictID=res.DistrictID
+                                   this.customer.OrderDiscount=res.OrderDiscount
+                                   this.customer.AllotDiscount=res.AllotDiscount
+                                   this.customer.ReplenishDiscount=res.ReplenishDiscount
+                                   this.customer.lastAmt=''
+
+                               }else if(id==3){
+
+                                   this.emp.EmpID = res.id;
+                                   //  this.alert("employeeid:"+this.emp.employeeId)
+                                   this.emp.Name = res.Name;
+                               }
+
+                           }
+
+                       });
+
+
 
                    }
                   ,selectType(e){
@@ -402,7 +449,7 @@
                        //pop.show('root:Typeradio.js',{width:500,height:700},{},true);
                       for(var i=0 ;i< this.list.length ;i++){
                           var map=this.list[i]
-                           if(this.Type == map.value){
+                           if(this.billType.Name == map.value){
                                map.checked=true
                            }
                        }
@@ -643,7 +690,19 @@
                    //左滑方法结束
                    ,addgoods(e){ //如果有就是修改
 
+                       if(this.customer.customerid == '') {
+                           this.toast('请先选择客户')
+                           return
+                       }
+                       if(this.billType.Name== '') {
+                           this.toast('请先选择单据类别')
+                           return
+                       }
+
+
                        this.submitmap.detaillist=this.detaillist || []
+                       this.submitmap.CustomerID=this.customer.customerid
+                       this.submitmap.Type =this.billType.Name
                        nav.pushFull({url: 'root:goodslist.js',param:this.submitmap,animate:true}
                                     ,(e)=>{
                                 if(e.detaillist.length >0){
