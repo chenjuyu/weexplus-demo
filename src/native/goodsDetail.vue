@@ -4,9 +4,9 @@
         <div class="goodsimg">
             <image style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
             <div class="dec">
-                <text class="size" style="height: 60px;margin-top: 10px">货品名称</text>
-                <text class="size" style="height: 60px;">货品编码</text>
-                <text class="size" style="height: 60px;">零售价￥:{{retailsales}}</text>
+                <text class="size" style="height: 60px;margin-top: 10px">货品名称:{{goods.Name}}</text>
+                <text class="size" style="height: 60px;">货品编码{{goods.Code}}</text>
+                <text class="size" style="height: 60px;">零售价￥:{{goods.RetailSales}}</text>
                 <div class="unitprice">
                     <text class="size" style="height:60px;">单价:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="unitprice">
                     <text class="size" style="height: 60px;">折扣:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="discountrate">
@@ -243,6 +243,7 @@
                 _this.colorid=(_this.testData3.filter(map=>map.checked))[0].ColorID
                 _this.goods.Code=(_this.testData3.filter(map=>map.checked))[0].Code
                 _this.goods.Name =(_this.testData3.filter(map=>map.checked))[0].Name
+                _this.goods.RetailSales =(_this.testData3.filter(map=>map.checked))[0].RetailSales
 
                 /*   net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
 
@@ -281,14 +282,15 @@
                        m.Quantity = Number(m.Quantity) + Number(map.Quantity)
                        m.Amount = Number(m.Amount) + Number(map.Amount)
                        return m
-                   }else return undefined
+                   }
                }
+               return undefined
            }
             ,submit(){
                var _that=this
                 var p={}
                // p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
-                var templist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
+                var templist=this.sizelist.filter(item=>Number(item.Quantity)!==0) ||[]
                 if(this.isPDA) {
                     pref._SendN(this.sizelist.filter(item => Number(item.Quantity) !== 0))
                 }else {
@@ -314,60 +316,15 @@
                             map.Quantity = obj[i].Quantity
                             map.Color = obj[i].Color
                             map.Amount = obj[i].Amount
-                            map.sizetitle = [{field: 'x_1', title: '均码'}, {field: 'x_2', title: 'XS'}, {
-                                filed: 'x_3',
-                                title: 'S'
-                            }
-                                , {filed: 'x_4', title: 'M'}, {filed: 'x_5', title: 'L'}, {filed: 'x_6', title: '1L'},
-                                {filed: 'x_7', title: '2L'}, {filed: 'x_8', title: '3L'}, {filed: 'x_9', title: '4L'}
-                                , {filed: 'x_10', title: '5L'}]
+                            map.sizetitle =_that.testData3[0].sizetitle //显示的颜色尺码组
 
-                            if (temparr.length > 0) {
                                 var m = this.hascolor(temparr, map)
                                 if (m == undefined) {
                                     temparr.unshift(map)
                                 }
 
-                            } else {
-                                temparr.unshift(map)
 
-
-                            }
                         } //for 结束 货品 颜色 总集合
-                     /*
-                        temparr.unshift({GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BE',Color:'本色色',
-                            Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
-                            sizetitle:[
-                            {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
-                            ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
-                            {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
-                            ,{filed:'x_10',title:'5L'}
-                        ],
-                            sizeData:[{GoodsID:'00AG',ColorID:'0BE',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
-                            {GoodsID:'00AG',ColorID:'0BE',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
-                            ,right: [
-                            /*  {
-                                  text: "置顶",
-                                  onPress: function() {
-                                      modal.toast({
-                                          message: "置顶",
-                                          duration: 0.3
-                                      });
-                                  }
-                              },
-                            {
-                                text: "删除",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "删除",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "#F4333C", color: "white" }
-                            }
-                        ]
-                        }) */
-
 
 
                             //再加入尺码
@@ -379,7 +336,7 @@
                                     for (var j = 0; j < this.sizelist.length; j++) {
 
                                         if (map.GoodsID == this.sizelist[j].GoodsID && map.ColorID == this.sizelist[j].ColorID) {
-                                            sizeDatalist.unshift(this.sizelist[j])
+                                            sizeDatalist.push(this.sizelist[j])
                                         }
 
                                     }
@@ -414,9 +371,10 @@
                             this.alert("返回的数组："+JSON.stringify(temparr)+",temparr的长度："+temparr.length)
 
 
-                       p.detaillist =temparr
-                        nav.backFull(p,false)
+
                     }
+                    p.detaillist =temparr
+                    nav.backFull(p,false)
                 }
             },
             onSelect (res,{selectIndex, checked, checkedList }) {

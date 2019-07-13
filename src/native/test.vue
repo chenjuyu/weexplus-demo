@@ -23,16 +23,16 @@
                 // this.alert(p);
                 //this.name=p.name;
                 this.ip=pref.getString('ip');
-                var GoodsID=p.GoodsID
-                var ActivityName=p.ActivityName
-                modal.toast({
-                    message: ActivityName,
-                    duration: 0.3
-                })
-                modal.toast({
-                    message: 'GoodsID的值：'+ GoodsID,
-                    duration: 0.3
-                })
+              //  var GoodsID=p.GoodsID
+             //   var ActivityName=p.ActivityName
+                /*  modal.toast({
+                 message: ActivityName,
+                 duration: 0.3
+             })
+        modal.toast({
+                 message: 'GoodsID的值：'+ GoodsID,
+                 duration: 0.3
+             }) */
 
 
             },

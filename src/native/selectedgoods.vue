@@ -24,10 +24,10 @@
                         </div>
                         <!-- 图片与显示-->
                         <div style="flex-direction: row">
-                            <text style="font-size: 30px;color:red;margin-left: 10px;width: 60px;text-align: center" v-for="(lst,index1) in ls.sizetitle">{{lst.title}}</text>
+                            <text style="font-size: 30px;color:red;margin-left: 5px;width: 40px;text-align: center" v-for="(lst,index1) in ls.sizetitle">{{lst.title}}</text>
                         </div>
                         <div style="flex-direction: row">
-                            <text style="font-size: 30px;color:#000000;margin-left: 10px;width: 60px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
+                            <text style="font-size: 30px;color:#000000;margin-left: 5px;width: 40px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
                         </div>
 
                     </div>  <!-- 整体包1结束-->
@@ -84,6 +84,9 @@
                 var obj =(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
                     return {
                         GoodsID: obj.GoodsID,
+                        Code:obj.Code,
+                        Name:obj.Name,
+                        RetailSales:obj.RetailSales,
                         ColorID: obj.ColorID,
                         Quantity: obj.Quantity,
                         tipqty: obj.Quantity,
@@ -101,6 +104,9 @@
                     debugger
                     var map = {}
                     map.GoodsID = obj[i].GoodsID
+                    map.Code = obj[i].Code
+                    map.Name = obj[i].Name
+                    map.RetailSales=obj[i].RetailSales
                     map.ColorID = obj[i].ColorID
                     map.Quantity = obj[i].Quantity
                     map.tipqty = obj[i].tipqty

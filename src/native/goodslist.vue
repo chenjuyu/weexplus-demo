@@ -19,7 +19,8 @@
 
            <cell v-for="(item,i) in templist " @click="onNodeClick(item, i)" style="flex-direction: row;height:170px;border-bottom-width: 1px;border-color: #dddddd">
             <div style="width: 150px;height: 150px;margin-left: 20px;justify-content: center;align-items: center">
-            <image :src="item.img" style="width: 100px;height: 100px;"></image>
+            <image v-if="item.img" :src="item.img" style="width: 100px;height: 100px;"></image>
+            <image v-else  src="root:img/home_logo.png" style="width: 100px;height: 100px;"></image>
             <text v-if="item.Quantity" style="font-size: 35px;color:#FFFFFF;position:absolute;bottom: 0;left:0;right: 0;height: 40px;background-color: orange;text-align: center">{{item.Quantity}}</text>
             </div>
             <div style="margin-left: 30px">
@@ -51,17 +52,22 @@
     import { WxcSearchbar } from 'weex-ui'
     var modal = weex.requireModule("modal");
     var nav = weex.requireModule('navigator') ;
+    const net = weex.requireModule('net');
+    const  pref=weex.requireModule('pref');
+    const url='/goodsInfo.do?goodslist'
     export default {
         components: { WxcSearchbar },
         data(){
             return{
                 loadinging: false,
                 refreshing: false,
+                Code:'',//搜索条件&page=1
+                page:1,//当前页数
                 submitmap:{},
                 templist:[],
                 selectedlist:[],//已选列表，修改界面，点增加按扭进来，要保存单据已有的数据
                 selectedQuanity:0,//已选列表，总数，用于显示
-                goodslist:[
+                goodslist:[ /*
                     {GoodsID:'00AA',Code:'aaaaa',Name:'测试货号',ColorID:'0AA',Color:'红色',img:'root:img/logo.png',
                         Discount:0.0,DiscountRate:8.0,Quantity:0,Amount:0,RetailSales:59.00,
                         sizetitle:[
@@ -70,7 +76,7 @@
                         sizeData:[{GoodsID:'00AA',ColorID:'0AA',Color:'红色',x:'x_1',Quantity:0,SizeID:'00A',Size:'均码',Amount:''},
                             {GoodsID:'00AA',ColorID:'0AA',Color:'红色',x:'x_2',Quantity:0,SizeID:'00B',Size:'34',Amount:''}]
                         ,right: [
-                            /*  {
+                              {
                                   text: "置顶",
                                   onPress: function() {
                                       modal.toast({
@@ -78,7 +84,7 @@
                                           duration: 0.3
                                       });
                                   }
-                              }, */
+                              },
                             {
                                 text: "删除",
                                 onPress: () => {
@@ -99,7 +105,7 @@
                         sizeData:[{GoodsID:'00AA',ColorID:'0AB',Color:'白色',x:'x_1',Quantity:0,SizeID:'00A',Size:'均码',Amount:''},
                             {GoodsID:'00AA',ColorID:'0AB',Color:'白色',x:'x_2',Quantity:0,SizeID:'00B',Size:'34',Amount:''}]
                         , right: [
-                /*  {
+                  {
                       text: "置顶",
                       onPress: function() {
                           modal.toast({
@@ -107,7 +113,7 @@
                               duration: 0.3
                           });
                       }
-                  }, */
+                  },
                 {
                     text: "删除",
                     onPress: () => {
@@ -134,7 +140,7 @@
                         sizeData:[{GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_1',Quantity:1,SizeID:'00A',Size:'均码',Amount:''},
                             {GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_2',Quantity:1,SizeID:'00A',Size:'XS',Amount:''}]
                         ,right: [
-                            /*  {
+                             {
                                   text: "置顶",
                                   onPress: function() {
                                       modal.toast({
@@ -142,7 +148,7 @@
                                           duration: 0.3
                                       });
                                   }
-                              }, */
+                              },
                             {
                                 text: "删除",
                                 onPress: () => {
@@ -166,7 +172,7 @@
                         sizeData:[{GoodsID:'00AG',ColorID:'0BB',x:'x_1',Quantity:1,SizeID:'00A',Color:'白色',Size:'37',Amount:''},
                             {GoodsID:'00AG',ColorID:'0BB',Color:'白色',x:'x_2',Quantity:2,SizeID:'00B',Size:'38',Amount:''}]
                         ,right: [
-                            /*  {
+                              {
                                   text: "置顶",
                                   onPress: function() {
                                       modal.toast({
@@ -174,7 +180,7 @@
                                           duration: 0.3
                                       });
                                   }
-                              }, */
+                              },
                             {
                                 text: "删除",
                                 onPress: () => {
@@ -197,7 +203,7 @@
                         sizeData:[{GoodsID:'00AG',ColorID:'0BC',x:'x_1',Size:'均码',Color:'黄色',SizeID:'00B',Quantity:1,Amount:''},
                             {GoodsID:'00AG',ColorID:'0BC',Color:'黄色',x:'x_2',SizeID:'00C',Size:'XS',Quantity:2,Amount:''}]
                         ,right: [
-                            /*  {
+                              {
                                    text: "置顶",
                                    onPress: function() {
                                        modal.toast({
@@ -205,7 +211,7 @@
                                            duration: 0.3
                                        });
                                    }
-                               }, */
+                               },
                             {
                                 text: "删除",
                                 onPress: () => {
@@ -229,7 +235,7 @@
                         sizeData:[{GoodsID:'00AG',ColorID:'0BD',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
                             {GoodsID:'00AG',ColorID:'0BD',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
                         ,right: [
-                            /*  {
+                             {
                                   text: "置顶",
                                   onPress: function() {
                                       modal.toast({
@@ -237,7 +243,7 @@
                                           duration: 0.3
                                       });
                                   }
-                              }, */
+                              },
                             {
                                 text: "删除",
                                 onPress: () => {
@@ -260,7 +266,7 @@
                         sizeData:[{GoodsID:'00AG',ColorID:'0BF',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
                             {GoodsID:'00AG',ColorID:'0BF',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
                         ,right: [
-                            /*  {
+                             {
                                   text: "置顶",
                                   onPress: function() {
                                       modal.toast({
@@ -268,7 +274,7 @@
                                           duration: 0.3
                                       });
                                   }
-                              }, */
+                              },
                             {
                                 text: "删除",
                                 onPress: () => {
@@ -280,39 +286,61 @@
                                 style: { backgroundColor: "#F4333C", color: "white" }
                             }
                         ]
-                    }
+                    } */
 
                 ]
             }
         },methods: {
             onLoad(p){
               //...this.goodslist
-
+               var that=this
                // this.goodslist =p.detaillist || []
 
-
-
+                //有数据时单据
                 this.selectedlist =p.detaillist || []//JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
 
                 this.totalSelectedQuantity()
 
-                if(this.goodslist.length>0 && this.selectedlist.length >0){
-                 for(var i=0;i<this.selectedlist.length ;i++){
-                      var m1=this.selectedlist[i]
-                 //    this.alert('执行次数：'+i)
-                      for(var j=0;j<this.goodslist.length ;j++){
-                          var m2=this.goodslist[j]
-                         if(m1.GoodsID==m2.GoodsID && m1.ColorID==m2.ColorID){
-                             m2.Quantity=m1.Quantity
-                             m2.sizeData =m1.sizeData
-                         }
-                      }
-                 }
+                net.post(pref.getString('ip') + url,{Code:this.Code,page:this.page},{},function(){
+                    //start
+                },function(e){
+                    //success
+                    //self.back=e.res;
+                    //that.alert('e的返回：'+JSON.stringify(e))
+                   if(e.res.attributes !==undefined) {
+                       that.goodslist = e.res.attributes.goodslist || []
 
-                }
-                this.templist =this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist)))
-                this.alert('经过方法过滤后的templist：'+JSON.stringify(this.templist))
-                this.alert('goodslist：'+JSON.stringify(this.goodslist))
+                    //   if(that.goodslist.length>0 && that.selectedlist.length >0){
+                           for(var i=0;i<that.selectedlist.length ;i++){
+                               var m1=that.selectedlist[i]
+                               //    this.alert('执行次数：'+i)
+                               for(var j=0;j<that.goodslist.length ;j++){
+                                   var m2=that.goodslist[j]
+                                   if(m1.GoodsID==m2.GoodsID && m1.ColorID==m2.ColorID){
+                                       m2.Quantity=m1.Quantity
+                                       m2.sizeData =m1.sizeData
+                                   }
+                               }
+                           }
+
+                    //   }
+                       that.templist =that.goodsfilter(JSON.parse(JSON.stringify(that.goodslist)))
+
+
+                   }
+
+                },function(e){
+                    //compelete
+
+                },function(){
+                    //exception
+                    that.alert('请求异常')
+                });
+
+
+
+              //  this.alert('经过方法过滤后的templist：'+JSON.stringify(this.templist))
+               // this.alert('goodslist：'+JSON.stringify(this.goodslist))
 
             },totalSelectedQuantity(){
                 var sumqty=0
@@ -329,62 +357,45 @@
                     duration: 1
                 });
                 this.loadinging = true;
+                var that=this
+                that.page =Number(that.page)+Number(1)
                 setTimeout(() => {
-                    const length = this.goodslist.length;
-                    for (let i = length; i < length + 5; i++) {
-                        var map={GoodsID:'00AG',Code:'192B1210017',Name:'下拉加载的',ColorTitle:'颜色',ColorID:'0BD',Color:'绿色',img:'root:img/logo.png',
-                            Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,RetailSales:59.00,
-                            sizetitle:[
-                                {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
-                                ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
-                                {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
-                                ,{filed:'x_10',title:'5L'}
-                            ],
-                            sizeData:[{GoodsID:'00AG',ColorID:'0BD',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
-                                {GoodsID:'00AG',ColorID:'0BD',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
-                            ,right: [
-                                /*  {
-                                      text: "置顶",
-                                      onPress: function() {
-                                          modal.toast({
-                                              message: "置顶",
-                                              duration: 0.3
-                                          });
-                                      }
-                                  }, */
-                                {
-                                    text: "删除",
-                                    onPress: () => {
-                                        modal.toast({
-                                            message: "删除",
-                                            duration: 0.3
-                                        });
-                                    },
-                                    style: { backgroundColor: "#F4333C", color: "white" }
+                    const length = that.goodslist.length;
+                    net.post(pref.getString('ip') + url,{Code:that.Code,page:that.page},{},function(){
+
+                    },function(e){
+                         //let i = length; i < length + 5; i++
+                        for (let i = 0; i <e.res.attributes.goodslist.length; i++) {
+                            var map=e.res.attributes.goodslist[i]//{}
+
+                            var cm=that.hasmap(that.goodslist,map,0)//这里是每一项
+                            if(cm==undefined){
+                                that.goodslist.push(map);//i + 1
+                            } else if(cm !=undefined){
+                                for(var j=0;j<map.sizeData.length;j++){
+                                    var m=map.sizeData[j]
+                                    var zm=that.hasSize(cm.sizeData,m,1)
+                                    if( zm==undefined){
+                                        cm.sizeData.push(m)
+                                    }
                                 }
-                            ]
+
+                            }
                         }
+                        that.templist =that.goodsfilter(JSON.parse(JSON.stringify(that.goodslist))) //刷新列表
+                        that.loadinging = false;
 
-                        var cm=this.hasmap(this.goodslist,map,0)//这里是每一项
-                        if(JSON.stringify(cm) =="{}"){
-                            this.goodslist.push(map);//i + 1
-                        } else if(cm !='{}' && cm !=undefined){
-                           for(var j=0;j<map.sizeData.length;j++){
-                               var m=map.sizeData[j]
-                            var zm=this.hasSize(cm.sizeData,m,1)
-                               if(JSON.stringify(zm) =="{}" || zm==undefined){
-                                   cm.sizeData.push(m)
-                               }
-                           }
 
-                        }
+                    },function(e){
+                        //compelete
+
+                    },function(){
+                        //exception
+                    });
 
 
 
 
-                    }
-                    this.templist =this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist))) //刷新列表
-                    this.loadinging = false;
                 }, 2000);
             }, onrefresh(event) {
                 modal.toast({
@@ -403,16 +414,20 @@
                 });
             },onNodeClick(item2,i){
                 //this.goodslist.filter(item=>item.GoodsID ==item2.GoodsID))
-                this.alert('选 货品 的：'+JSON.stringify(this.goodslist))
+              //  this.alert('选 货品 的：'+JSON.stringify(this.goodslist))
                var obj =(this.goodslist.filter(item=>item.GoodsID ==item2.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
                     return {
                         GoodsID: obj.GoodsID,
+                        Code:obj.Code,
+                        Name:obj.Name,
+                        RetailSales:obj.RetailSales,
                         ColorID: obj.ColorID,
                         Quantity: obj.Quantity,
                         tipqty: obj.Quantity,
                         title: obj.Color,
                         Amount:obj.Amount,
-                        sizeData :obj.sizeData
+                        sizeData :obj.sizeData,
+                        sizetitle:obj.sizetitle
 
 
                     }
@@ -423,14 +438,18 @@
                     debugger
                     var map = {}
                     map.GoodsID = obj[i].GoodsID
+                    map.Code = obj[i].Code
+                    map.Name=obj[i].Name
+                    map.RetailSales=obj[i].RetailSales
                     map.ColorID = obj[i].ColorID
                     map.Quantity = obj[i].Quantity
                     map.tipqty = obj[i].tipqty
                     map.title = obj[i].title
+                    map.sizetitle=obj[i].sizetitle
                     if(arr.length>0) {
 
                         var  m=this.hasmap(arr,map,0)
-                        if(JSON.stringify(m)=='{}' || m==undefined){
+                        if(m==undefined){
 
                             arr.push(map)
                         }
@@ -459,159 +478,139 @@
 
                 nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                     , (e) => {
-                        if (e !== undefined){ //返回结果
+                        if (e !== undefined){ //返回结果  这里返回 的一个货号的
                             // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
-                            if(e.detaillist.length >0) {
-
-                                for(var i=0;i<e.detaillist.length ;i++){
-
-                                    var backdata=e.detaillist[i]
-                                    if(this.goodslist.length>0){
-                                        var m=this.hasmap(this.goodslist,backdata,1) //已经累加到货品颜色的值
-                                        if(JSON.stringify(m) !=='{}') {
+                              var templist =e.detaillist ||[]
+                                for(var i=0;i<templist.length ;i++){
+                                    var backdata=templist[i]
+                                        var m=this.hasmap(this.goodslist,backdata,1) //1 替换到货品颜色的值 整个货品列表
+                                    if(m != undefined) {//更新尺码
                                             for(var j=0;j<backdata.sizeData.length;j++) {
                                                 var sizemap=backdata.sizeData[j]
                                                 var n = this.hasSize(m.sizeData, sizemap,0)
                                             }
-                                        }else if(JSON.stringify(m) =='{}'){
+                                        }else {
                                             this.goodslist.unshift(backdata)
                                         }
-                                    }else{
-                                        this.goodslist.unshift(backdata)
-                                    }
 
-
+                                    var tempselect= this.hasmap(this.selectedlist,backdata,1) //已选货品列表
+                                   if(tempselect ==undefined){
+                                       this.selectedlist.unshift(backdata)
+                                   }else {
+                                       for(var j=0;j<backdata.sizeData.length;j++) {
+                                           var smap=backdata.sizeData[j]
+                                           this.hasSize(tempselect.sizeData, smap,0)   //替换原来 的值 0
+                                       }
+                                   }
 
                                 }
                                 //goodslist 代表所有货品 ，不管有没数量 这里只有有数量 的都要 但不确定是否有问题
                                 //this.selectedlist  这里是单据详情过来的，可能 有数据 ，也可能没有
-                                if(this.selectedlist.length<=0) {
-                                    this.selectedlist =JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
-                                }else if(this.selectedlist.length >0){
-                                    var arr =JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
-                                   if(arr.length>0) {
-                                       for(var i=0 ;i<arr.length;i++){
-                                           var map=arr[i]
-                                          var m= this.hasmap(this.selectedlist, map, 0)//0 表示累加 这里是比较到货品，颜色的
-                                           if(JSON.stringify(m) =='{}' || m==undefined){
-                                               this.selectedlist.unshift(map)
-                                           }else if(JSON.stringify(m) !=='{}' && m !==undefined){
-                                               for(var j=0;j<map.sizeData.length ;j++){
-                                                   var sizemap=map.sizeData[j]
-                                               this.hasSize(m.sizeData,sizemap,0)
-                                               }
-                                           }
-                                       }
-                                   }
-                                }
-                                this.alert('selectedlist:'+JSON.stringify(this.selectedlist))
+
+                              //  this.alert('selectedlist:'+JSON.stringify(this.selectedlist))
                                 this.totalSelectedQuantity()
                                 this.templist =this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist)))
                                 this.alert(JSON.stringify(this.goodslist))
 
                             }
-                        }
+
 
                     })
             },goodsfilter(arr){
-                //this.alert("arr过滤后的数组："+arr.length)
 
-              if(arr.length >0){ //要返回一个与货品汇总 数量的
                var returnlist=[]
-               for(var i=0; i<arr.length;i++){
-
-                  var map=arr[i]
-
-                 if(returnlist.length>0){
-                     var m=this.hasGoodsID(returnlist,map)
-
-                     if(JSON.stringify(m) =='{}'){
-                         returnlist.push(map)
-                     }
-                 }else{ //第一条
-
-                 returnlist.push(map)
-                 }
+               for(var i=0; i<arr.length;i++) { //每次都重新刷新
+                   var map = arr[i]
+                   var m=this.hasGoodsID(returnlist,map)
+                   if(m==undefined){
+                       returnlist.push(map)
+                   }
                }
-            //   this.alert("过滤后的数组kkkk："+JSON.stringify(returnlist))
-                 // this.alert('经过方法过滤后的goodslist：'+JSON.stringify(arr))
-
               return  returnlist;
-              }
+
             },selectedgoods(){ //只作显示 从已选列表返回
              //   this.selectedlist=JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !==''))))
                 this.submitmap.detaillist =this.selectedlist ||[] //this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='') )
-                nav.pushFull({url: 'root:selectedgoods.js',param:this.submitmap,animate:true}
+                this.alert("selectedlist发到已选列表的："+JSON.stringify(this.submitmap.detaillist))
+               nav.pushFull({url: 'root:selectedgoods.js',param:this.submitmap,animate:true}
                     , (e) => {
                     if(e !=undefined) { //返回的一定是已选列表里面有的货品
-                        if (e.detaillist.length > 0 && this.goodslist.length > 0) {
-                            for (var i = 0; i < e.detaillist.length; i++) {
-                                if (Number(e.detaillist[i].Quantity) > 0) {
-                                    for (var j = 0; j < this.selectedlist.length; j++) {
-                                        if (e.detaillist[i].GoodsID == this.selectedlist[j].GoodsID && e.detaillist[i].ColorID == this.selectedlist[j].ColorID) {
-                                            this.selectedlist[j] = e.detaillist[i]
-                                        }
+                           var tempselect =e.detaillist || []
 
-                                    }
+                          this.alert("tempselect:"+JSON.stringify(tempselect))
+
+                            for (var i = 0; i < tempselect.length; i++) {
+                                var tmap=tempselect[i]
+                                if (Number(tmap.Quantity) > 0) {
+                                  var m= this.hasmap(this.selectedlist,tmap,1)
+                                  if(m !=undefined){
+                                      m.sizeData=tmap.sizeData
+                                  }
+
+
                                 }
-                            }//<e.detaillist for 结束
-                            if(this.goodslist.length>0 && this.selectedlist.length>0) {
-                               for(var i =0 ; i<this.selectedlist.length ;i++){
-                                    var map=this.selectedlist[i]
+                            }//tempselect for 结束
+                        this.alert("selectedlist:"+JSON.stringify(this.selectedlist))
+                       //     if(this.goodslist.length>0 && this.selectedlist.length>0) {
+                               for(var i2 =0 ; i2<this.selectedlist.length ;i2++){
+                                    var map=this.selectedlist[i2]
                                    var m=this.hasmap(this.goodslist,map,1) //返回的是替换
                                }
 
-                            }
+                        //    }
                             this.totalSelectedQuantity()
                             this.templist = this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist)))
 
-                        }
+
                     }
             })
 
             }
             ,hasGoodsID(ls,map){
-               var m={}
+
                for(var i=0;i<ls.length ;i++){
                    if(ls[i].GoodsID == map.GoodsID ){
                        ls[i].Quantity =Number(ls[i].Quantity)+Number(map.Quantity)
-                       m= ls[i]
+                     var  m= ls[i]
 
                        return  m
                    }
                }
-               return m;
+               return undefined;
             },hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
-                var m={}
                 for (var j = 0; j < arr.length; j++) {
                     if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==0 ) {
                         arr[j].Quantity = Number(arr[j].Quantity) + Number(map.Quantity)
                         arr[j].tipqty = Number(arr[j].tipqty) + Number(map.tipqty)
-                        m=arr[j]
+                        var m=arr[j]
+                        return m
                     }else  if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==1 ) {
                         arr[j].Quantity = Number(map.Quantity)
                         arr[j].tipqty =  Number(map.tipqty)
-                        m=arr[j]
+                       var m=arr[j]
+                        return m
                     }
                 }
-                return m
+                return undefined
 
 
             },hasSize(arr,map,append){//用于过滤 sizeData
-                var m={}
+
                 for (var j = 0; j < arr.length; j++) {
 
                     if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID && append==0) {
                         arr[j].Quantity = map.Quantity
                         arr[j].Amount =map.Amount
-                        m  = arr[j]
+                       var m  = arr[j]
+                        return m
                     }else if(arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID && append==1){
                         arr[j].Quantity = Number(arr[j].Quantity)+Number(map.Quantity)
                         arr[j].Amount =Number(arr[j].Amount)+Number(map.Amount)
-                        m  = arr[j]
+                      var  m  = arr[j]
+                        return m
                     }
                         }
-                return m
+                return undefined
             },goSalesAdd(){ //返回单据详情
                 var p={}
                 p.detaillist= this.selectedlist || [] //已选列表
@@ -620,20 +619,54 @@
             //搜索框
            , wxcSearchbarInputOnFocus () {
             },
-            wxcSearchbarInputOnBlur () {
+            wxcSearchbarInputOnBlur (e) {
+               // this.alert("e的值:"+JSON.stringify(e))
+                var that=this
+                // this.value = e.value;
+               // this.alert("e的值:"+e.value)
+               // if(e.value.length >3) {
+                    net.post(pref.getString('ip') + url, {Code:e.value, page:1}, {}, function () {
+                        //start
+                    }, function (e) {
+                        //success
+                        // that.alert("e的值："+JSON.stringify(e))
+                        if(e.res.toLogin){
+                            that.alert('登录超时')
+                            that.push("root:index.js")
+                        }
+                        if(e.res.success && e.res.msg=='暂无数据'){
+                            that.toast(e.res.msg)
+                            return
+                        }
+                        if(e.res.attributes.goodslist.length>0) {
+                            that.goodslist = e.res.attributes.goodslist || []
+                            that.templist = that.goodsfilter(JSON.parse(JSON.stringify(that.goodslist)))
+                        }
+                    }, function (e) {
+                        //compelete
+
+                    }, function () {
+                        //exception
+                    });
+
+
             },
-            wxcSearchbarInputReturned (){
+            wxcSearchbarInputReturned (e){
+
+
             },
             wxcSearchbarCloseClicked () {
             },
             wxcSearchbarInputOnInput (e) {
-                this.value = e.value;
+
+
             },
             wxcSearchbarCancelClicked () {
             },
             wxcSearchbarInputDisabledClicked () {
             },
             wxcSearchbarDepChooseClicked () {
+
             } //搜索框结束
         }
     }

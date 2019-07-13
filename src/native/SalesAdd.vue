@@ -73,9 +73,11 @@
 
                      <div style="flex-direction: row"><text style="font-size: 30px;color: red;">{{ls.Code}}</text> <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text></div>
                  <!-- 图片与显示-->
-               <div style="flex-direction: row">
-                   <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text>
-                   <image src="https://www.baidu.com/img/bd_logo1.png" style="width: 150px;height: 150px"></image>
+               <div style="flex-direction: row;width: 750px">
+                   <text style="font-size: 30px;color:#000000;justify-content: center;align-items: center">{{Number(i)+1}}</text>
+                   <image v-if="ls.img" :src="ls.img" style="width: 150px;height: 150px;"></image>
+                   <image v-else  src="root:img/home_logo.png" style="width: 150px;height: 150px;"></image>
+
                    <div>
                    <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
                    <text style="font-size: 30px;color:#000000;height: 50px">折扣率:{{ls.Discount}}</text>
@@ -89,10 +91,10 @@
                </div>
                  <!-- 图片与显示-->
                 <div style="flex-direction: row">
-                 <text style="font-size: 30px;color:red;margin-left: 10px;width: 60px;text-align: center" v-for="(lst,index1) in ls.sizetitle">{{lst.title}}</text>
+                 <text style="font-size: 30px;color:red;margin-left: 5px;width: 40px;text-align: center" v-for="(lst,index1) in ls.sizetitle">{{lst.title}}</text>
                 </div>
                  <div style="flex-direction: row">
-                 <text style="font-size: 30px;color:#000000;margin-left: 10px;width: 60px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
+                 <text style="font-size: 30px;color:#000000;margin-left: 5px;width: 40px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
                  </div>
 
                  </div>  <!-- 整体包1结束-->
@@ -545,6 +547,7 @@
                                            this.alert(JSON.stringify(this.detaillist))
 
                                        }
+                                       this.total()
                                    }
 
                                })
