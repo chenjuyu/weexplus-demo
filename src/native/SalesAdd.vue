@@ -13,7 +13,7 @@
                   :cell-style="{'height':'70px'}"
                   @wxcCellClicked="wxcCellClicked"
                    :has-bottom-border="false"	>
-            <input type="text" style="width: 500px;height: 70px"/>
+            <input type="text" style="width: 500px;height: 70px" v-model="memo"/>
         </wxc-cell>
         <wxc-cell label="日期:"
                   :has-arrow="true"
@@ -125,7 +125,7 @@
 
     </list> <!-- 包整体-->
         <div class="footer">
-            <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; border-radius:20px ">  <text style="font-size: 40px;color: #FFFFFF;">保存</text></div>
+            <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; border-radius:20px " @click="save">  <text style="font-size: 40px;color: #FFFFFF;">保存</text></div>
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
         </div>
         <wxc-mask height="500"
@@ -210,9 +210,11 @@
            var nav = weex.requireModule('navigator') ;
            const  pref=weex.requireModule('pref')
            const net = weex.requireModule('net');
+           const progress = weex.requireModule('progress');
            import module1 from './jstools/mytool'//引用方式
            let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
            var url='/sales.do?salesEditX'
+           var saveurl='/sales.do?saveSales'
            export default {
                components: { WxcCell,WxcMask,WxcRadio   }
                ,props: {
@@ -234,6 +236,7 @@
                        submitmap:{}
                        ,SalesID:''//销售发货单 主表ID
                        ,billType:{Name:'批发'}
+                       ,memo:''
                       // ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
                      //  {GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
                        ,mobileX: 0,
@@ -664,7 +667,62 @@
 
 
 
-                   }, hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
+                   },
+                   save(){ //保存单据
+                       //提交前，先算好，零售金额
+                       var that=this
+
+                       if(this.Department.DepartmentID ==''){
+                           that.alert('请选择发货部门')
+                           return
+                       }
+                       if(this.customer.customerid ==''){
+                           that.alert('请选择客户')
+                           return;
+                       }
+
+                       for(var i=0;i<this.detaillist.length;i++){
+                           var map=this.detaillist[i] //只算到颜色那一层，尺码暂不管
+                           map.RetailAmount =Number(map.Quantity) *  Number(map.RetailSales)
+                       }
+                       var p={}
+                       p.SalesID =this.SalesID
+                       p.customerid=this.customer.customerid
+                       p.discountRateSum ='' //整单折扣 字段
+                       p.lastARAmount ='' //单据收款金额
+                       p.orderAmount ='' //使用订金
+                       p.privilegeAmount=''//优惠金额
+                       p.departmentid=this.Department.DepartmentID //发货部门
+                       p.employeeId =this.emp.EmpID //经手人
+                       p.brandId ='' //品牌
+                       p.businessDeptId ='' //业务部门
+                       p.paymentTypeId=''//结算方式
+                       p.memo ='手机APP生成' //备注
+                       p.type =this.billType.Name //单据类别
+                       p.direction =1 //发货单标志
+                       p.typeEName ='' //暂无使用些字段，有参数要地求要有
+                       p.notUseNegativeInventoryCheck="true" //没有负库存开单 猜的
+                       p.wxflag =true  //标志来源
+                       p.data=this.detaillist //单据子表数据 关键
+
+                       net.post(pref.getString('ip') + saveurl,p,{},function(){
+                           //start
+                           progress.showFull('正在保存单据请稍等',false)
+                       },function(e){
+                           //success
+
+                           progress.dismiss()
+                       },function(e){
+                           //compelete
+
+                       },function(){
+                           //exception
+                           that.alert('异常')
+                       });
+
+
+                   }
+                   ,hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
                        var m={}
                   for (var j = 0; j < arr.length; j++) {
                      if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==0 ) {
