@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <head :rightText="rightText"  @rightClick="rightClick"></head>
+        <head :rightText="rightText" title="销售发货单单据" @rightClick="rightClick"></head>
     <div class="search">
     <input type="text" style="width: 500px;height: 60px;border-width: 5px;border-color: #00B4FF;margin-left: 10px"/>
         <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">查询</text>
@@ -197,6 +197,7 @@
                direction: rtl;
 
 
+
            }
 
        </style>
@@ -207,8 +208,11 @@
            const modal =weex.requireModule('modal')
            var lodash = require('lodash');
            var nav = weex.requireModule('navigator') ;
+           const  pref=weex.requireModule('pref')
+           const net = weex.requireModule('net');
            import module1 from './jstools/mytool'//引用方式
            let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
+           var url='/sales.do?salesEditX'
            export default {
                components: { WxcCell,WxcMask,WxcRadio   }
                ,props: {
@@ -228,6 +232,7 @@
                ,data() {
                    return {
                        submitmap:{}
+                       ,SalesID:''//销售发货单 主表ID
                        ,billType:{Name:'批发'}
                       // ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
                      //  {GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
@@ -385,7 +390,36 @@
                }
                ,methods:{
                    onLoad(p){
-                     this.total()
+                      var that=this
+                       if(p==null){
+                           p={}
+                       }
+                     this.SalesID=p.hasOwnProperty("SalesID")?p.SalesID:''   //|| 'DN000XW'//''
+                       net.post(pref.getString('ip') + url,{SalesID:this.SalesID},{},function(){
+                           //start
+                       },function(e){
+                           //success
+                           if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                               that.detaillist = e.res.obj;
+                            /*   for(var i=0;i<that.detaillist[0].right.length;i++) {
+                                  // that.alert("style:" +that.detaillist[0].right[i].style)
+                                   //that.detaillist[0].right[i].style =JSON.parse(JSON.stringify(that.detaillist[0].right[i].style))
+                                   var style ={ backgroundColor: '#F4333C', color: 'white' }
+                                   that.detaillist[0].right[i].style =style
+                               } */
+                               that.total()
+                           }
+
+                       },function(e){
+                           //compelete
+
+                       },function(){
+                           //exception
+                       });
+
+
+
+
                    }
                    ,total(){
                      var  sumqty =0,sumamt=0,sumdiscount=0
@@ -496,6 +530,7 @@
                            });
                    },
                    onNodeClick(node, i) {
+                       this.alert("mobileX:"+this.mobileX)
                        if (this.mobileX < 0) {
                            this.mobileX = 0;
                            this.special(this.$refs.skid[this.saveIdx], {
@@ -511,6 +546,8 @@
                            if(node.sizeData.length>0) {
                                var obj =(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
                                    return {
+                                       SalesDetailID:obj.hasOwnProperty("SalesDetailID")?obj.SalesDetailID:'',
+                                       SalesID:obj.hasOwnProperty("SalesID")?obj.SalesID:'',
                                        GoodsID: obj.GoodsID,
                                        Code:obj.Code,
                                        Name:obj.Name,
@@ -533,6 +570,8 @@
                                for (var i = 0; i < obj.length; i++) {
                                    debugger
                                    var map = {}
+                                   map.SalesDetailID=obj[i].SalesDetailID
+                                   map.SalesID=obj[i].SalesID
                                    map.GoodsID = obj[i].GoodsID
                                    map.Code=obj[i].Code
                                    map.Name=obj[i].Name
@@ -545,7 +584,7 @@
                                    map.title = obj[i].title
                                    if(arr.length>0) {
 
-                                    var  m=this.hasmap(arr,map,0)
+                                    var  m=this.hasmap(arr,map,0) //合并相同颜色的 数量金额
                                      if(JSON.stringify(m)=='{}' || m==undefined){
 
                                          arr.push(map)
@@ -582,38 +621,36 @@
                                //this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
                             //  this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
 
-                           }
-
                            nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
                                    this.alert('e'+JSON.stringify(e))
                                    if (e !== undefined){ //返回结果是尺码集体的，要拆分
-                                      // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
+                                       // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                                        if(e==null || JSON.stringify(e)=='{}'){//无结果返回，指的是点左上角返回菜单的返回
                                            return
                                        }
                                        if(e.detaillist.length >0) {
 
-                                        for(var i=0;i<e.detaillist.length ;i++){
+                                           for(var i=0;i<e.detaillist.length ;i++){
 
-                                            var backdata=e.detaillist[i]
-                                            if(this.detaillist.length>0){
-                                             var m=this.hasmap(this.detaillist,backdata,1) //已经累加到货品颜色的值
-                                             if(JSON.stringify(m) !=='{}') {
-                                                 for(var j=0;j<backdata.sizeData.length;j++) {
-                                                     var sizemap=backdata.sizeData[j]
-                                                     var n = this.hasSize(m.sizeData, sizemap)
-                                                 }
-                                             }else if(JSON.stringify(m) =='{}'){
-                                                 this.detaillist.unshift(backdata)
-                                             }
-                                            }else{
-                                                this.detaillist.unshift(backdata)
-                                            }
+                                               var backdata=e.detaillist[i]
+                                               if(this.detaillist.length>0){
+                                                   var m=this.hasmap(this.detaillist,backdata,1) //已经累加到货品颜色的值 数量，金额
+                                                   if(JSON.stringify(m) !=='{}') {
+                                                       for(var j=0;j<backdata.sizeData.length;j++) {
+                                                           var sizemap=backdata.sizeData[j]
+                                                           var n = this.hasSize(m.sizeData, sizemap)
+                                                       }
+                                                   }else if(JSON.stringify(m) =='{}'){
+                                                       this.detaillist.unshift(backdata)
+                                                   }
+                                               }else{
+                                                   this.detaillist.unshift(backdata)
+                                               }
 
 
 
-                                        }
+                                           }
 
                                            this.alert(JSON.stringify(this.detaillist))
 
@@ -622,6 +659,10 @@
                                    }
 
                                })
+
+                           }
+
+
 
                    }, hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
                        var m={}

@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <head rightText="" backClick="back" title="多颜色多尺码" rightButton=""></head>
+        <head rightText="" backClick="back" title="录入界面" rightButton=""></head>
         <div class="goodsimg">
             <image style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
             <div class="dec">
@@ -112,7 +112,7 @@
                 retailsales:99.00,
                 unitprice:80.00,
                 discountrate:8.0,
-                imgurl:'root:img/logo.png',
+                imgurl:'root:img/home_logo.png',
                 res1: '',
                 res2: '',
                 res3: '',
@@ -486,6 +486,7 @@
                 let a=Number(0)
                 for(let i=0;i<this.sizelist.length;i++)
                 {
+
                     q=q+Number(this.sizelist[i].Quantity)
                     a=a+ Number(this.sizelist[i].Amount)
                 }

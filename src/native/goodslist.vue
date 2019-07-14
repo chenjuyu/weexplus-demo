@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <head :rightText="rightText"  @rightClick="rightClick"></head>
+        <head :rightText="rightText" title="货品列表"  @rightClick="rightClick"></head>
         <wxc-searchbar ref="wxc-searchbar"
                        @wxcSearchbarCancelClicked="wxcSearchbarCancelClicked"
                        @wxcSearchbarInputReturned="wxcSearchbarInputReturned"

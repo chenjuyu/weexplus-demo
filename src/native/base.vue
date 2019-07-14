@@ -1,6 +1,6 @@
 <template>
     <div class="wxc-demo">
-        <head></head>
+        <head :rightText="rightText" title="资料选择"  @rightClick="rightClick"></head>
         <div> <input class="input" type="text" placeholder="search" return-key-type="search" @return="search" v-model="text" /></div>
         <list>
         <cell class="cell" v-for="(lst,index) in list" @click="onSelected(lst,index)">
