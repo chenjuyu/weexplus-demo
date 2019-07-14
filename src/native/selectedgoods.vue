@@ -9,17 +9,17 @@
                         <div style="flex-direction: row"><text style="font-size: 30px;color: red;">{{ls.Code}}</text> <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text></div>
                         <!-- 图片与显示-->
                         <div style="flex-direction: row;width: 750px">
-                            <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text>
+                           <div style="justify-content: center;align-items: center"> <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text> </div>
                             <image src="https://www.baidu.com/img/bd_logo1.png" style="width: 150px;height: 150px;border-width: 3px"></image>
-                            <div>
+                            <div style="margin-left: 20px">
                                 <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
                                 <text style="font-size: 30px;color:#000000;height: 50px">折扣率:{{ls.Discount}}</text>
                                 <text style="font-size: 30px;color:#000000;height: 50px">数量:{{ls.Quantity}}</text>
                             </div>
                             <div style="position: absolute;right: 10px;">
-                                <text style="font-size: 30px;color:#000000;height: 50px;">单价:29.50</text>
-                                <text style="font-size: 30px;color:#000000;height: 50px;">折扣:9.0</text>
-                                <text style="font-size: 30px;color:#000000;height: 50px;">金额:29.50</text>
+                                <text style="font-size: 30px;color:#000000;height: 50px;">单价:{{ls.UnitPrice}}</text>
+                                <text style="font-size: 30px;color:#000000;height: 50px;">折扣:{{ls.DiscountRate}}</text>
+                                <text style="font-size: 30px;color:#000000;height: 50px;">金额:{{ls.Amount}}</text>
                             </div>
                         </div>
                         <!-- 图片与显示-->
@@ -200,6 +200,13 @@
                         m=arr[j]
                     }else  if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==1 ) {
                         arr[j].Quantity = Number(map.Quantity)
+                        arr[j].UnitPrice = Number(map.UnitPrice)
+                        arr[j].DiscountRate = Number(map.DiscountRate)
+                        if(Number(map.DiscountRate) !=0 && map.DiscountRate !='' && map.DiscountRate !=undefined) {
+                            arr[j].Discount = Number(map.Quantity)*Number(map.UnitPrice)*(Number(10)-Number(map.DiscountRate))/10.0
+                        }else{
+                            arr[j].Discount=''
+                        }
                         arr[j].tipqty =  Number(map.tipqty)
                         m=arr[j]
                     }

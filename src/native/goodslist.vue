@@ -482,8 +482,12 @@
 
                 nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                     , (e) => {
+                        this.alert('e:'+e)
                         if (e !== undefined){ //返回结果  这里返回 的一个货号的
                             // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
+                             if(e ==null){ //无结果返回，指的是点左上角返回菜单的返回
+                                 return
+                             }
                               var templist =e.detaillist ||[]
                                 for(var i=0;i<templist.length ;i++){
                                     var backdata=templist[i]
@@ -585,11 +589,22 @@
                 for (var j = 0; j < arr.length; j++) {
                     if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==0 ) {
                         arr[j].Quantity = Number(arr[j].Quantity) + Number(map.Quantity)
+                        arr[j].Amount = Number(arr[j].Amount) + Number(map.Amount)
                         arr[j].tipqty = Number(arr[j].tipqty) + Number(map.tipqty)
                         var m=arr[j]
                         return m
                     }else  if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==1 ) {
                         arr[j].Quantity = Number(map.Quantity)
+                        arr[j].UnitPrice = Number(map.UnitPrice)
+                        arr[j].DiscountRate = Number(map.DiscountRate)
+                        if(map.DiscountRate !=0 && map.DiscountRate !='' && map.DiscountRate !=undefined){
+                            arr[j].Amount =Number(map.Quantity) * Number(map.UnitPrice) * Number(map.DiscountRate) /10.0
+                            arr[j].Discount =Number(map.Quantity) * Number(map.UnitPrice) * (Number(10)-Number(map.DiscountRate)) /10.0
+                        }else{
+                            arr[j].Amount =Number(map.Quantity) * Number(map.UnitPrice)
+                            arr[j].Discount =''
+                        }
+
                         arr[j].tipqty =  Number(map.tipqty)
                        var m=arr[j]
                         return m
@@ -604,6 +619,13 @@
 
                     if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID && append==0) {
                         arr[j].Quantity = map.Quantity
+                        arr[j].UnitPrice = map.UnitPrice
+                        arr[j].DiscountRate = map.DiscountRate
+                        if(map.DiscountRate !=0 && map.DiscountRate !='' && map.DiscountRate !=undefined){
+                        arr[j].Discount =Number(map.Quantity) * Number(map.UnitPrice) * Number(map.DiscountRate) /10.0
+                        }else{
+                       arr[j].Discount =''
+                        }
                         arr[j].Amount =map.Amount
                        var m  = arr[j]
                         return m

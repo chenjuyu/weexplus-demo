@@ -388,12 +388,14 @@
                      this.total()
                    }
                    ,total(){
-                     var  sumqty =0,sumamt=0
+                     var  sumqty =0,sumamt=0,sumdiscount=0
                       for(var i=0 ;i<this.detaillist.length;i++){
                           sumqty =Number(sumqty)+Number(this.detaillist[i].Quantity)
                           sumamt =Number(sumamt)+Number(this.detaillist[i].Amount)
+                          sumdiscount =Number(sumdiscount)+Number(this.detaillist[i].Discount)
                       }
                        this.totalQty=sumqty
+                       this.totalDiscount =sumdiscount
                        this.totalAmt=sumamt
                    }
                    ,wxcCellClicked(id){
@@ -482,7 +484,12 @@
                        });
                    },
                    onRightNode(pNode, node, i) {
-                       node.onPress();
+                      // node.onPress();
+                       //this.alert(node)
+                       if(node.text=='删除'){
+                           this.detaillist.splice(i,1);//删除元素，以i 为参数
+                           this.total()
+                       }
                        if (pNode.autoClose)
                            this.special(this.$refs.skid[i], {
                                transform: `translate(0, 0)`
@@ -579,8 +586,12 @@
 
                            nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
+                                   this.alert('e'+JSON.stringify(e))
                                    if (e !== undefined){ //返回结果是尺码集体的，要拆分
                                       // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
+                                       if(e==null || JSON.stringify(e)=='{}'){//无结果返回，指的是点左上角返回菜单的返回
+                                           return
+                                       }
                                        if(e.detaillist.length >0) {
 
                                         for(var i=0;i<e.detaillist.length ;i++){
@@ -625,7 +636,7 @@
                          arr[j].UnitPrice = Number(map.UnitPrice)
                          arr[j].DiscountRate = Number(map.DiscountRate)
                          if(Number(map.DiscountRate)!=0 && map.DiscountRate !=="" && map.DiscountRate !=undefined) {
-                             arr[j].Discount = Number(map.UnitPrice) * Number(map.Quantity) * Number(map.DiscountRate)/ 10.0 //增加一基折扣额
+                             arr[j].Discount = Number(map.UnitPrice) * Number(map.Quantity) * (Number(10)-Number(map.DiscountRate))/ 10.0 //增加一基折扣额
                          }else{
                              arr[j].Discount =''
                          }
@@ -727,6 +738,10 @@
                        this.submitmap.Type =this.billType.Name
                        nav.pushFull({url: 'root:goodslist.js',param:this.submitmap,animate:true}
                                     ,(e)=>{
+                               this.alert('e的的的'+JSON.stringify(e))
+                               if(e==null || JSON.stringify(e)=='{}'){//无结果返回，指的是点左上角返回菜单的返回
+                                   return
+                               }
                                 if(e.detaillist.length >0){
 
                                   this.detaillist =e.detaillist

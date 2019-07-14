@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <head rightText="" title="多颜色多尺码" rightButton=""></head>
+        <head rightText="" backClick="back" title="多颜色多尺码" rightButton=""></head>
         <div class="goodsimg">
             <image style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
             <div class="dec">
@@ -274,6 +274,7 @@
 
 
             },jian(ls){
+                var _this=this
                 ls.Quantity =Number(ls.Quantity)-1
                 if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
                     ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
@@ -281,8 +282,20 @@
                 if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
                     ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
                 }
+
+                   let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
+                   for (let i = 0; i < dList.length; i++) {
+                       let map = dList[i]
+                       map.tipqty = _this.tipqtytotal(map.GoodsID, map.ColorID)
+                       if (map.tipqty > 99) {
+                           map.tipqty = '99+'
+                       }
+                   }
+
+
                 this.total()
             },add(ls){
+               var _this=this
                 ls.Quantity =Number(ls.Quantity)+1
                if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
@@ -290,17 +303,34 @@
                if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
                }
+
+                   let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
+                   for (let i = 0; i < dList.length; i++) {
+                       let map = dList[i]
+                       map.tipqty = _this.tipqtytotal(map.GoodsID, map.ColorID)
+                       if (map.tipqty > 99) {
+                           map.tipqty = '99+'
+                       }
+                   }
+
                 this.total()
-            },hascolor(arr,map){
+            },hascolor(arr,map){ //这里是每个颜色的合计与合并
                for (var j = 0; j < arr.length; j++) {
                    var m=arr[j]
                    if (m.GoodsID == map.GoodsID && m.ColorID == map.ColorID) {
                        m.Quantity = Number(m.Quantity) + Number(map.Quantity)
                        m.Amount = Number(m.Amount) + Number(map.Amount)
+                       if(m.DiscountRate !=0 && m.DiscountRate !='' && m.DiscountRate !=undefined){
+                           m.Discount  =  Number(m.UnitPrice)* Number(m.Quantity) * (Number(10)-Number(m.DiscountRate)) /10.0
+                       }else{
+                           m.Discount =''
+                       }
                        return m
                    }
                }
                return undefined
+           },back(e){ //没有按提交返回，这个是点左上角菜单返回的
+
            }
             ,submit(){
                var _that=this
@@ -321,6 +351,7 @@
                                 RetailSales:_that.goods.RetailSales,
                                 UnitPrice:obj.UnitPrice,
                                 DiscountRate:obj.DiscountRate,
+                                Discount:'',
                                 Color: obj.Color,
                                 Amount: obj.Amount
                             }
@@ -413,14 +444,7 @@
                 // checkedList.map(item => item.tipqty=8) //这种方式可以更新
                 //  _this.alert('checkedList:'+JSON.stringify(_this.$refs.glist.dList))
 
-                let dList=_this.$refs.glist.dList.filter(item => item.checked===false)
-                for(let i=0;i<dList.length;i++){
-                    let map=dList[i]
-                    map.tipqty=_this.tipqtytotal(map.GoodsID,map.ColorID)
-                    if(map.tipqty>99){
-                        map.tipqty='99+'
-                    }
-                }
+
 
 
 
