@@ -45,6 +45,7 @@
 </template>
 
 <script>
+    import module1 from './jstools/mytool'// 引用方式
     var nav = weex.requireModule('navigator') ;
     import { Utils } from 'weex-ui';
     import Binding from "weex-bindingx/lib/index.weex.js";
@@ -53,6 +54,12 @@
     var nav = weex.requireModule('navigator') ;
     const  pref=weex.requireModule('pref')
     const net = weex.requireModule('net');
+
+    var date = new Date();//获取当前时间
+    date.setDate(date.getDate()-1);//设置天数 -1 天
+    let beginTime=module1.formatDate((date),"yyyy-MM-dd")
+    let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
+
     var url='/sales.do?saleslist'
     export default {
         components: {
@@ -223,8 +230,8 @@
                 param.currPage=this.currPage
                 param.audit=''
                 param.no=''
-                param.beginDate=''
-                param.endDate=''
+                param.beginDate=beginTime
+                param.endDate=endTime
                 param.departmentId=''
                 param.customerId=''
                 param.employeeId=''
@@ -316,7 +323,18 @@
                     });
                 } else {
                     //this.$emit("onNodeClick", node, i);
-                    this.push('root:SalesAdd.js',{SalesID:node.SalesID})
+                    var p={}
+                    p.SalesID=node.SalesID
+                    p.DepartmentID =node.DepartmentID
+                    p.Department =node.Department
+                    p.Memo=node.Memo
+                    p.Customer=node.Customer
+                    p.CustomerID=node.CustomerID
+                    p.Name=node.Name
+                    p.EmployeeID=node.EmployeeID
+                    p.Date=node.Date
+                    p.LastNeedRAmount=node.LastNeedRAmount
+                    this.push('root:SalesAdd.js',p)
 
                 }
             },

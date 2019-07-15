@@ -211,7 +211,7 @@
            const  pref=weex.requireModule('pref')
            const net = weex.requireModule('net');
            const progress = weex.requireModule('progress');
-           import module1 from './jstools/mytool'//引用方式
+           import module1 from './jstools/mytool'// 引用方式
            let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
            var url='/sales.do?salesEditX'
            var saveurl='/sales.do?saveSales'
@@ -394,10 +394,23 @@
                ,methods:{
                    onLoad(p){
                       var that=this
+                       this.alert(JSON.stringify(p))
                        if(p==null){
                            p={}
                        }
+
                      this.SalesID=p.hasOwnProperty("SalesID")?p.SalesID:''   //|| 'DN000XW'//''
+
+                      this.memo =p.hasOwnProperty("Memo")?p.Memo:''
+                      this.DateStr =p.hasOwnProperty("Date")?p.Date:timestr
+                      this.Department.DepartmentID =p.hasOwnProperty("DepartmentID")?p.DepartmentID:''
+                      this.Department.Department =p.hasOwnProperty("Department")?p.Department:''
+                      this.customer.customerid =p.hasOwnProperty("CustomerID")?p.CustomerID:''
+                      this.customer.customer =p.hasOwnProperty("Customer")?p.Customer:''
+                      this.customer.lastAmt = p.hasOwnProperty("LastNeedRAmount")?p.LastNeedRAmount:''
+                      this.emp.EmpID = p.hasOwnProperty("EmployeeID")?p.EmployeeID:''
+                       this.emp.Name =p.hasOwnProperty("Name")?p.Name:''
+
                        net.post(pref.getString('ip') + url,{SalesID:this.SalesID},{},function(){
                            //start
                        },function(e){
@@ -680,6 +693,11 @@
                            that.alert('请选择客户')
                            return;
                        }
+                      if(this.detaillist.length <=0){
+                          that.alert('当前无数据可提交')
+                          return;
+                      }
+
 
                        for(var i=0;i<this.detaillist.length;i++){
                            var map=this.detaillist[i] //只算到颜色那一层，尺码暂不管
@@ -707,17 +725,24 @@
 
                        net.post(pref.getString('ip') + saveurl,p,{},function(){
                            //start
-                           progress.showFull('正在保存单据请稍等',false)
+                           progress.showFull('正在保存单据',false)
                        },function(e){
                            //success
-
                            progress.dismiss()
+                           that.SalesID =e.res.attributes.SalesID
+                           that.toast('保存成功')
+                           that.push('root:saleslist.js')
+                           //var p={}
+                          // p.SalesID=e.res.attributes.SalesID
+                           //that.onLoad(p)
+
                        },function(e){
                            //compelete
 
                        },function(){
                            //exception
                            that.alert('异常')
+                           progress.dismiss()
                        });
 
 

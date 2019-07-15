@@ -3,6 +3,7 @@ let wraper = require('../component/wraper.vue')
 let head = require('../component/head.vue')
 let button = require('../component/button.vue')
 let page = require('../component/page.vue')
+
 Mixins.install = (Vue, options) => {
   Vue.mixin({
     components: {wraper, head, button, page},
