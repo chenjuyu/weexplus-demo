@@ -108,6 +108,7 @@
         data(){
             return{
                 isPDA:false,
+                addflag:false,//点新增按扭增加 新增货品，不是修改货品
                 goods:{},
                 retailsales:99.00,
                 unitprice:80.00,
@@ -235,6 +236,9 @@
                     message: 'GoodsID的值：'+ param.GoodsID,
                     duration: 0.3
                 })
+
+                _this.addflag =p.hasOwnProperty("addflag")?p.addflag:false
+
                 _this.testData3.splice(0,_this.testData3.length) //清空
                 _this.sizelist.splice(0,_this.sizelist.length)
 
@@ -336,9 +340,11 @@
                var _that=this
                 var p={}
                // p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
-                var templist=this.sizelist.filter(item=>Number(item.Quantity)!==0) ||[]
+               //这里是单个的 改一下，改为不等于空 而不是0
+              //  var templist=this.sizelist.filter(item=>Number(item.Quantity)!==0) ||[]
+               var templist=JSON.parse(JSON.stringify(this.sizelist.filter(item=>Number(item.Quantity)!==''))) ||[]
                 if(this.isPDA) {
-                    pref._SendN(this.sizelist.filter(item => Number(item.Quantity) !== 0))
+                    pref._SendN(this.sizelist.filter(item => Number(item.Quantity) !== ''))
                 }else {
                     if (templist.length > 0) {
                         var obj = templist.map(function (obj) {
@@ -427,6 +433,7 @@
 
                     }
                     p.detaillist =temparr
+                   // templist.slice(0,templist.length) //清空
                     nav.backFull(p,false)
                 }
             },

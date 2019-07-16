@@ -5,7 +5,7 @@
             <input type="text" style="width: 500px;height: 80px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" return-key-type="search" v-model="No" @input="search" placeholder="输入单号查询"/>
             <div style="border-width: 5px;border-color: #00B4FF;height: 80px;width: 200px;align-items:center;justify-content: center"><text @click="add" style="font-size: 35px;">增加单据</text> </div>
         </div>
-        <list style="height: 920px; margin-top: 20px">
+        <list style="flex: 1; margin-top: 20px;margin-bottom: 80px;">
                 <cell ref="skid" v-for="(item, i) of data" @click="onNodeClick(item, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + item.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, item, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, item, i)" @touchend="(e) => onPanEnd(e, item, i)">
                     <div :style='styles' class="swipe-action-center border">
 
@@ -407,6 +407,7 @@
       /* background-color: #dddddd; */
         border-top-width: 1px;
         border-top-color: #dddddd;
+        flex:1;
     }
     .border {
         border-bottom-width: 1px;

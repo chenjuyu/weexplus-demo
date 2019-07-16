@@ -5,7 +5,7 @@
     <input type="text" style="width: 500px;height: 60px;border-width: 5px;border-color: #00B4FF;margin-left: 10px"/>
         <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">查询</text>
     </div>
-    <list style="height: 1000px;">
+    <list style="flex: 1;margin-top: 5px;margin-bottom: 80px">
     <cell>
     <div class="master">
         <wxc-cell label="备注:"
@@ -148,6 +148,9 @@
          </div>
        </template>
        <style scoped>
+           .wrapper{
+               flex: 1;
+           }
            .wxc-skid{
                flex-direction: row;
                border-bottom-width: 1px;
@@ -393,13 +396,19 @@
                }
                ,methods:{
                    onLoad(p){
+
                       var that=this
+                       that.detaillist.slice(0,that.detaillist.length) //重新进入都清一次
                        this.alert(JSON.stringify(p))
                        if(p==null){
                            p={}
                        }
-
                      this.SalesID=p.hasOwnProperty("SalesID")?p.SalesID:''   //|| 'DN000XW'//''
+
+                       if(this.SalesID ==''){ //可能是新增单据，也有可能是从其他页面点的返回键
+                           return
+                       }
+
 
                       this.memo =p.hasOwnProperty("Memo")?p.Memo:''
                       this.DateStr =p.hasOwnProperty("Date")?p.Date:timestr
@@ -417,6 +426,10 @@
                            //success
                            if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
                                that.detaillist = e.res.obj;
+                             //  that.alert("网络返回的："+JSON.stringify(that.detaillist[3])+",长度："+that.detaillist[3].sizeData.length)
+
+
+
                             /*   for(var i=0;i<that.detaillist[0].right.length;i++) {
                                   // that.alert("style:" +that.detaillist[0].right[i].style)
                                    //that.detaillist[0].right[i].style =JSON.parse(JSON.stringify(that.detaillist[0].right[i].style))
@@ -559,6 +572,7 @@
                        } else {
                           // this.$emit("onNodeClick", node, i);
                          //  this.alert(JSON.stringify(node))
+                           this.alert("占南后的："+JSON.stringify(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID))+",记录数："+(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).length)
                            if(node.sizeData.length>0) {
                                var obj =(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
                                    return {
@@ -581,7 +595,7 @@
                                    }
                                })
 
-                            //   this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
+                              this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
                                var arr = [] ,   sizearr=[]
                                for (var i = 0; i < obj.length; i++) {
                                    debugger
@@ -634,9 +648,9 @@
                                arr[0].checked = true
                                this.submitmap.colorlist = arr
                                this.submitmap.sizelist = sizearr//node.sizeData//this.testlist
-                               //this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
-                            //  this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
-
+                               this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
+                              this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
+                        //  return
                            nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
                                    this.alert('e'+JSON.stringify(e))
@@ -860,6 +874,7 @@
                        this.submitmap.detaillist=this.detaillist || []
                        this.submitmap.CustomerID=this.customer.customerid
                        this.submitmap.Type =this.billType.Name
+                       this.submitmap.addflag=true
                        nav.pushFull({url: 'root:goodslist.js',param:this.submitmap,animate:true}
                                     ,(e)=>{
                                this.alert('e的的的'+JSON.stringify(e))

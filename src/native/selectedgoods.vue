@@ -67,6 +67,7 @@
         },
         data(){
             return{
+                addflag:false,
                 submitmap:{},
                 detaillist:[]
 
@@ -74,6 +75,7 @@
         },methods:{
             onLoad(p){
               this.detaillist=p.detaillist
+              this.addflag =p.hasOwnProperty("addflag")?p.addflag:false
             },
             submit(e){
               var p={}
@@ -151,6 +153,7 @@
             arr[0].checked = true
             this.submitmap.colorlist = arr
             this.submitmap.sizelist = sizearr//node.sizeData//this.testlist
+            this.submitmap.addflag=this.addflag
             //this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
             //  this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
 

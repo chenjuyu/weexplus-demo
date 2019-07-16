@@ -59,6 +59,7 @@
         components: { WxcSearchbar },
         data(){
             return{
+                addflag:false,//单据新增标志
                 loadinging: false,
                 refreshing: false,
                 Code:'',//搜索条件&page=1
@@ -295,7 +296,9 @@
               //...this.goodslist
                var that=this
                // this.goodslist =p.detaillist || []
-
+               if(p !=null && p !=undefined && JSON.stringify(p) !="{}"){
+                   this.addflag =p.hasOwnProperty("addflag")?p.addflag:false
+               }
                 //有数据时单据
                 this.selectedlist =p.detaillist || []//JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
 
@@ -479,6 +482,7 @@
 
                 this.submitmap.colorlist = arr
                 this.submitmap.sizelist = sizearr
+                this.submitmap.addflag=this.addflag
 
                 nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                     , (e) => {
@@ -539,6 +543,7 @@
             },selectedgoods(){ //只作显示 从已选列表返回
              //   this.selectedlist=JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !==''))))
                 this.submitmap.detaillist =this.selectedlist ||[] //this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='') )
+                this.submitmap.addflag=this.addflag
                 this.alert("selectedlist发到已选列表的："+JSON.stringify(this.submitmap.detaillist))
                nav.pushFull({url: 'root:selectedgoods.js',param:this.submitmap,animate:true}
                     , (e) => {
