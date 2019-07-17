@@ -280,6 +280,7 @@
             },jian(ls){
                 var _this=this
                 ls.Quantity =Number(ls.Quantity)-1
+
                 if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
                     ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
                 }
@@ -340,9 +341,12 @@
                var _that=this
                 var p={}
                // p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
-               //这里是单个的 改一下，改为不等于空 而不是0
+               //这里是单个的 改一下，等于0 时可能是修改，
               //  var templist=this.sizelist.filter(item=>Number(item.Quantity)!==0) ||[]
-               var templist=JSON.parse(JSON.stringify(this.sizelist.filter(item=>Number(item.Quantity)!==''))) ||[]
+             //  _that.alert("cc:"+JSON.stringify(this.sizelist.filter(item=>(item.Quantity===0 || item.Quantity))))
+
+              // return
+               var templist=JSON.parse(JSON.stringify(this.sizelist.filter(item=>(item.Quantity===0 || item.Quantity)))) ||[]
                 if(this.isPDA) {
                     pref._SendN(this.sizelist.filter(item => Number(item.Quantity) !== ''))
                 }else {

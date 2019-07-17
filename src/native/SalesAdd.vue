@@ -1,9 +1,9 @@
 <template>
     <div class="wrapper">
         <head :rightText="rightText" title="销售发货单单据" @rightClick="rightClick"></head>
-    <div class="search">
-    <input type="text" style="width: 500px;height: 60px;border-width: 5px;border-color: #00B4FF;margin-left: 10px"/>
-        <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">查询</text>
+    <div class="search" >
+    <input type="text" style="width: 500px;height: 60px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" @input="input"  v-model="keyword"/>
+        <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center" @click="search">查询</text>
     </div>
     <list style="flex: 1;margin-top: 5px;margin-bottom: 80px">
     <cell>
@@ -126,7 +126,7 @@
     </list> <!-- 包整体-->
         <div class="footer">
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; border-radius:20px " @click="save">  <text style="font-size: 40px;color: #FFFFFF;">保存</text></div>
-            <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
+            <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px" @click="receival"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
         </div>
         <wxc-mask height="500"
                   width="500"
@@ -149,7 +149,12 @@
        </template>
        <style scoped>
            .wrapper{
-               flex: 1;
+
+               position: absolute;
+               top: 0;
+               right: 0;
+               bottom: 0;
+               left: 0;
            }
            .wxc-skid{
                flex-direction: row;
@@ -214,6 +219,7 @@
            const  pref=weex.requireModule('pref')
            const net = weex.requireModule('net');
            const progress = weex.requireModule('progress');
+           const dom = weex.requireModule('dom')
            import module1 from './jstools/mytool'// 引用方式
            let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
            var url='/sales.do?salesEditX'
@@ -237,7 +243,9 @@
                ,data() {
                    return {
                        submitmap:{}
+                       ,keyword:''
                        ,SalesID:''//销售发货单 主表ID
+                       ,lastARAmount:'' //单据的收款金额
                        ,billType:{Name:'批发'}
                        ,memo:''
                       // ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
@@ -721,7 +729,7 @@
                        p.SalesID =this.SalesID
                        p.customerid=this.customer.customerid
                        p.discountRateSum ='' //整单折扣 字段
-                       p.lastARAmount ='' //单据收款金额
+                       p.lastARAmount =this.lastARAmount //单据收款金额
                        p.orderAmount ='' //使用订金
                        p.privilegeAmount=''//优惠金额
                        p.departmentid=this.Department.DepartmentID //发货部门
@@ -759,6 +767,25 @@
                            progress.dismiss()
                        });
 
+
+                   },receival(){//收款
+                       var that=this
+                       var p={}
+                         p.lastARAmount =this.lastARAmount
+                         p.totalQty =this.totalQty
+                         p.totalAmt =this.totalAmt
+                       nav.pushFull({url: 'root:salesreceival.js',param:p,animate:true}
+                           , (e) => {
+                               this.alert('e' + JSON.stringify(e))
+                               if (e !== undefined) { //返回结果是尺码集体的，要拆分
+                                   if(e==null || JSON.stringify(e)=='{}'){//无结果返回，指的是点左上角返回菜单的返回
+                                       return
+                                   }
+                                   that.lastARAmount= e.ReceivalAmount
+
+
+                               }
+                           })
 
                    }
                    ,hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
@@ -889,6 +916,23 @@
                                 }
                            })
 
+                   },input(){
+                       this.search()
+                   }
+                   ,search(){
+
+
+                       for(var i=0;i<this.detaillist.length;i++) {
+                         var map  =  this.detaillist[i]
+                           this.log("外层的："+i)
+                        //   this.log(map) indexOf(this.keyword) !=-1
+                             if(map.Code.indexOf(this.keyword) !=-1){
+                                 this.log(i)
+                                   const el = this.$refs["skid"][i] //this.$refs.item10[0]
+                                   dom.scrollToElement(el, {})
+
+                               }
+                       }
                    }
 
                }
