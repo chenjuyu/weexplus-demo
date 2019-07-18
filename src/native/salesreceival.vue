@@ -3,17 +3,17 @@
         <head :rightText="rightText" title="收款"  @rightClick="rightClick"></head>
         <div class="master">
             <wxccell label="应收余额:"
-                      :has-arrow="false"
-                      :cell-style="{'height':'100px'}"
-                      :has-bottom-border="true"	>
-                <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{LastNeedRAmount}}</text>
-            </wxccell>
-
-            <wxccell label="收款余额:"
                      :has-arrow="false"
                      :cell-style="{'height':'100px'}"
                      :has-bottom-border="true"	>
-                <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{ReceivalAmount}}</text>
+                <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{LastNeedRAmount}}</text>
+            </wxccell>
+
+            <wxccell label="收款金额:"
+                     :has-arrow="false"
+                     :cell-style="{'height':'100px'}"
+                     :has-bottom-border="true">
+                <input type="number" v-model="ReceivalAmount" style="width: 500px;height: 90px;"/>
             </wxccell>
 
             <wxccell label="结算方式:"
@@ -95,18 +95,19 @@
                 if(p==null){
                     p={}
                 }
+                this.ReceivalAmount=p.hasOwnProperty("lastARAmount")?p.lastARAmount:''
                 this.totalQty=p.hasOwnProperty("totalQty")?p.totalQty:''
                 this.totalAmt=p.hasOwnProperty("totalAmt")?p.totalAmt:''
             },wxcCellClicked(id){
                 var that=this
                 var condition=''
-               if(that.PaymentType !=='' && id==1){
-                   condition =that.PaymentType
-               }else if(that.PaymentType2 !=='' && id==2){
-                   condition =that.PaymentType2
-               }else if(that.PaymentType3 !=='' && id==3){
-                   condition =that.PaymentType3
-               }
+                if(that.PaymentType !=='' && id==1){
+                    condition =that.PaymentType
+                }else if(that.PaymentType2 !=='' && id==2){
+                    condition =that.PaymentType2
+                }else if(that.PaymentType3 !=='' && id==3){
+                    condition =that.PaymentType3
+                }
 
 
                 nav.pushFull({
@@ -116,19 +117,19 @@
                     isPortrait:true
                 }, (e) => {
                     if (e != undefined){
-                       if(e==null || JSON.stringify(e)=="{}"){
-                           return
-                       }
-                       if(id==1){
-                          that.PaymentTypeID =e.id
-                          that.PaymentType =e.Name
-                       }else if(id==2){
-                           that.PaymentType2ID =e.id
-                           that.PaymentType2 =e.Name
-                       }else if(id==3){
-                           that.PaymentType3ID =e.id
-                           that.PaymentType3 =e.Name
-                       }
+                        if(e==null || JSON.stringify(e)=="{}"){
+                            return
+                        }
+                        if(id==1){
+                            that.PaymentTypeID =e.id
+                            that.PaymentType =e.Name
+                        }else if(id==2){
+                            that.PaymentType2ID =e.id
+                            that.PaymentType2 =e.Name
+                        }else if(id==3){
+                            that.PaymentType3ID =e.id
+                            that.PaymentType3 =e.Name
+                        }
 
 
 
@@ -153,17 +154,17 @@
 </script>
 
 <style scoped>
-.container{
-    flex: 1;
-}
-.footer{
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 750px;
-    flex-direction: row;
-    height: 80px;
-    background-color: #1EA5FC;
-}
+    .container{
+        flex: 1;
+    }
+    .footer{
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 750px;
+        flex-direction: row;
+        height: 80px;
+        background-color: #1EA5FC;
+    }
 </style>
