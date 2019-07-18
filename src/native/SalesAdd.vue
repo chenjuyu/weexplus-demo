@@ -62,7 +62,7 @@
      <div class="listbutton">
          <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-left: 5px;text-align: center">蓝牙增加</text>
          <text @click="addgoods" style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;text-align: center">快速增加</text>
-         <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">扫码增加</text>
+         <text @click="qrcodeclick" style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">扫码增加</text>
      </div>
     </div> </cell><!--master 结束 border-radius:25px   v-for="num in lists" <list style="height: 200px"> </list>-->
 
@@ -219,11 +219,13 @@
            const  pref=weex.requireModule('pref')
            const net = weex.requireModule('net');
            const progress = weex.requireModule('progress');
+
            const dom = weex.requireModule('dom')
            import module1 from './jstools/mytool'// 引用方式
            let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
            var url='/sales.do?salesEditX'
            var saveurl='/sales.do?saveSales'
+           var qrcodeurl='/select.do?analyticalBarcodeX'
            export default {
                components: { WxcCell,WxcMask,WxcRadio   }
                ,props: {
@@ -246,7 +248,7 @@
                        ,keyword:''
                        ,SalesID:''//销售发货单 主表ID
                        ,lastARAmount:'' //单据的收款金额
-                       ,billType:{Name:'批发'}
+                       ,billType:{Name:'批发',id:'PriceType'}
                        ,memo:''
                       // ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
                      //  {GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2}]
@@ -542,7 +544,18 @@
                       // var pop=weex.requireModule("centerpop")
                       // pop.dismiss();
 
-                       this.Type =e.value
+                       this.billType.Name =e.value
+                       if(e.value=='批发'){
+                        this.billType.id='PriceType'
+                       }else if(e.value=='订货'){
+                        this.billType.id='OrderPriceType'
+                       }else if(e.value =='配货'){
+                        this.billType.id='AllotPriceType'
+                       }else if(e.value =='补货'){
+                         this.billType.id='ReplenishType'
+                       }
+
+
                        this.show=false
                    }
                    //左滑方法开始
@@ -673,11 +686,11 @@
 
                                                var backdata=e.detaillist[i]
                                                if(this.detaillist.length>0){
-                                                   var m=this.hasmap(this.detaillist,backdata,1) //已经累加到货品颜色的值 数量，金额
+                                                   var m=this.hasmap(this.detaillist,backdata,1) //1 替换
                                                    if(JSON.stringify(m) !=='{}') {
                                                        for(var j=0;j<backdata.sizeData.length;j++) {
                                                            var sizemap=backdata.sizeData[j]
-                                                           var n = this.hasSize(m.sizeData, sizemap)
+                                                           var n = this.hasSize(m.sizeData, sizemap,0)
                                                        }
                                                    }else if(JSON.stringify(m) =='{}'){
                                                        this.detaillist.unshift(backdata)
@@ -808,20 +821,35 @@
                          arr[j].Amount = Number(map.Amount)
                          arr[j].tipqty =  Number(map.tipqty)
                          m=arr[j]
+                     }else  if(arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==2){ //扫码追加数据
+                         arr[j].Quantity = Number(arr[j].Quantity) + Number(map.Quantity)
+                         arr[j].Amount = Number(arr[j].Amount) + Number(map.Amount)
+                         arr[j].DiscountRate = Number(map.DiscountRate)
+                         if(Number(map.DiscountRate)!=0 && map.DiscountRate !=="" && map.DiscountRate !=undefined) {
+                             arr[j].Discount =Number(arr[j].Discount)+ Number(map.UnitPrice) * Number(map.Quantity) * (Number(10)-Number(map.DiscountRate))/ 10.0 //增加一基折扣额
+                         }else if(arr[j].Discount ==''){
+                             arr[j].Discount ==''
+                         }
+                         arr[j].tipqty = Number(arr[j].tipqty) + Number(map.tipqty)
+                         m=arr[j]
                      }
                  }
                       return m
 
 
-                 },hasSize(arr,map){
+                 },hasSize(arr,map,flag){  //flag 0  从详情页返回 替换 1 扫码追加
                        var m={}
                        for (var j = 0; j < arr.length; j++) {
 
-                           if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID) {
+                           if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID && flag==0) {
                                arr[j].Quantity = map.Quantity
                                arr[j].Amount =map.Amount
                                  m  = arr[j]
 
+                           }else if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID && flag==1){
+                               arr[j].Quantity =Number(arr[j].Quantity)+Number(map.Quantity)
+                               arr[j].Amount =Number(arr[j].Amount)+ Number(map.Amount)
+                               m  = arr[j]
                            }
                        }
                        return m
@@ -933,6 +961,68 @@
 
                                }
                        }
+                   },qrcodeclick(){
+
+                       if(this.Department.DepartmentID ==''){
+                           that.alert('请选择发货部门')
+                           return
+                       }
+                       if(this.customer.customerid ==''){
+                           that.alert('请选择客户')
+                           return;
+                       }
+                       var that=this
+                       var qr=weex.requireModule('qr')
+                       var p={};
+                       p.color='#000000'
+                       p.bgcolor='#ffffff'
+                       qr.open(p,(res)=>{
+                           //var url=res.url
+                             if(res ==undefined){
+                                 that.alert('没有扫到内容')
+                                 return
+                             }
+                           that.alert('扫到内容'+res)
+                           net.post(pref.getString('ip')+qrcodeurl,{BarCode:res,CustomerId:that.customer.customerid,Type:that.billType.id},{},function(){
+                               //start
+                           },function(e){
+                               //success  e.res;
+                               if(e==null || JSON.stringify(e)=='{}' || e==undefined){
+                                   return
+                               }
+                               if(JSON.stringify(e.res.obj)=="{}" || e.res.obj==null){
+                                   return;
+                               }
+                               that.alert("扫码返回的数据："+JSON.stringify(e))
+                               that.alert("detaillist.length数据："+that.detaillist.length)
+                               if(that.detaillist.length >0) {
+                                   var m=that.hasmap(that.detaillist,e.res.obj,2) //1 替换
+                                   that.alert("m的数据："+JSON.stringify(m))
+                                   if(JSON.stringify(m) !=='{}') {
+                                       for(var j=0;j<e.res.obj.sizeData.length;j++) {
+                                           var sizemap=e.res.obj.sizeData[j]
+                                           var n = that.hasSize(m.sizeData, sizemap,1)
+                                       }
+                                   }else if(JSON.stringify(m) =='{}'){
+                                       that.detaillist.unshift(e.res.obj)
+                                   }
+                               }else{
+                                   that.detaillist.unshift(e.res.obj)
+                               }
+                               that.toast('成功添加货号：'+e.res.obj.Code)
+                               that.total()
+
+                           },function(e){
+                               //compelete
+
+                           },function(){
+                               //exception
+                               that.alert('异常')
+                           });
+
+
+                       })
+
                    }
 
                }
