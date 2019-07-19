@@ -5,7 +5,8 @@
     <input type="text" style="width: 500px;height: 60px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" @input="input"  v-model="keyword"/>
         <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center" @click="search">查询</text>
     </div>
-    <list style="flex: 1;margin-top: 5px;margin-bottom: 80px">
+     <!-- style="flex: 1;margin-top: 5px;margin-bottom: 80px" -->
+    <list :style="{height: pageheight+'px','margin-top': '20px','margin-bottom':'80px'}">
     <cell>
     <div class="master">
         <wxc-cell label="备注:"
@@ -229,6 +230,10 @@
            export default {
                components: { WxcCell,WxcMask,WxcRadio   }
                ,props: {
+                 pageheight: {
+                    type: [Number, String],
+                    default: Utils.env.getPageHeight()
+                },
                    data: {
                        type: Array,
                        default: []
@@ -406,7 +411,8 @@
                }
                ,methods:{
                    onLoad(p){
-
+                    this.pageheight =Number(this.pageheight)-Number(180) //动态获取页面的高度不用flex:1 这里用到定位功能
+               //   this.alert("页面高度:"+this.pageheight) //dom.scrollToElement(el, {offset:0}) 不用到定位功能可以用list 列表flex:1
                       var that=this
                        that.detaillist.slice(0,that.detaillist.length) //重新进入都清一次
                        this.alert(JSON.stringify(p))
