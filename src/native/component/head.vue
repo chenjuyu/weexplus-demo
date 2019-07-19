@@ -174,8 +174,8 @@
         padding-top: 40px;
     }
     .iconfont {
-        font-family:iconfont;  /*必须写哦！！ */
+        font-family:iconfont;  /*必须写哦！！color: #0085ee; */
         font-size: 50px;
-        color: #0085ee;
+        color: white;
     }
 </style>

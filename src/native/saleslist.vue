@@ -56,7 +56,7 @@
     const net = weex.requireModule('net');
 
     var date = new Date();//获取当前时间
-    date.setDate(date.getDate()-1);//设置天数 -1 天
+    date.setDate(date.getDate()-8);//设置天数 -1 天
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
 
@@ -334,6 +334,7 @@
                     p.EmployeeID=node.EmployeeID
                     p.Date=node.Date
                     p.LastNeedRAmount=node.LastNeedRAmount
+                    p.AuditFlag =node.AuditFlag
                     this.push('root:SalesAdd.js',p)
 
                 }
@@ -472,6 +473,7 @@
         background-color: #1EA5FC;
     }
     .input_bg{ /*position: absolute; background-color: #0085ee; top: 60px;bottom: 60px; 170*/
-        width:200px;height:200px;
+        top:50;
+        width:170px;height:125px;
     }
 </style>

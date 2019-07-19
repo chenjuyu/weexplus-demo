@@ -2,12 +2,14 @@
     <div class="wrapper">
         <head :rightText="rightText" title="销售发货单单据" @rightClick="rightClick"></head>
     <div class="search" >
-    <input type="text" style="width: 500px;height: 60px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" @input="input"  v-model="keyword"/>
-        <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center" @click="search">查询</text>
+    <input type="text" style="width: 500px;height: 80px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" placeholder="请输入货号查找" @input="input"  v-model="keyword"/>
+     <div style="height: 80px;width: 220px;margin-right: 5px;border-width: 5px;justify-content: center;align-items: center;border-color: #00B4FF;"  @click="search">
+         <text style="font-size: 35px;">查询</text>
+     </div>
     </div>
-    <list style="flex: 1;margin-top: 5px;margin-bottom: 80px">
-    <cell>
-    <div class="master">
+        <!-- style="flex: 1;margin-top: 5px;margin-bottom: 80px" 'margin-top': '5px',,'background-color': 'orange'}" -->
+        <list :style="{height: pageheight+'px'}">
+    <cell >
         <wxc-cell label="备注:"
                   :has-arrow="false"
                   :cell-style="{'height':'70px'}"
@@ -29,6 +31,9 @@
                   :has-bottom-border="true"	>
             <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{billType.Name}}</text>
         </wxc-cell>
+
+      <div class="input_bg" v-if="AuditFlag">  <image src="root:img/Audit.png" style="width: 170px;height: 125px;"  ></image> </div>
+
         <wxc-cell label="发货部门:"
                   :has-arrow="true"
                   :cell-style="{'height':'80px'}"
@@ -61,10 +66,10 @@
         </wxc-cell>
      <div class="listbutton">
          <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-left: 5px;text-align: center">蓝牙增加</text>
-         <text @click="addgoods" style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;text-align: center">快速增加</text>
-         <text @click="qrcodeclick" style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">扫码增加</text>
+         <text @click="addgoods"  style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;text-align: center">快速增加</text>
+         <text @click="qrcodeclick"  style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">扫码增加</text>
      </div>
-    </div> </cell><!--master 结束 border-radius:25px   v-for="num in lists" <list style="height: 200px"> </list>-->
+    </cell><!--master 结束 border-radius:25px   v-for="num in lists" <list style="height: 200px"> </list>-->
 
 
              <cell ref="skid" v-for="(ls,i) in detaillist" @click="onNodeClick(ls, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + ls.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, ls, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, ls, i)" @touchend="(e) => onPanEnd(e, ls, i)">
@@ -124,7 +129,7 @@
 
 
     </list> <!-- 包整体-->
-        <div class="footer">
+        <div class="footer" v-if="AuditFlag == false">
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; border-radius:20px " @click="save">  <text style="font-size: 40px;color: #FFFFFF;">保存</text></div>
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px" @click="receival"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
         </div>
@@ -149,7 +154,6 @@
        </template>
        <style scoped>
            .wrapper{
-
                position: absolute;
                top: 0;
                right: 0;
@@ -183,6 +187,7 @@
            .master {
                width: 750px;
                background-color: #f2f3f4;
+
            }
            .listbutton{
                display: block;
@@ -196,18 +201,26 @@
 
            }
            .footer{
-              position: absolute;
+               position: absolute;
                left: 0;
                right: 0;
                bottom: 0;
               flex-direction: row;
                height: 80px;
                direction: rtl;
+           }
+           .input_bg{ /*position: absolute; background-color: #0085ee; top: 60px;bottom: 60px; 170  background-color: red;*/
+               position: absolute;
+               left: 300;
+               top: 90;
 
+               width:170px;
+               height:135px;
+               justify-content: center;
+               align-items: center;
 
 
            }
-
        </style>
        <script>
            import Binding from "weex-bindingx/lib/index.weex.js";
@@ -229,6 +242,10 @@
            export default {
                components: { WxcCell,WxcMask,WxcRadio   }
                ,props: {
+                   pageheight: {
+                       type: [Number, String],
+                       default:weex.config.env.deviceHeight //Utils.env.getPageHeight()   //Utils.env.getPageHeight() 这个会已减去导航条的高度了
+                   },
                    data: {
                        type: Array,
                        default: []
@@ -244,9 +261,11 @@
                }
                ,data() {
                    return {
-                       submitmap:{}
+                       rightText:'\ue604'
+                       ,submitmap:{}
                        ,keyword:''
                        ,SalesID:''//销售发货单 主表ID
+                       ,AuditFlag:false //审核标志
                        ,lastARAmount:'' //单据的收款金额
                        ,billType:{Name:'批发',id:'PriceType'}
                        ,memo:''
@@ -407,13 +426,16 @@
                ,methods:{
                    onLoad(p){
 
-                      var that=this
+                       //   this.alert("页面高度:"+this.pageheight) //dom.scrollToElement(el, {offset:0}) 不用到定位功能可以用list 列表flex:1
+
+
+                       var that=this
                        that.detaillist.slice(0,that.detaillist.length) //重新进入都清一次
                        this.alert(JSON.stringify(p))
                        if(p==null){
                            p={}
                        }
-                     this.SalesID=p.hasOwnProperty("SalesID")?p.SalesID:''   //|| 'DN000XW'//''
+                      this.SalesID=p.hasOwnProperty("SalesID")?p.SalesID:''   //|| 'DN000XW'//''
 
                        if(this.SalesID ==''){ //可能是新增单据，也有可能是从其他页面点的返回键
                            return
@@ -428,7 +450,20 @@
                       this.customer.customer =p.hasOwnProperty("Customer")?p.Customer:''
                       this.customer.lastAmt = p.hasOwnProperty("LastNeedRAmount")?p.LastNeedRAmount:''
                       this.emp.EmpID = p.hasOwnProperty("EmployeeID")?p.EmployeeID:''
-                       this.emp.Name =p.hasOwnProperty("Name")?p.Name:''
+                      this.emp.Name =p.hasOwnProperty("Name")?p.Name:''
+                      this.AuditFlag =p.hasOwnProperty("AuditFlag")?p.AuditFlag:false
+
+
+                       if(this.AuditFlag) {
+                           //this.alert("页面高度a:"+this.pageheight)
+                          // this.alert("页面高度:"+this.pageheight)
+                           this.pageheight = weex.config.env.deviceHeight
+                       }else{
+                           this.pageheight = Utils.env.getPageHeight()- Number(160)//Number(this.pageheight) - Number(200) //动态获取页面的高度不用flex:1 这里用到定位功能
+
+                       }
+
+
 
                        net.post(pref.getString('ip') + url,{SalesID:this.SalesID},{},function(){
                            //start
@@ -580,7 +615,7 @@
                            });
                    },
                    onNodeClick(node, i) {
-                       this.alert("mobileX:"+this.mobileX)
+                    //   this.alert("mobileX:"+this.mobileX)
                        if (this.mobileX < 0) {
                            this.mobileX = 0;
                            this.special(this.$refs.skid[this.saveIdx], {
@@ -593,7 +628,11 @@
                        } else {
                           // this.$emit("onNodeClick", node, i);
                          //  this.alert(JSON.stringify(node))
-                           this.alert("占南后的："+JSON.stringify(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID))+",记录数："+(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).length)
+                          // this.alert("占南后的："+JSON.stringify(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID))+",记录数："+(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).length)
+                           if(this.AuditFlag) {
+                             this.toast('单据已审核不能再修改')
+                               return
+                           }
                            if(node.sizeData.length>0) {
                                var obj =(this.detaillist.filter(item=>item.GoodsID ==node.GoodsID)).map(function (obj) {  // node.sizeData.map(function (obj) {
                                    return {
@@ -925,6 +964,10 @@
                            return
                        }
 
+                      if(this.AuditFlag){
+                          this.toast('单据已审核无法再修改')
+                          return;
+                      }
 
                        this.submitmap.detaillist=this.detaillist || []
                        this.submitmap.CustomerID=this.customer.customerid
@@ -952,10 +995,12 @@
 
                        for(var i=0;i<this.detaillist.length;i++) {
                          var map  =  this.detaillist[i]
-                           this.log("外层的："+i)
+
+                           //this.log("外层的："+i)
                         //   this.log(map) indexOf(this.keyword) !=-1
                              if(map.Code.indexOf(this.keyword) !=-1){
-                                 this.log(i)
+                                // this.log(i)
+                               //  this.log("输出："+this.$refs["skid"][i])
                                    const el = this.$refs["skid"][i] //this.$refs.item10[0]
                                    dom.scrollToElement(el, {})
 
@@ -969,6 +1014,11 @@
                        }
                        if(this.customer.customerid ==''){
                            that.alert('请选择客户')
+                           return;
+                       }
+
+                       if(this.AuditFlag){
+                           this.toast('单据已审核无法再修改')
                            return;
                        }
                        var that=this
@@ -1023,6 +1073,8 @@
 
                        })
 
+                   },rightClick(){
+                       this.toast('更多功能开发中，敬请期待')
                    }
 
                }
