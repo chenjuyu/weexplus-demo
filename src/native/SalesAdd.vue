@@ -149,6 +149,12 @@
         </wxc-mask>
 
 
+        <wxcpopover ref="wxc-popover"
+                     :buttons="btns"
+                     :position="popoverPosition"
+                     :arrowPosition="popoverArrowPosition"
+                     @wxcPopoverButtonClicked="popoverButtonClicked"></wxcpopover>
+
 
          </div>
        </template>
@@ -226,6 +232,7 @@
            import Binding from "weex-bindingx/lib/index.weex.js";
            const animation = weex.requireModule("animation");
            import { WxcCell ,WxcMask,WxcRadio  ,Utils } from 'weex-ui';
+           import wxcpopover from './component/wxc-popover.vue';
            const modal =weex.requireModule('modal')
            var lodash = require('lodash');
            var nav = weex.requireModule('navigator') ;
@@ -240,7 +247,7 @@
            var saveurl='/sales.do?saveSales'
            var qrcodeurl='/select.do?analyticalBarcodeX'
            export default {
-               components: { WxcCell,WxcMask,WxcRadio   }
+               components: { WxcCell,WxcMask,WxcRadio,wxcpopover   }
                ,props: {
                    pageheight: {
                        type: [Number, String],
@@ -261,7 +268,14 @@
                }
                ,data() {
                    return {
-                       rightText:'\ue604'
+                       popoverPosition:{x:-14,y:110}
+                       ,popoverArrowPosition:{pos:'top',x:-14}
+                       ,btns:[{
+                           icon: '\ue61f',
+                           text:'打印',
+                           key:'key-print'
+                          }]
+                       ,rightText:'\ue604'
                        ,submitmap:{}
                        ,keyword:''
                        ,SalesID:''//销售发货单 主表ID
@@ -467,6 +481,7 @@
 
                        net.post(pref.getString('ip') + url,{SalesID:this.SalesID},{},function(){
                            //start
+                           progress.showFull('加载中',false)
                        },function(e){
                            //success
                            if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
@@ -483,12 +498,13 @@
                                } */
                                that.total()
                            }
-
+                           progress.dismiss()
                        },function(e){
                            //compelete
 
                        },function(){
                            //exception
+                           progress.dismiss()
                        });
 
 
@@ -505,6 +521,13 @@
                        this.totalQty=sumqty
                        this.totalDiscount =sumdiscount
                        this.totalAmt=sumamt
+                       if(this.totalDiscount){
+                           this.totalDiscount =parseFloat(this.totalDiscount).toFixed(2)
+                       }
+                       if(this.totalAmt){
+                           this.totalAmt =parseFloat(this.totalAmt).toFixed(2)
+                       }
+
                    }
                    ,wxcCellClicked(id){
                    // var obj=   lodash.pick(this.testlist,['GoodsID','ColorID','Quantity'])
@@ -605,14 +628,23 @@
                    onRightNode(pNode, node, i) {
                       // node.onPress();
                        //this.alert(node)
-                       if(node.text=='删除'){
-                           this.detaillist.splice(i,1);//删除元素，以i 为参数
-                           this.total()
-                       }
+
                        if (pNode.autoClose)
                            this.special(this.$refs.skid[i], {
                                transform: `translate(0, 0)`
                            });
+
+                       if(this.AuditFlag){
+                           this.toast('单据已审核不可删除')
+                           return
+                       }
+
+                       if(node.text=='删除'){
+                           this.detaillist.splice(i,1);//删除元素，以i 为参数
+                           this.total()
+                       }
+
+
                    },
                    onNodeClick(node, i) {
                     //   this.alert("mobileX:"+this.mobileX)
@@ -1074,7 +1106,10 @@
                        })
 
                    },rightClick(){
-                       this.toast('更多功能开发中，敬请期待')
+                      // this.toast('更多功能开发中，敬请期待')
+                       this.$refs['wxc-popover'].wxcPopoverShow();
+                   },popoverButtonClicked (obj) {
+                       modal.toast({ 'message': `key:${obj.key}, index:${obj.index}`, 'duration': 1 });
                    }
 
                }

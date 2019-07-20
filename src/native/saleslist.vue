@@ -263,6 +263,9 @@
                 }
                 this.totalQty =q
                 this.totalAmt =a
+                if(this.totalAmt){ //这里表示 不等于0 与空
+                    this.totalAmt =parseFloat(this.totalAmt).toFixed(2)
+                }
             }
             ,add(e){
                 nav.push('root:SalesAdd.js')
