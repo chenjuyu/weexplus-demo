@@ -83,8 +83,8 @@
                  <!-- 图片与显示-->
                <div style="flex-direction: row;width: 750px">
                   <div style="justify-content: center;align-items: center;height: 150px"> <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text> </div>
-                   <image v-if="ls.img" :src="ls.img" style="width: 150px;height: 150px;"></image>
-                   <image v-else  src="root:img/home_logo.png" style="width: 150px;height: 150px;"></image>
+                   <image v-if="ls.img" @click="piczoom(ls.img)" :src="ls.img" style="width: 150px;height: 150px;"></image>
+                   <image v-else  src="root:img/home_logo.png" @click="piczoom('root:img/home_logo.png')" style="width: 150px;height: 150px;"></image>
 
                    <div style="margin-left: 20px">
                    <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
@@ -133,6 +133,7 @@
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; border-radius:20px " @click="save">  <text style="font-size: 40px;color: #FFFFFF;">保存</text></div>
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px" @click="receival"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
         </div>
+        <!--单据类别 -->
         <wxc-mask height="500"
                   width="500"
                   border-radius="0"
@@ -144,8 +145,20 @@
                   :show="show"
                   @wxcMaskSetHidden="wxcMaskSetHidden">
             <wxc-radio :list="list" @wxcRadioListChecked="wxcRadioListChecked"></wxc-radio>
+        </wxc-mask>
 
-
+        <!--图片放大 -->
+        <wxc-mask height="500"
+                  width="500"
+                  border-radius="0"
+                  duration="200"
+                  mask-bg-color="#FFFFFF"
+                  :has-animation="hasAnimation"
+                  :has-overlay="true"
+                  :show-close="false"
+                  :show="picshow"
+                  @wxcMaskSetHidden="wxcMaskSetHidden">
+         <image :src="showpicurl" style="width: 500px;height: 500px"></image>
         </wxc-mask>
 
 
@@ -281,6 +294,7 @@
                        ,SalesID:''//销售发货单 主表ID
                        ,AuditFlag:false //审核标志
                        ,lastARAmount:'' //单据的收款金额
+                       ,ReceivalType:[{ReceivalAmount:'',PaymentTypeID:'',PaymentType:''}]
                        ,billType:{Name:'批发',id:'PriceType'}
                        ,memo:''
                       // ,testlist: [{GoodsID:'00AG',ColorID:'0BD',Color:'黑色',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1},
@@ -290,7 +304,9 @@
                        saveIdx: null,
                        isAndroid: Utils.env.isAndroid()
                      ,DateStr:timestr
-                     ,show:false
+                     ,show:false  //类别控制显示窗
+                     ,picshow:false  //图片放大显示 控制
+                     ,showpicurl:''//显示图片路径
                      ,hasAnimation:false
                      ,totalQty:0
                      ,totalAmt:0.0
@@ -466,6 +482,10 @@
                       this.emp.EmpID = p.hasOwnProperty("EmployeeID")?p.EmployeeID:''
                       this.emp.Name =p.hasOwnProperty("Name")?p.Name:''
                       this.AuditFlag =p.hasOwnProperty("AuditFlag")?p.AuditFlag:false
+                      this.ReceivalType[0].PaymentTypeID =p.hasOwnProperty("PaymentTypeID")?p.PaymentTypeID:''
+                      this.ReceivalType[0].PaymentType =p.hasOwnProperty("PaymentType")?p.PaymentType:''
+                      this.ReceivalType[0].ReceivalAmount =p.hasOwnProperty("ReceivalAmount")?p.ReceivalAmount:''
+                      this.lastARAmount = p.hasOwnProperty("ReceivalAmount")?p.ReceivalAmount:'' //收款金额
 
 
                        if(this.AuditFlag) {
@@ -532,6 +552,11 @@
                    ,wxcCellClicked(id){
                    // var obj=   lodash.pick(this.testlist,['GoodsID','ColorID','Quantity'])
                   // this.alert(JSON.stringify(e))
+                       if(this.AuditFlag){
+                           this.toast('单据已审核不能修改')
+                           return
+                       }
+
                       var p={}
                       if(id==1){//发货部门
                          p.send='getWarehouse'
@@ -583,6 +608,11 @@
                   ,selectType(e){
                       // var pop=weex.requireModule("centerpop")
                        //pop.show('root:Typeradio.js',{width:500,height:700},{},true);
+                      if(this.AuditFlag){
+                          this.toast('单据已审核不能修改')
+                          return
+                      }
+
                       for(var i=0 ;i< this.list.length ;i++){
                           var map=this.list[i]
                            if(this.billType.Name == map.value){
@@ -593,6 +623,8 @@
                    }
                   ,wxcMaskSetHidden(e){
                        this.show=false
+                       this.picshow=false //图片放大是否显示
+                       this.showpicurl =''//图片放大是否显示
                    }
                   , wxcRadioListChecked (e) {
 
@@ -820,7 +852,7 @@
                        p.employeeId =this.emp.EmpID //经手人
                        p.brandId ='' //品牌
                        p.businessDeptId ='' //业务部门
-                       p.paymentTypeId=''//结算方式
+                       p.paymentTypeId=this.ReceivalType[0].PaymentTypeID//结算方式
                        p.memo ='手机APP生成' //备注
                        p.type =this.billType.Name //单据类别
                        p.direction =1 //发货单标志
@@ -856,6 +888,9 @@
                        var that=this
                        var p={}
                          p.lastARAmount =this.lastARAmount
+                         p.ReceivalAmount=this.ReceivalType[0].ReceivalAmount
+                         p.PaymentTypeID=this.ReceivalType[0].PaymentTypeID
+                         p.PaymentType=this.ReceivalType[0].PaymentType
                          p.totalQty =this.totalQty
                          p.totalAmt =this.totalAmt
                        nav.pushFull({url: 'root:salesreceival.js',param:p,animate:true}
@@ -866,6 +901,9 @@
                                        return
                                    }
                                    that.lastARAmount= e.ReceivalAmount
+                                   that.ReceivalType[0].ReceivalAmount=e.ReceivalAmount
+                                   that.ReceivalType[0].PaymentTypeID=e.PaymentTypeID
+                                   that.ReceivalType[0].PaymentType=e.PaymentType
 
 
                                }
@@ -1110,6 +1148,9 @@
                        this.$refs['wxc-popover'].wxcPopoverShow();
                    },popoverButtonClicked (obj) {
                        modal.toast({ 'message': `key:${obj.key}, index:${obj.index}`, 'duration': 1 });
+                   },piczoom(imgurl){
+                     this.picshow=true
+                     this.showpicurl =  imgurl
                    }
 
                }

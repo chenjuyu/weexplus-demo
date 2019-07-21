@@ -13,7 +13,7 @@
                      :has-arrow="false"
                      :cell-style="{'height':'100px'}"
                      :has-bottom-border="true">
-                <input type="number" v-model="ReceivalAmount" style="width: 500px;height: 90px;"/>
+                <input type="number" v-model="ReceivalAmount" style="width: 500px;height: 90px;direction: rtl;"/>
             </wxccell>
 
             <wxccell label="结算方式:"
@@ -27,7 +27,7 @@
                      :has-arrow="false"
                      :cell-style="{'height':'100px'}"
                      :has-bottom-border="true"	>
-                <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{ReceivalAmount2}}</text>
+                <input type="number" disabled="true" v-model="ReceivalAmount2" style="width: 500px;height: 90px;direction: rtl;"/>
             </wxccell>
 
             <wxccell label="结算方式2:"
@@ -42,7 +42,7 @@
                      :has-arrow="false"
                      :cell-style="{'height':'100px'}"
                      :has-bottom-border="true"	>
-                <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{ReceivalAmount3}}</text>
+                <input type="number" disabled="true" v-model="ReceivalAmount3" style="width: 500px;height: 90px;direction: rtl;"/>
             </wxccell>
             <wxccell label="结算方式3:"
                      :has-arrow="true"
@@ -95,9 +95,21 @@
                 if(p==null){
                     p={}
                 }
-                this.ReceivalAmount=p.hasOwnProperty("lastARAmount")?p.lastARAmount:''
+                this.alert('p的对象：'+JSON.stringify(p))
+               // this.ReceivalAmount=p.hasOwnProperty("lastARAmount")?p.lastARAmount:''
+                this.ReceivalAmount=p.hasOwnProperty("ReceivalAmount")?p.ReceivalAmount:''
+                this.PaymentTypeID=p.hasOwnProperty("PaymentTypeID")?p.PaymentTypeID:''
+                this.PaymentType=p.hasOwnProperty("PaymentType")?p.PaymentType:''
                 this.totalQty=p.hasOwnProperty("totalQty")?p.totalQty:''
                 this.totalAmt=p.hasOwnProperty("totalAmt")?p.totalAmt:''
+                if(this.totalAmt){
+                    this.totalAmt =parseFloat(this.totalAmt).toFixed(2)
+                }
+
+                if(this.ReceivalAmount){
+                    this.ReceivalAmount =parseFloat(this.ReceivalAmount).toFixed(2)
+                }
+
             },wxcCellClicked(id){
                 var that=this
                 var condition=''
@@ -137,7 +149,7 @@
 
                 })
             },submit(e){
-
+                var param={}
                 param.ReceivalAmount =this.ReceivalAmount
                 param.PaymentTypeID =this.PaymentTypeID
                 param.PaymentType =this.PaymentType

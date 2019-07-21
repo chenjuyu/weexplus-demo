@@ -338,6 +338,9 @@
                     p.Date=node.Date
                     p.LastNeedRAmount=node.LastNeedRAmount
                     p.AuditFlag =node.AuditFlag
+                    p.PaymentTypeID =node.PaymentTypeID
+                    p.PaymentType =node.PaymentType
+                    p.ReceivalAmount =node.ReceivalAmount
                     this.push('root:SalesAdd.js',p)
 
                 }

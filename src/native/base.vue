@@ -124,6 +124,10 @@
                            map.id=array[i].BrandID
                            map.Name=array[i].Name
                            self.list.push(map);
+                       }else if(p.send =='getPaymentType'){
+                           map.id=array[i].PaymentTypeID
+                           map.Name=array[i].Name
+                           self.list.push(map);
                        }
                     }
 
