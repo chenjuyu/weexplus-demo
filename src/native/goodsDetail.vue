@@ -64,8 +64,8 @@
         <div class="cellTitle">
             <text class="text">尺码</text><text class="text2">采购数/可发数</text><text class="text3">输入数</text>
         </div>
-
-        <list style="height: 490px;margin-bottom: 5px">
+        <!-- height: 490px;margin-bottom: 5px-->
+        <list style="flex: 1;margin-bottom: 80px;">
             <cell class="cell"  v-for="(ls,index) in sizefilter(sizelist,colorid)">
                 <text class="cellitem">{{ls.Size}}</text><!-- v-focus="true"  blur(ls)-->
                 <text class="cellitem">{{ls.Size}}/{{ls.Size}}</text><!-- v-focus="true"  blur(ls)-->
@@ -231,11 +231,11 @@
                 param.onLineId='0000-0000'
                 param.userId=1
                 let  _this=this
-
+           /*
                 modal.toast({
                     message: 'GoodsID的值：'+ param.GoodsID,
                     duration: 0.3
-                })
+                }) */
 
                 _this.addflag =p.hasOwnProperty("addflag")?p.addflag:false
 
@@ -250,8 +250,8 @@
                 _this.goods.UnitPrice =(_this.testData3.filter(map=>map.checked))[0].UnitPrice
                 _this.goods.DiscountRate =(_this.testData3.filter(map=>map.checked))[0].DiscountRate
                 _this.goods.RetailSales=(_this.testData3.filter(map=>map.checked))[0].RetailSales
-                _this.alert("单价："+ (_this.testData3.filter(map=>map.checked))[0].UnitPrice)
-                _this.alert("折扣："+ (_this.testData3.filter(map=>map.checked))[0].DiscountRate)
+              //  _this.alert("单价："+ (_this.testData3.filter(map=>map.checked))[0].UnitPrice)
+             //   _this.alert("折扣："+ (_this.testData3.filter(map=>map.checked))[0].DiscountRate)
                 this.total()
                 /*   net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
 
@@ -326,7 +326,12 @@
                        m.Quantity = Number(m.Quantity) + Number(map.Quantity)
                        m.Amount = Number(m.Amount) + Number(map.Amount)
                        if(m.DiscountRate !=0 && m.DiscountRate !='' && m.DiscountRate !=undefined){
-                           m.Discount  =  Number(m.UnitPrice)* Number(m.Quantity) * (Number(10)-Number(m.DiscountRate)) /10.0
+                           //this.alert('ddddd')
+                           if(m.UnitPrice && m.Quantity) {
+                               m.Discount = Number(m.UnitPrice) * Number(m.Quantity) * (Number(10) - Number(m.DiscountRate)) / 10.0
+                           }else{
+                               m.Discount =''
+                           }
                        }else{
                            m.Discount =''
                        }
@@ -431,7 +436,7 @@
 
                                 }
                             }
-                            this.alert("返回的数组："+JSON.stringify(temparr)+",temparr的长度："+temparr.length)
+                        //    this.alert("返回的数组："+JSON.stringify(temparr)+",temparr的长度："+temparr.length)
 
 
 
@@ -676,7 +681,7 @@
     .bar-ic{
         /*  padding-top: 14px; */
         font-size: 60px;
-        color:#FFFFFF;
+        color:#000;
         /*  margin-left: 50px; */
         justify-content: center;
         align-items: center;
@@ -687,7 +692,7 @@
     } .bar-ic2{
           /*  padding-top: 14px; */
           font-size: 60px;
-          color: #FFF;
+          color: #000;
           background-color: #eeeeee;
           justify-content: center;
           align-items: center;

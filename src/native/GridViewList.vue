@@ -2,7 +2,7 @@
     <div class="layout">
 
         <head leftButton="" title="主页" rightButton=""></head>
-        <scroller>
+        <scroller style="flex: 1;">
             <!--九宫格显示  <text class="iconfont bar-ic">&#xe614;</text> 动态显示要 即：字体编码后前四位是Unicode编码，想使用字符串来传递的话,只要将 “&#xe64b;” 改为 “\ue64b” 即可。-->
 
             <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">

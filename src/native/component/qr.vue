@@ -1,62 +1,74 @@
 <template>
-    <div>
-        <text>{{text}}</text>
+    <div style="flex: 1">
+        <head :rightText="rightText" title="扫描条码/二维码" @rightClick="rightClick"></head>
 
-        <qr ref="qr" style="position: absolute;top: 0;left: 0;right: 0;bottom: 0">
+        <qr ref="qr" style="position: absolute;top: 130;left: 0;right: 0;bottom: 0">
 
         </qr>
         <div  style="position: absolute;top: 0;left: 0;right: 0;bottom: 0;background-color: transparent;">
-            <!--<button @click="start"></button>-->
-            <!--<button @click="stop"></button>-->
-            <div style="width: 750px;flex: 1;background-color: rgba(0,0,0,0.3)"></div>
-            <div style="height: 450px;flex-direction: row">
-                <div style="width: 150px;background-color: rgba(0,0,0,0.3)">
-                    <text>返回</text>
-                </div>
-                <div style="flex: 1"></div>
-                <div style="width: 150px;background-color: rgba(0,0,0,0.3)">
-                    <text>相册</text>
-                </div>
-            </div>
-            <div style="width: 750px;flex:1;background-color: rgba(0,0,0,0.3)"></div>
 
-        </div>
+          <!--  <button @click="start"></button> <image src="root:tab_bg9.png" style="width: 32px;height: 32px"></image> -->
+            <!-- <button @click="stop"></button> -->
+             <div style="width: 750px;flex: 1;background-color: rgba(0,0,0,0.3)"></div>
+             <div style="height: 450px;flex-direction: row">
+                 <div style="width: 150px;background-color: rgba(0,0,0,0.3)">
 
-    </div>
-</template>
-<script>
+                 </div>
+                 <!--  background-color: red  <image src="root:img/scan_light.png" style="width: 500px;height: 32px"></image> -->
+                 <div ref="scan" :style="{transform:`translateY(50px)`}" @panmove="onPanMove" style="flex: 1;justify-content: center;align-items: center;">
+                     <image src="root:img/scan_light.png" style="width: 500px;height: 32px"></image>
 
-    export default{
-        components: { },
-        data(){
-            return {
-                text:''
-            }
-        },
-        props: {},
-        methods: {
-            start(){
+                 </div>
+                 <div style="width: 150px;background-color: rgba(0,0,0,0.3)">
 
-            },
-            stop(){
+                 </div>
+             </div>
+             <div style="width: 750px;flex:1;background-color: rgba(0,0,0,0.3);flex-direction: row;justify-content: center;align-items: center">
+                 <text style="font-size: 35px;color: #FFFFFF">扫描条码/二维码</text>
 
-            },
-            onLoad(p){
+             </div>
 
-            }
-        },
-        mounted(){
-            this.$refs.qr.scan((res)=>{
-                this.text=res.res
-                this.toast(this.text)
+         </div>
 
-            })
-        },
-        created(){
+     </div>
+ </template>
+ <script>
+     import { WxcLightbox } from 'weex-ui';
+     const animation = weex.requireModule('animation');
+     import Binding from 'weex-bindingx/lib/index.weex.js';
+     export default{
+         components: {WxcLightbox },
+         data(){
+             return {
+                 text:'条码/二维码扫描',
+                 show:true,
+                 imageList:[{src: 'root:img/scan_light.png'}]
+             }
+         },
+         props: {},
+         methods: {
+             start(){
 
-        }
-    }
-</script>
-<style scoped>
+             },
+             stop(){
 
-</style>
+             },
+             onLoad(p){
+
+             }
+         },
+         mounted(){
+             this.$refs.qr.scan((res)=>{
+                 this.text=res.res
+                 this.toast(this.text)
+
+             })
+         },
+         created(){
+
+         }
+     }
+ </script>
+ <style scoped>
+
+ </style>

@@ -8,7 +8,7 @@
                        @wxcSearchbarCloseClicked="wxcSearchbarCloseClicked"
                        @wxcSearchbarInputOnFocus="wxcSearchbarInputOnFocus"
                        @wxcSearchbarInputOnBlur="wxcSearchbarInputOnBlur"></wxc-searchbar>
-        <list style="height: 910px;"> <!-- background-color: red 用于测试高度  refresh用于给列表添加下拉刷新的功能。 -->
+        <list style="flex: 1;margin-bottom: 100px"> <!-- background-color: red height: 910px; 用于测试高度  refresh用于给列表添加下拉刷新的功能。 -->
 
             <refresh class="refresh" @refresh="onrefresh" @pullingdown="onpullingdown" :display="refreshing ? 'show' : 'hide'">
                 <text class="indicator-text">Refreshing...</text>
@@ -478,7 +478,7 @@
                 }//颜色结果 for 结束
                 arr[0].checked = true
 
-                this.alert('颜色列表：'+JSON.stringify(arr.filter(map=>map.checked)))
+               // this.alert('颜色列表：'+JSON.stringify(arr.filter(map=>map.checked)))
 
                 this.submitmap.colorlist = arr
                 this.submitmap.sizelist = sizearr
@@ -544,7 +544,7 @@
              //   this.selectedlist=JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !==''))))
                 this.submitmap.detaillist =this.selectedlist ||[] //this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='') )
                 this.submitmap.addflag=this.addflag
-                this.alert("selectedlist发到已选列表的："+JSON.stringify(this.submitmap.detaillist))
+            //    this.alert("selectedlist发到已选列表的："+JSON.stringify(this.submitmap.detaillist))
                nav.pushFull({url: 'root:selectedgoods.js',param:this.submitmap,animate:true}
                     , (e) => {
                     if(e !=undefined) { //返回的一定是已选列表里面有的货品

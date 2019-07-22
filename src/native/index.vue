@@ -1,7 +1,6 @@
 <template>
     <div class="layout">
         <div class="ig">  <image class="img" src="root:img/logo.png" @click="gonext"></image> </div>
-
         <wxc-cell title="用户名"
                   :has-arrow="false"
                   :has-top-border="false">
@@ -28,7 +27,7 @@
     //<text class="text">欢迎使用</text>
     // const nav=weex.registerModule('navigator')
 
-    import { WxcButton,WxcCell } from 'weex-ui'
+    import { WxcButton,WxcCell,Utils } from 'weex-ui'
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
     const url='/login.do?login';
@@ -36,6 +35,7 @@
         components: { WxcButton ,WxcCell },
         data(){
             return {
+                height:Utils.env.getPageHeight(),
                 username:'',
                 password:'',
                 list:[]
@@ -44,6 +44,8 @@
         props: {},
         methods: {
             onLoad(p){
+                let navbar=weex.requireModule('navbar')
+                navbar.setStatusBarStyle('black')//#1EA5FC
             },
             gonext(){
                 //  debugger
@@ -119,6 +121,7 @@
         justify-content: center;
         background-color:#eeeeee;
         text-align: center;
+
     }
     .ig{
         align-items:center;

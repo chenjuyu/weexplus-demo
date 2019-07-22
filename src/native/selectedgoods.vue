@@ -186,7 +186,7 @@
 
                         }
 
-                        this.alert(JSON.stringify(this.detaillist))
+                     //   this.alert(JSON.stringify(this.detaillist))
 
                     }
                 }

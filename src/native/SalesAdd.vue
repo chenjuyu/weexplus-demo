@@ -461,7 +461,7 @@
 
                        var that=this
                        that.detaillist.slice(0,that.detaillist.length) //重新进入都清一次
-                       this.alert(JSON.stringify(p))
+                     //  this.alert(JSON.stringify(p))
                        if(p==null){
                            p={}
                        }
@@ -536,12 +536,15 @@
                       for(var i=0 ;i<this.detaillist.length;i++){
                           sumqty =Number(sumqty)+Number(this.detaillist[i].Quantity)
                           sumamt =Number(sumamt)+Number(this.detaillist[i].Amount)
-                          sumdiscount =Number(sumdiscount)+Number(this.detaillist[i].Discount)
+                          if(this.detaillist[i].Discount) {
+                              sumdiscount = Number(sumdiscount) + Number(this.detaillist[i].Discount)
+                          }
                       }
                        this.totalQty=sumqty
                        this.totalDiscount =sumdiscount
                        this.totalAmt=sumamt
                        if(this.totalDiscount){
+
                            this.totalDiscount =parseFloat(this.totalDiscount).toFixed(2)
                        }
                        if(this.totalAmt){
@@ -719,7 +722,7 @@
                                    }
                                })
 
-                              this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
+                             // this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
                                var arr = [] ,   sizearr=[]
                                for (var i = 0; i < obj.length; i++) {
                                    debugger
@@ -772,12 +775,12 @@
                                arr[0].checked = true
                                this.submitmap.colorlist = arr
                                this.submitmap.sizelist = sizearr//node.sizeData//this.testlist
-                               this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
-                              this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
+                           //    this.alert('挑选颜色列表对象：' + JSON.stringify(arr)+',颜色记录数：'+arr.length)
+                           //   this.alert('挑选尺码列表对象：' + JSON.stringify(sizearr)+',尺码记录数:'+sizearr.length)
                         //  return
                            nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                                , (e) => {
-                                   this.alert('e'+JSON.stringify(e))
+                                //   this.alert('e'+JSON.stringify(e))
                                    if (e !== undefined){ //返回结果是尺码集体的，要拆分
                                        // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                                        if(e==null || JSON.stringify(e)=='{}'){//无结果返回，指的是点左上角返回菜单的返回
@@ -806,7 +809,7 @@
 
                                            }
 
-                                           this.alert(JSON.stringify(this.detaillist))
+                                         //  this.alert(JSON.stringify(this.detaillist))
 
                                        }
                                        this.total()
@@ -895,7 +898,7 @@
                          p.totalAmt =this.totalAmt
                        nav.pushFull({url: 'root:salesreceival.js',param:p,animate:true}
                            , (e) => {
-                               this.alert('e' + JSON.stringify(e))
+                              // this.alert('e' + JSON.stringify(e))
                                if (e !== undefined) { //返回结果是尺码集体的，要拆分
                                    if(e==null || JSON.stringify(e)=='{}'){//无结果返回，指的是点左上角返回菜单的返回
                                        return
@@ -918,11 +921,14 @@
                          arr[j].Amount = Number(arr[j].Amount) + Number(map.Amount)
                          arr[j].tipqty = Number(arr[j].tipqty) + Number(map.tipqty)
                          m=arr[j]
-                   }else  if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==1 ) {
+                   }else  if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==1 ) { //点详情 点进来
                          arr[j].Quantity = Number(map.Quantity)
                          arr[j].UnitPrice = Number(map.UnitPrice)
-                         arr[j].DiscountRate = Number(map.DiscountRate)
+                         if(map.DiscountRate) {
+                             arr[j].DiscountRate = Number(map.DiscountRate)
+                         }
                          if(Number(map.DiscountRate)!=0 && map.DiscountRate !=="" && map.DiscountRate !=undefined) {
+                            // this.alert('cccc')
                              arr[j].Discount = Number(map.UnitPrice) * Number(map.Quantity) * (Number(10)-Number(map.DiscountRate))/ 10.0 //增加一基折扣额
                          }else{
                              arr[j].Discount =''
@@ -933,7 +939,9 @@
                      }else  if(arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && isback==2){ //扫码追加数据
                          arr[j].Quantity = Number(arr[j].Quantity) + Number(map.Quantity)
                          arr[j].Amount = Number(arr[j].Amount) + Number(map.Amount)
-                         arr[j].DiscountRate = Number(map.DiscountRate)
+                         if(map.DiscountRate) {
+                             arr[j].DiscountRate = Number(map.DiscountRate)
+                         }
                          if(Number(map.DiscountRate)!=0 && map.DiscountRate !=="" && map.DiscountRate !=undefined) {
                              arr[j].Discount =Number(arr[j].Discount)+ Number(map.UnitPrice) * Number(map.Quantity) * (Number(10)-Number(map.DiscountRate))/ 10.0 //增加一基折扣额
                          }else if(arr[j].Discount ==''){
@@ -1045,7 +1053,7 @@
                        this.submitmap.addflag=true
                        nav.pushFull({url: 'root:goodslist.js',param:this.submitmap,animate:true}
                                     ,(e)=>{
-                               this.alert('e的的的'+JSON.stringify(e))
+                            //   this.alert('e的的的'+JSON.stringify(e))
                                if(e==null || JSON.stringify(e)=='{}'){//无结果返回，指的是点左上角返回菜单的返回
                                    return
                                }
