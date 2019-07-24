@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 //def AAVersion='4.5.2'
 android {
-    compileSdkVersion 28
-
+    compileSdkVersion 26
+    buildToolsVersion "28.0.2"
 
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 28
+        minSdkVersion 16
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
@@ -27,5 +27,6 @@ android {
 dependencies {
 
     api fileTree(dir: 'libs', include: ['*.jar'])
+    api 'com.google.zxing:core:3.3.0'
     api project(':farwolf.weex')
 }

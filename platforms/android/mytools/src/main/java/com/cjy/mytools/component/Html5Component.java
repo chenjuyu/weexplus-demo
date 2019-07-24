@@ -25,6 +25,7 @@ import com.taobao.weex.ui.component.WXComponentProp;
 import com.taobao.weex.ui.component.WXVContainer;
 
 import java.util.HashMap;
+
 @WeexComponent(name="webView")
 public class Html5Component extends WXComponent<WebView> {
     //我们操作的webView
@@ -72,7 +73,7 @@ public class Html5Component extends WXComponent<WebView> {
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
 
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
-      //  settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        //  settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setDomStorageEnabled(true);
 
 
@@ -96,7 +97,7 @@ public class Html5Component extends WXComponent<WebView> {
         });
     }
     //父类的方法，重写这个方法获取path属性的值，这个是我们要加载的html界面
-   // 由于 WXDomObject 下沉至 WeexCore 中，所以 getDomObject() 方法已被删除。
+    // 由于 WXDomObject 下沉至 WeexCore 中，所以 getDomObject() 方法已被删除。
 
 
     @Override
@@ -139,6 +140,8 @@ public class Html5Component extends WXComponent<WebView> {
     //为html提供的通用的触发webView在weex中的对应方法名的事件
     @JavascriptInterface
     public void fireWeexEvent(final String weexMethod, String param){
+        System.out.println("方法："+weexMethod);
+        System.out.println("参数："+param);
         String data="";
         if(param!=null){
             data=param;
@@ -155,23 +158,22 @@ public class Html5Component extends WXComponent<WebView> {
     /*为weex界面提供的调用h5中js方法的接口*/
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @JSMethod
-    public void JavatoHtml(String functionName, String param, final JSCallback callback){
+    public void htmlTOJava(String functionName, String param, final JSCallback callback){
         System.out.println("已经执行到这个方法了！！");
-     if (!mLoadFinish){
+        if (!mLoadFinish){
             return;
         }
         if (!TextUtils.isEmpty(functionName)) {
-            System.out.println("weex页面的点击："+param);
-
-
-           webView.evaluateJavascript("javascript:"+functionName+"("+param+")", new ValueCallback<String>() {
+          //  System.out.println("weex页面的点击："+param);
+         //   webView.evaluateJavascript("javascript:save();", new ValueCallback<String>() {
+            webView.evaluateJavascript("javascript:"+functionName+"("+param+")", new ValueCallback<String>() {
                 @Override
                 public void onReceiveValue(String value) {
                     //此处为 js 返回的结果
                     if(callback!=null){
                         HashMap map=new HashMap();
                         map.put("res",value);
-                        System.out.println("返回到weex页面的结果："+value);
+                    //    System.out.println("返回到weex页面的结果："+value);
                         callback.invoke(map);
                     }
                 }

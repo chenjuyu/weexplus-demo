@@ -1,9 +1,8 @@
 <template>
     <div class="wxc-demo">
         <scroller class="scroller">
-            <div class="demo">
-                <wxc-minibar background-color="#1EA5FC"
-
+            <div class="demo"> <!-- #1EA5FC-->
+                <wxc-minibar background-color="#0080FF"
                              @wxcMinibarLeftButtonClicked="backTo"
                              @wxcMinibarRightButtonClicked="rightclick">
                     <image :src="leftButton"
@@ -153,12 +152,12 @@
 <style scoped>
 
     .wxc-demo {
-      /*  position: absolute; */
+      /*  position: absolute; #1EA5FC */
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
-        background-color:#1EA5FC;
+        background-color:#0080FF;
         width: 750px;
         height: 130px;
         display: block;

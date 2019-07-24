@@ -1,2 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cjy.mytools" />
+    package="com.cjy.mytools">
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 震动权限 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 摄像头权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera.autofocus" /> <!-- 自动聚焦权限 -->
+<application>
+    <activity android:name="com.cjy.mytools.google.zxing.CaptureActivity"
+        android:windowSoftInputMode="adjustPan"
+        android:theme="@style/Default"
+        android:screenOrientation="portrait"
+        android:configChanges="orientation|screenSize"
+        >
+
+    </activity>
+
+</application>
+</manifest>

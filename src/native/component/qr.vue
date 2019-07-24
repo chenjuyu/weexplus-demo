@@ -15,7 +15,7 @@
 
                  </div>
                  <!--  background-color: red  <image src="root:img/scan_light.png" style="width: 500px;height: 32px"></image> -->
-                 <div ref="scan" :style="{transform:`translateY(50px)`}" @panmove="onPanMove" style="flex: 1;justify-content: center;align-items: center;">
+                 <div ref="scan" :style="{transform:`translateY(50)`}" @panmove="onPanMove" style="flex: 1;justify-content: center;align-items: center;">
                      <image src="root:img/scan_light.png" style="width: 500px;height: 32px"></image>
 
                  </div>
