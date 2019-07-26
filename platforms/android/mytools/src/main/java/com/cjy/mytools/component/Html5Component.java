@@ -24,7 +24,12 @@ import com.taobao.weex.ui.component.WXComponent;
 import com.taobao.weex.ui.component.WXComponentProp;
 import com.taobao.weex.ui.component.WXVContainer;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 @WeexComponent(name="webView")
 public class Html5Component extends WXComponent<WebView> {
@@ -36,6 +41,9 @@ public class Html5Component extends WXComponent<WebView> {
     private String url; //file:///android_asset/html/index.html
     //浏览器加载界面是否完成
     private boolean  mLoadFinish=false;
+
+    String poststr = ""; //请求串拼接 txtName=zzz&QueryTypeLst=1&CertificateTxt=dsds
+
     //构造方法，获得当前weex实例instance
    /* public Html5Component(WXSDKInstance instance, WXDomObject dom, WXVContainer parent) {
         super(instance, dom, parent);
@@ -49,7 +57,22 @@ public class Html5Component extends WXComponent<WebView> {
         super(instance, parent, basicComponentData);
 
     }
-
+    //url 转码用，参数为map
+    private static String concatParams(Map<String,String> params) throws UnsupportedEncodingException {
+        if(params.size() ==0){
+            return null;
+        }
+        StringBuilder builder = new StringBuilder();
+        Set<String> keys = params.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext()){
+            String key = iterator.next();
+            String value = URLEncoder.encode(params.get(key), "UTF-8");
+            builder.append(String.format("%s=%s&",key, value));
+        }
+        builder.deleteCharAt(builder.lastIndexOf("&"));
+        return builder.toString();
+    }
 
 
     //初始化webView设置一些参数
@@ -77,14 +100,16 @@ public class Html5Component extends WXComponent<WebView> {
         webSettings.setDomStorageEnabled(true);
 
 
-        webView.loadUrl(url);
+        //webView.loadUrl(url);
+        webView.postUrl(url,poststr.getBytes());
         //复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器， 而是在本WebView中显示
         webView.setWebViewClient(new WebViewClient(){
         /*    @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
+              //  view.postUrl(url,poststr.getBytes());
                 return true;
-            }    */
+            } */
 
 
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -121,11 +146,25 @@ public class Html5Component extends WXComponent<WebView> {
     public void onActivityDestroy() {
         super.onActivityDestroy();
     }
-    /*要加载的html的文件路径*/
+    /*要加载的html的文件路径 path 为一个对像才对 */
     @WXComponentProp(name = "path")
-    public void setPath(String path) {
-        this.url = path;
-        webView.loadUrl(url);
+    public void setPath(Map<String,Object> path) {
+        if(path.containsKey("path")) {
+            this.url = String.valueOf(path.get("path"));
+        }
+        if(path.containsKey("poststr")){
+            Map<String,String>  postmap =(Map<String,String>) path.get("poststr");
+            try {
+                poststr=concatParams(postmap);
+                System.out.print(concatParams(postmap));
+            }catch (UnsupportedEncodingException e){
+                e.printStackTrace();
+            }
+
+        }
+
+        webView.postUrl(url,poststr.getBytes());
+       // webView.loadUrl(url);
       /*  if (path.indexOf("http")>-1 ||path.indexOf("https")>-1 ) {
             this.url = path;
         }else {

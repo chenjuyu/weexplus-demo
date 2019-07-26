@@ -27,6 +27,8 @@ android {
 dependencies {
 
     api fileTree(dir: 'libs', include: ['*.jar'])
+ //   api 'org.apache.httpcomponents:httpcore:4.4.4'
     api 'com.google.zxing:core:3.3.0'
     api project(':farwolf.weex')
+
 }

@@ -1,8 +1,8 @@
 <template>
     <div style="width:750px">
         <head :rightText="rightText" title="多颜色"  @rightClick="rightClick"></head>
-        <webView ref="myWeb" @newEvent="newEvent" :path="url" @finish="htmlFinish" style="width: 720px; height:600px;align-items: center;justify-content:center">
-        </webView>
+        <UChartsView ref="myWeb" @newEvent="newEvent" :path="path" @finish="htmlFinish" style="width: 720px; height:600px;align-items: center;justify-content:center">
+        </UChartsView>
 
      <div @click="excuJS" style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 750px;height: 80px;align-items: center;justify-content:center">
          <text style="font-size: 30px" >提交</text>
@@ -17,8 +17,9 @@
     const webview = weex.requireModule('webview');
     export default {
         data() {
-         return {
+         return {//demo.html在 放在 assets/app 中的表 静太文件
              name: "webView",
+             path:{path :'demo.html',poststr:{"categories":["2012","2013","2014","2015","2016","2017"],"series":[{"name":"成交量A","data":[35,8,25,37,4,20]},{"name":"成交量B","data":[70,40,65,100,44,68]},{"name":"成交量C","data":[100,80,95,150,112,132]}]}},
              url:'',
              msg:'rrrr',
              list:[{name:'陈中国',id:1},
@@ -28,8 +29,12 @@
          }
         },methods: {
             onLoad(p){
-            this.url ='http://172.20.10.5:8080/FPOS/demo.jsp?list=1' //list=+JSON.stringify(this.list)
-            this.log('url的地址：'+this.url)
+          /*  this.path.url ='http://192.168.1.25:8080/FPOS/demo.jsp' //list=+JSON.stringify(this.list)
+            this.path.poststr='list='+JSON.stringify(this.list)
+            this.log('url：'+this.path.url)
+            this.log('poststr：'+this.path.poststr)
+            */
+
             },
             htmlFinish(){//pref.getString('ip')+'
 
@@ -47,9 +52,25 @@
                     //执行完成的回调
                   //this.alert(res)
                 }) */
-                this.url ='http://172.20.10.5:8080/FPOS/demo.jsp?list=2'
-                this.log('url2'+this.url)
 
+               // submit
+                this.path.path ='demo.html' //list=+JSON.stringify(this.list)
+              //  this.path.poststr='list='+JSON.stringify(this.list)
+                this.log('path：'+this.path.path)
+                this.log('poststr：'+this.path.poststr)
+
+                this.path.poststr ={"categories":["2012","2013","2014"],"series":[{"name":"成交量A","data":[35,8,25,37,4,20]},{"name":"成交量B","data":[70,40,65,100,44,68]}]}
+
+
+              /*  this.$refs.myWeb.htmlTOJava('submit',this.path.url,
+                    (res)=>{
+                    //执行完成的回调
+                    this.alert(res)
+                }
+                ) */
+                this.$refs.myWeb.submit(this.path,(res)=>{
+                    this.alert(res)
+                })
             }
         },created(){
            // this.url='http://192.168.1.104:8080/FPOS/common.do?testwebview&test=asssssss'
