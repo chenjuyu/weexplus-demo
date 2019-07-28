@@ -1,7 +1,8 @@
 <template>
     <div style="width:750px">
         <head :rightText="rightText" title="多颜色"  @rightClick="rightClick"></head>
-        <UChartsView ref="myWeb" @newEvent="newEvent" :path="path" @finish="htmlFinish" style="width: 720px; height:600px;align-items: center;justify-content:center">
+        <div style="height:500px;ba"> </div>
+        <UChartsView ref="myWeb" @newEvent="newEvent" :path="path" @finish="htmlFinish" style="flex:1;align-items: center;justify-content:center">
         </UChartsView>
 
      <div @click="excuJS" style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 750px;height: 80px;align-items: center;justify-content:center">
@@ -17,7 +18,7 @@
     const webview = weex.requireModule('webview');
     export default {
         data() {
-         return {//demo.html在 放在 assets/app 中的表 静太文件
+         return {
              name: "webView",
              path:{path :'demo.html',poststr:{"categories":["2012","2013","2014","2015","2016","2017"],"series":[{"name":"成交量A","data":[35,8,25,37,4,20]},{"name":"成交量B","data":[70,40,65,100,44,68]},{"name":"成交量C","data":[100,80,95,150,112,132]}]}},
              url:'',
