@@ -61,6 +61,7 @@
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
 
     var url='/sales.do?saleslist'
+    var auditurl ='/sales.do?auditOrder'
     export default {
         components: {
 
@@ -308,11 +309,53 @@
                 });
             },
             onRightNode(pNode, node, i) {
-                node.onPress();
+                var that =this
+                //node.onPress();
+
+                var p={}
+                if(node.text =='审核'){
+                    if(pNode.AuditFlag){
+                        that.toast('单据已审核')
+                        return
+                    }
+                    p.direction ='1'
+                    p.SalesID =pNode.SalesID
+                    p.departmentid =pNode.DepartmentID
+                    p.AuditFlag =1
+                }else if(node.text =='反审'){
+                    if(!pNode.AuditFlag){
+                        that.toast('单据未审核不能反审')
+                        return
+                    }
+                    p.AuditFlag =0
+                    p.direction ='1'
+                    p.SalesID =pNode.SalesID
+                    p.departmentid =''
+                }
+               if(node.text =='审核' || node.text =='反审') {
+                   net.post(pref.getString('ip') + auditurl, p, {}, function () {
+                       //start
+                   }, function (e) {
+                       //success
+                       if(e !=null && e !=undefined){
+                           that.toast(e.res.msg)
+                           var page=weex.requireModule("page")
+                           page.reload();
+                       }
+
+                   }, function (e) {
+                       //compelete
+
+                   }, function () {
+                       //exception
+                       that.alert('异常')
+                   });
+               }
                 if (pNode.autoClose)
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
+
             },
             onNodeClick(node, i) {
                 if (this.mobileX < 0) {
