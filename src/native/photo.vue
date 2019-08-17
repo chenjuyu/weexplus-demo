@@ -29,12 +29,12 @@
 
                     path.file=e.path;
                     var net=weex.requireModule("net"); //&SalesID='+SalesID
-                    net.postFile('http://192.168.1.105:8080/FPOS/common.do?uploadImages&SalesID='+SalesID,param,header,path,()=>{
+                    net.postFile('http://192.168.43.53:8080/FPOS/common.do?uploadImages&SalesID='+SalesID,param,header,path,()=>{
                         //start
                     },(e)=>{
                         //succcess
                         var modal=weex.requireModule("modal")
-                        e.res.obj
+
                         modal.toast({message:'上传成功！url:'+e.res.obj})
                     },()=>{
                         //compelete

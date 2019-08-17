@@ -11,7 +11,8 @@ dList.length >= cols ? lineSpacing : null
                 :key="index"
                 :index="index"
                 :style="{marginTop: lineSpacing }"
-                @select="onSelect(index)"></option>
+                @select="onSelect(index)"
+                @del="del(index)"></option>
         <option
                 v-for="(item, index) in cHackList"
                 v-bind="Object.assign({}, customStyles, item)"
@@ -87,6 +88,9 @@ dList.length >= cols ? lineSpacing : null
             this.lineSpacing =  this.customStyles.lineSpacing || '12px';
         },
         methods: {
+            del(index){
+              this.$emit('del',index)
+            },
             onSelect (index) {
                 const checked = this.dList[index].checked;
                 if (this.limit <= this.checkedCount && !checked) {

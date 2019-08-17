@@ -74,9 +74,6 @@
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden"/>
 
 
-
-
-
     </application>
 
 </manifest>

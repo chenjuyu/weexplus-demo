@@ -284,11 +284,8 @@ public class WeexFactory  extends ServiceBase{
             @Override
             public void onViewCreated(WXSDKInstance instance, final View view) {
 
-            String TypeName=    getActivity().getClass().getName(); //当前页面的activity
 
-            System.out.println("当前页面的activity"+TypeName);
-
-
+//                ((WeexActivity)context).mask.addView(view);
                 p.v=view;
                 p.instance.hasInit=true;
                 if(ispotrait)

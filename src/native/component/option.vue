@@ -15,7 +15,7 @@
 
     <text v-if="tipqty" class="divright">{{tipqty}}</text>
 
-    <image v-if="checked && icon" class="image-checked" :src="icon"></image>
+    <image v-if="checked && icon" class="image-checked" :src="icon" @click="del"></image>
   </div>
 </template>
 
@@ -126,6 +126,8 @@
         if (!this.disabled) {
           this.$emit('select', this.index);
         }
+      },del(){
+        this.$emit('del', this.index);
       }
     }
   }

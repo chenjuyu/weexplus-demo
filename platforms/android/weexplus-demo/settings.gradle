@@ -79,8 +79,6 @@ project(':wechat').projectDir = new File('../../../plugins/wechat/android/wechat
 //project(':audio').projectDir = new File('../../../plugins/audio/android/audio')
 
 
-//include ':amap'
-//project(':amap').projectDir = new File('../../../plugins/amap/android/amap')
 
 
 //include ':NIMKit'
@@ -93,8 +91,8 @@ project(':wechat').projectDir = new File('../../../plugins/wechat/android/wechat
 
 
 
-//include ':record'
-//project(':record').projectDir = new File('../../../plugins/record/android/record')
+include ':record'
+project(':record').projectDir = new File('../../../plugins/record/android/record')
 
 
 //include ':lottie'
@@ -105,9 +103,21 @@ project(':wechat').projectDir = new File('../../../plugins/wechat/android/wechat
 //project(':seekbar').projectDir = new File('../../../plugins/seekbar/android/seekbar')
 
 
-//include ':jpush'
-//project(':jpush').projectDir = new File('../../../plugins/jpush/android/jpush')
+include ':jpush'
+project(':jpush').projectDir = new File('../../../plugins/jpush/android/jpush')
 
 
 //include ':zoomImage'
 //project(':zoomImage').projectDir = new File('../../../plugins/zoomImage/android/zoomImage')
+
+
+include ':sysShare'
+project(':sysShare').projectDir = new File('../../../plugins/sysShare/android/sysShare')
+
+
+include ':office'
+project(':office').projectDir = new File('../../../plugins/office/android/office')
+
+
+include ':amap'
+project(':amap').projectDir = new File('../../../plugins/amap/android/amap')

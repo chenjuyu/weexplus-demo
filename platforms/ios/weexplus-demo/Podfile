@@ -77,7 +77,6 @@ def mypod
     pod 'umshare', :path => '../../../plugins/umshare/ios/umshare'
     pod 'zvideo', :path => '../../../plugins/zvideo/ios/zvideo'
     pod 'audio', :path => '../../../plugins/audio/ios/audio'
-    pod 'amap', :path => '../../../plugins/amap/ios/amap'
     pod 'NIMKit', :path => '../../../plugins/NIMKit/ios/NIMKit'
     pod 'umanalyse', :path => '../../../plugins/umanalyse/ios/umanalyse'
     pod 'record', :path => '../../../plugins/record/ios/record'
@@ -85,6 +84,9 @@ def mypod
     pod 'seekbar', :path => '../../../plugins/seekbar/ios/seekbar'
     pod 'jpush', :path => '../../../plugins/jpush/ios/jpush'
     pod 'zoomImage', :path => '../../../plugins/zoomImage/ios/zoomImage'
+    pod 'sysShare', :path => '../../../plugins/sysShare/ios/sysShare'
+    pod 'office', :path => '../../../plugins/office/ios/office'
+    pod 'amap', :path => '../../../plugins/amap/ios/amap'
 end
 
 
@@ -101,6 +103,9 @@ end
 
  
  
+
+
+
 
 
 
