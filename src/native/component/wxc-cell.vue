@@ -15,7 +15,7 @@
         </slot>
         <div class="cell-title">
             <slot name="title">
-                <text class="cell-content">{{title}}</text>
+                <text class="cell-content" :style="titlestyle">{{title}}</text>
                 <text class="cell-desc-text"
                       v-if="desc">{{desc}}</text>
             </slot>
@@ -82,9 +82,12 @@
     }
 
     .cell-content {
-        color: #333333;
+        /* color: #333333; 这里要自定义字体颜色
+
         font-size: 40px;
         line-height: 40px;
+        */
+
     }
 
     .cell-desc-text {
@@ -149,6 +152,10 @@
             hasVerticalIndent: {
                 type: Boolean,
                 default: true
+            },
+            titlestyle:{ //title 自定义字体颜色 'line-height': '40px'
+                type:Object,
+                default:()=>({color:'#333333','font-size':'40px','line-height': '40px'})
             },
             cellStyle: {
                 type: Object,

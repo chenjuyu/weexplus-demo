@@ -275,6 +275,7 @@
 <style scoped>
     .wrapper{
         flex-direction: column;
+
     }
     .search{
         flex-direction: row;
