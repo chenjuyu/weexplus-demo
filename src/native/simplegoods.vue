@@ -1,8 +1,9 @@
 <template>
     <div class="wrapper">
-         <head :rightText="rightText" title="货品资料详情"  @rightClick="rightClick"></head>
+        <head :rightText="rightText" title="货品资料详情"  @rightClick="rightClick"></head>
 
         <scroller style="flex: 1;margin-bottom: 80px;">
+
         <div class="lightbox">
             <slider class="slider" interval="3000" auto-play="true" offset-x-accuracy="0.9" @scroll="scrollHandler" @change="changeHandler" infinite="true">
                 <div class="slider-pages" v-for="item in itemList">
@@ -158,6 +159,7 @@
 <script>
     import gridselect from './component/wxc-grid-select.vue'
     import wxccell from './component/wxc-cell.vue'
+
     export default {
         components:{gridselect,wxccell},
         data(){
@@ -239,6 +241,11 @@
 <style scoped>
 .wrapper{
     flex-direction: column;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top:0;
+    bottom: 0;
 }
     .lightbox{
         width: 750px;

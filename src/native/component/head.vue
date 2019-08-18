@@ -153,7 +153,6 @@ export default {
 
     .wxc-demo {
         /*  position: absolute; #1EA5FC */
-        position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
