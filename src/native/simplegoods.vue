@@ -2,7 +2,7 @@
     <div class="wrapper">
         <head :rightText="rightText" title="货品资料详情"  @rightClick="rightClick"></head>
 
-        <scroller style="flex: 1;margin-bottom: 80px;">
+        <scroller class="scroller" >
 
         <div class="lightbox">
             <slider class="slider" interval="3000" auto-play="true" offset-x-accuracy="0.9" @scroll="scrollHandler" @change="changeHandler" infinite="true">
@@ -146,10 +146,12 @@
                      :titlestyle="{'font-size':'35px'}"
                      @wxcCellClicked="wxcCellClicked"
                      :has-top-border="false">
-                <input type="number" class="input" return-key-type="search" v-model="TradePrice"  placeholder=""/>
+                <input type="number" class="input" return-key-type="search" auto-appear="false" v-model="TradePrice"  placeholder=""/>
             </wxccell>
         </div>
+
         </scroller>
+
         <div class="footer">
            <div class="btn"><text style="font-size: 40px;color: white">保存</text></div>
         </div>
@@ -159,11 +161,14 @@
 <script>
     import gridselect from './component/wxc-grid-select.vue'
     import wxccell from './component/wxc-cell.vue'
-
+    var nav = weex.requireModule('navigator') ;
+    const net = weex.requireModule('net');
+    const  pref=weex.requireModule('pref');
     export default {
         components:{gridselect,wxccell},
         data(){
          return{
+             GoodsID:'',
              Code:'11111888',
              Name:'长袖裙子',
              GoodsType:'裙子',
@@ -217,6 +222,11 @@
              ]
          }
         } , methods : {
+            onLoad(p){
+                if(p !=undefined && p!=null) {
+                    this.GoodsID = p.GoodsID
+                }
+            },
             scrollHandler: function(e) {
                 this.scrollHnadlerCallCount = this.scrollHnadlerCallCount + 1;
                 this.offsetXRatio = e.offsetXRatio;
@@ -241,11 +251,7 @@
 <style scoped>
 .wrapper{
     flex-direction: column;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top:0;
-    bottom: 0;
+    position: relative;
 }
     .lightbox{
         width: 750px;
@@ -306,7 +312,7 @@
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)
 }
 .footer{
-    position: absolute;
+   position: absolute;
     bottom:0;
     left:0;
     right:0;
@@ -323,5 +329,10 @@
     border-width: 5px;
     border-color: white;
     border-radius: 15px;
+}
+.scroller{
+flex: 1;
+margin-bottom: 80px;
+
 }
 </style>

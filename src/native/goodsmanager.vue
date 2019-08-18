@@ -183,7 +183,14 @@
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
+                }else{
+
+                    nav.pushFull({url:'root:simplegoods.js',param:{GoodsID:node.GoodsID}},(res)=>{
+                        this.log('res的返回值：'+res)
+                    })
                 }
+
+
             }, onPanEnd(e, node, i) {
                 if (Utils.env.isWeb()) {
                     const webEndX = e.changedTouches[0].pageX;

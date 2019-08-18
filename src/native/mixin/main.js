@@ -70,7 +70,9 @@ Mixins.install = (Vue, options) => {
 
         if (WXEnvironment.platform === 'android') {
           let keyboard = weex.requireModule('keyboard')
-          keyboard.setKeyboardMode('adjust_pan')
+          keyboard.setKeyboardMode('adjust_pan')  //设置 adjust_resize 标题栏不会被 顶起，但底部的绝对定位按扭会被顶起 看情况选择吧
+          //android 下请调用此来控制键盘遮挡方式，参数有3个值adjust_pan，adjust_resize，adjust_nothing，请来回测试
+
         }
          //阿里字库
         let domModule = weex.requireModule('dom');

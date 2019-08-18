@@ -160,6 +160,8 @@ export default {
         background-color:#0080FF;
         width: 750px;
         height: 130px;
+
+
     }
     .scroller {
         flex: 1;
