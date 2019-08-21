@@ -52,7 +52,7 @@
                      :titlestyle="{'font-size':'35px'}"
 
                      :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="goods.subType"  placeholder="输入货品子类别"/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.SubType"  placeholder="输入货品子类别"/>
             </wxccell>
             <wxccell title="厂商"
                      :has-arrow="true"
@@ -172,16 +172,16 @@
              rightText:'\ue604',
              editflag:false,//为真时，这个是修改货品，其他为新增
              GoodsID:'',
-             Code:'11111888',
-             Name:'长袖裙子',
-             GoodsType:'裙子',
+             Code:'',
+             Name:'',
+             GoodsType:'',
              goods:{
                  GoodsID:'',
                  Code:'',
                  Name:'',
                  GoodsTypeID:'',
                  GoodsType:'',
-                 subType:'',
+                 SubType:'',
                  Age:'',
                  Season:'',
                  BrandID:'',
@@ -190,15 +190,15 @@
                  Model:'',
                  Model1:'',
                  Model2:'',
-                 PurchasePrice:0.0,
-                 RetailSales:0,
-                 RetailSales1:0,
-                 RetailSales2:0,
-                 TradePrice:0,
+                 PurchasePrice:'',
+                 RetailSales:'',
+                 RetailSales1:'',
+                 RetailSales2:'',
+                 TradePrice:'',
                  DepartmentID:'',
-                 Department:'aaaa',
-                 Supplier :'cccc',
-                 SupplierID:'aaaa'
+                 Department:'',
+                 Supplier :'',
+                 SupplierID:''
              },
              scrollHnadlerCallCount:0,
              offsetXRatio: 0,

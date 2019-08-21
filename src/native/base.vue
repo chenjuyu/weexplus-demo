@@ -128,6 +128,16 @@
                            map.id=array[i].PaymentTypeID
                            map.Name=array[i].Name
                            self.list.push(map);
+                       }else if(p.send=='getGoodsType'){
+                           map.id=array[i].GoodsTypeID
+                           map.Name=array[i].Name
+                           self.list.push(map);
+                       }else if(p.send=='getGoodsSupplier'){
+
+                           map.id=array[i].SupplierID
+                           map.Name=array[i].Name
+                           map.DiscountRate=array[i].DiscountRate
+                           self.list.push(map);
                        }
                     }
 
