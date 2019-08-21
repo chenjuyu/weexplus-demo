@@ -16,7 +16,7 @@
 
                     <!--   <slot :val='{item: item, index: i}'/> -->
                     <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
-                    <div class="left">
+                    <div class="left" >
                         <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.Code}}</text>
                         <text style="font-size: 35px;height: 60px">{{item.Name}}</text>
                         <text style="font-size: 35px;height: 60px">货品子类别:{{item.subType}}</text>
@@ -26,7 +26,7 @@
                     </div>
 
 
-                    <div class="right" style="position: absolute;right: 0">
+                    <div class="right" style="position: absolute;right: 0;">
                         <text style="font-size: 35px;height: 60px">{{item.GoodsType}}</text>
                         <text style="font-size: 35px;height: 60px">年份:{{item.Age}}</text>
                         <text style="font-size: 35px;height: 60px">品牌:{{item.Brand}}</text>
@@ -61,7 +61,7 @@
     var nav = weex.requireModule('navigator') ;
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
-    const url='/goodsInfo.do?goodslist'
+    const url='/goodsInfo.do?glist'
     export default {
        components: {  },
         props: {
@@ -106,6 +106,7 @@
         },
         data(){
             return{
+                rightText:'',
                 Code:'',
                 page:1,
                 loadinging:false,
@@ -120,11 +121,27 @@
 
         },methods:{
            onLoad(p){
+               var that=this
+               net.post(pref.getString('ip')+url,{Code:"",page:that.page},{},function(){
+                   //start
+               },function(e){
+                   //success
+                   if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                      that.data =  e.res.obj || []
+                   }
+
+
+               },function(e){
+                   //compelete
+
+               },function(){
+                   //exception
+               });
 
            },add(){
-               this.pushFull({},(res)=>{
-
-               })
+                nav.pushFull({url:'root:simplegoods.js',param:{}},(res)=>{
+                    this.log('res的返回值：'+res)
+                })
            },search(){ //输入查询 要加个延时2秒
                let that=this
                setTimeout(()=>{
@@ -185,7 +202,7 @@
                     });
                 }else{
 
-                    nav.pushFull({url:'root:simplegoods.js',param:{GoodsID:node.GoodsID}},(res)=>{
+                    nav.pushFull({url:'root:simplegoods.js',param:{GoodsID:node.GoodsID,editflag:true}},(res)=>{
                         this.log('res的返回值：'+res)
                     })
                 }
@@ -254,9 +271,26 @@
                     message: "refresh",
                     duration: 1
                 });
+                var that=this
                 this.refreshing = true;
                 setTimeout(() => {
                     //  this.goodslist = [1, 2, 3, 4, 5]; 上拉先不管
+                    net.post(pref.getString('ip')+url,{Code:that.Code,page:1},{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            that.data =  e.res.obj || []
+                        }
+
+
+                    },function(e){
+                        //compelete
+
+                    },function(){
+                        //exception
+                    });
+
                     this.refreshing = false;
                 }, 2000);
             },onpullingdown(event) {
@@ -265,12 +299,33 @@
                     duration: 1
                 });
             },onloading(event) { //上拉加载更多
+                 var that=this
                 this.loadinging = true;
                 modal.toast({
                     message: "loading",
                     duration: 1
                 });
                 setTimeout(()=>{
+                    this.page=Number(this.page) +Number(1)
+                    net.post(pref.getString('ip')+url,{Code:that.Code,page:that.page},{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            var array=e.res.obj || []
+                            for(var i=0;i<array.length;i++){
+                                that.data.push(array[i])
+                            }
+                        }
+
+
+                    },function(e){
+                        //compelete
+
+                    },function(){
+                        //exception
+                    });
+
                     this.loadinging = false;
                 },2000)
 

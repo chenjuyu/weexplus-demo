@@ -29,124 +29,124 @@
             <wxccell title="货品编码"
                       :has-arrow="false"
                       :titlestyle="{color:'red','font-size':'35px'}"
-                      @wxcCellClicked="wxcCellClicked"
+
                       :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="Code"  placeholder="输入货号"/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.Code"  placeholder="输入货号"/>
             </wxccell>
             <wxccell title="货品名称"
                      :has-arrow="false"
                      :titlestyle="{color:'red','font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="Name"  placeholder="输入名称"/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.Name"  placeholder="输入名称"/>
             </wxccell>
             <wxccell title="货品类别"
                      :has-arrow="true"
                      :titlestyle="{color:'red','font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+                     @wxcCellClicked="wxcCellClicked(3)"
                      :has-top-border="false">
-                <text style="font-size:35px">{{GoodsType}}</text>
+                <text style="font-size:35px">{{goods.GoodsType}}</text>
             </wxccell>
             <wxccell title="货品子类别"
-                     :has-arrow="true"
+                     :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <text style="font-size:35px">{{subType}}</text>
+                <input type="text" class="input" return-key-type="search" v-model="goods.subType"  placeholder="输入货品子类别"/>
             </wxccell>
             <wxccell title="厂商"
                      :has-arrow="true"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+                     @wxcCellClicked="wxcCellClicked(11)"
                      :has-top-border="false">
-                <text style="font-size:30px">{{Supplier}}</text>
+                <text style="font-size:30px">{{goods.Supplier}}</text>
             </wxccell>
             <wxccell title="收货部门"
                      :has-arrow="true"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+                     @wxcCellClicked="wxcCellClicked(15)"
                      :has-top-border="false">
-                <text style="font-size:35px">{{Department}}</text>
+                <text style="font-size:35px">{{goods.Department}}</text>
             </wxccell>
             <wxccell title="型号规格"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="Model"  placeholder="型号规格"/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.Model"  placeholder="型号规格"/>
             </wxccell>
             <wxccell title="材料成分1"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="Model1"  placeholder=""/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.Model1"  placeholder=""/>
             </wxccell>
             <wxccell title="材料成分2"
                          :has-arrow="false"
                          :titlestyle="{'font-size':'35px'}"
-                         @wxcCellClicked="wxcCellClicked"
+
                          :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="Model2"  placeholder=""/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.Model2"  placeholder=""/>
             </wxccell>
             <wxccell title="厂商货品编码"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="SupplierCode"  placeholder=""/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.SupplierCode"  placeholder=""/>
             </wxccell>
             <wxccell title="年份"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="Age"  placeholder=""/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.Age"  placeholder=""/>
             </wxccell>
             <wxccell title="季节"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="text" class="input" return-key-type="search" v-model="Season"  placeholder=""/>
+                <input type="text" class="input" return-key-type="search" v-model="goods.Season"  placeholder=""/>
             </wxccell>
 
             <wxccell title="品牌"
                      :has-arrow="true"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+                     @wxcCellClicked="wxcCellClicked(44)"
                      :has-top-border="false">
-                <text style="font-size:35px">{{Brand}}</text>
+                <text style="font-size:35px">{{goods.Brand}}</text>
             </wxccell>
             <wxccell title="参考进价"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="number" class="input" return-key-type="search" v-model="PurchasePrice"  placeholder=""/>
+                <input type="number" class="input" return-key-type="search" v-model="goods.PurchasePrice"  placeholder=""/>
             </wxccell>
             <wxccell title="零售价"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="number" class="input" return-key-type="search" v-model="RetailSales"  placeholder=""/>
+                <input type="number" class="input" return-key-type="search" v-model="goods.RetailSales"  placeholder=""/>
             </wxccell>
 
             <wxccell title="零售价2"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="number" class="input" return-key-type="search" v-model="RetailSales1"  placeholder=""/>
+                <input type="number" class="input" return-key-type="search" v-model="goods.RetailSales1"  placeholder=""/>
             </wxccell>
 
             <wxccell title="批发价"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-                     @wxcCellClicked="wxcCellClicked"
+
                      :has-top-border="false">
-                <input type="number" class="input" return-key-type="search" auto-appear="false" v-model="TradePrice"  placeholder=""/>
+                <input type="number" class="input" return-key-type="search" auto-appear="false" v-model="goods.TradePrice"  placeholder=""/>
             </wxccell>
         </div>
 
@@ -164,14 +164,42 @@
     var nav = weex.requireModule('navigator') ;
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
+    var url='/goodsInfo.do?goodsDetail'
     export default {
         components:{gridselect,wxccell},
         data(){
          return{
+             rightText:'\ue604',
+             editflag:false,//为真时，这个是修改货品，其他为新增
              GoodsID:'',
              Code:'11111888',
              Name:'长袖裙子',
              GoodsType:'裙子',
+             goods:{
+                 GoodsID:'',
+                 Code:'',
+                 Name:'',
+                 GoodsTypeID:'',
+                 GoodsType:'',
+                 subType:'',
+                 Age:'',
+                 Season:'',
+                 BrandID:'',
+                 Brand:'',
+                 SupplierCode:'',
+                 Model:'',
+                 Model1:'',
+                 Model2:'',
+                 PurchasePrice:0.0,
+                 RetailSales:0,
+                 RetailSales1:0,
+                 RetailSales2:0,
+                 TradePrice:0,
+                 DepartmentID:'',
+                 Department:'aaaa',
+                 Supplier :'cccc',
+                 SupplierID:'aaaa'
+             },
              scrollHnadlerCallCount:0,
              offsetXRatio: 0,
              currIdx: 0,
@@ -182,7 +210,7 @@
                  {itemId: '522076777467', title: 'item4', pictureUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1491837948&di=3dcecd1b1d709196873a91f9fd585962&imgtype=jpg&er=1&src=http%3A%2F%2Fphotocdn.sohu.com%2F20160304%2Fmp61863731_1457078539188_3.gif'}
              ],
              colorData:[
-                 {   'GoodsID':'00AQ',
+                /* {   'GoodsID':'00AQ',
                      'ColorID':'0BA',
                      'title': '红色',
                      'checked': true,
@@ -217,15 +245,93 @@
                      'title': '之色',
                      'checked': true,
                      'tipqty':''
-                 },
+                 }, */
                  {GoodsID:'',ColorID:'',title:'增加',tipqty:''}
              ]
          }
         } , methods : {
             onLoad(p){
-                if(p !=undefined && p!=null) {
+                var that=this
+                this.alert(JSON.stringify(p))
+                if(p !=undefined && p!=null && JSON.stringify(p)!='{}') {
                     this.GoodsID = p.GoodsID
+                    this.editflag=p.editflag || false
+
+                    net.post(pref.getString('ip')+url,{GoodsID:this.GoodsID},{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            //that.alert(JSON.stringify(e))
+                            that.colorData =  e.res.attributes.datalist || []
+                            that.goods =e.res.attributes.goods || {}
+                           // that.goods.DepartmentID =''
+                          //  that.goods.Department=''
+                        }
+
+
+                    },function(e){
+                        //compelete
+
+                    },function(){
+                        //exception
+                    });
+
+
                 }
+            },wxcCellClicked(id){
+                var that=this
+                var submitmap={}
+                if(id==3){//货品类别  只有新增才可以修改
+                    if(this.editflag){
+                        return
+                    }
+                    submitmap.send ='getGoodsType'
+                }else if(id==11){ //厂商
+                    submitmap.send= 'getGoodsSupplier'
+
+                }
+                else if(id==15){//收货部门
+                    submitmap.send= 'getWarehouse'
+
+                }else if(id==44){//品牌
+                    submitmap.send= 'getBrand'
+
+                }
+                submitmap.condition=''
+                submitmap.Type=''
+                submitmap.customerid=''
+                submitmap.mult=false
+                nav.pushFull({url: 'root:base.js',param:submitmap,animate:true,isPortrait:true},
+                (res)=>{
+                    this.alert(JSON.stringify(res))
+                    if(res == undefined || res==null || JSON.stringify(res)=='{}'){
+                        return
+                    }
+                  if(id==3){
+                      that.goods.GoodsTypeID=res.id
+                      that.goods.GoodsType=res.Name
+                  }else if(id==11){
+                    //  this.goods.SupplierID=res.id  这种的，返回固定列是可以的，值有，页面不刷新 坑，但如果有其他的就不行，就要用如下方法更新
+                     // this.goods.Supplier=res.Name
+                      Vue.set(this.goods, 'SupplierID', res.id)
+                      Vue.set(this.goods, 'Supplier', res.Name)
+                      //this.alert('goods.Supplier的值:'+this.goods.Supplier)
+                  }else if(id==15){
+                //      this.goods.DepartmentID=res.id
+                    //  this.goods.Department=res.Name
+                     Vue.set(this.goods, 'DepartmentID', res.id)
+                     Vue.set(this.goods, 'Department', res.Name)
+
+                      that.alert('departmentID的值：'+that.goods.DepartmentID)
+                  }else if(id==44){
+                     // that.goods.BrandID=res.id
+                     // that.goods.Brand=res.Name
+                      Vue.set(this.goods, 'BrandID', res.id)
+                      Vue.set(this.goods, 'Brand', res.Name)
+                  }
+
+                });
             },
             scrollHandler: function(e) {
                 this.scrollHnadlerCallCount = this.scrollHnadlerCallCount + 1;
@@ -243,6 +349,8 @@
                 }
             },del(index){
                 this.alert(index)
+            },rightClick(){
+
             }
             }
     }
