@@ -7,7 +7,7 @@
         <div class="lightbox">
             <slider class="slider" interval="3000" auto-play="true" offset-x-accuracy="0.9" @scroll="scrollHandler" @change="changeHandler" infinite="true">
                 <div class="slider-pages" v-for="item in itemList">
-                    <image class="img" :src="item.pictureUrl"></image>
+                    <image class="img" :src="item.pictureUrl" @click="open"></image>
                     <text class="title">{{item.title}}</text>
                 </div>
                 <indicator class="indicator"></indicator>
@@ -153,7 +153,7 @@
         </scroller>
 
         <div class="footer">
-           <div class="btn"><text style="font-size: 40px;color: white">保存</text></div>
+           <div class="btn" @click="save"><text style="font-size: 40px;color: white">保存</text></div>
         </div>
     </div>
 </template>
@@ -164,6 +164,7 @@
     var nav = weex.requireModule('navigator') ;
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
+    const progress = weex.requireModule('progress');
     var url='/goodsInfo.do?goodsDetail'
     export default {
         components:{gridselect,wxccell},
@@ -284,6 +285,7 @@
                 var submitmap={}
                 if(id==3){//货品类别  只有新增才可以修改
                     if(this.editflag){
+                        that.toast('修改状态下不能修改货品类别')
                         return
                     }
                     submitmap.send ='getGoodsType'
@@ -333,6 +335,41 @@
 
                 });
             },
+            open(){
+                var self=this;
+                if(self.goods.Code ==''){
+                    self.toast('货品编码为空不能使用拍照功能')
+                    return
+                }
+
+                const photo = weex.requireModule('photo');
+                photo.openCamera(500,800,'#000000',function(e){
+                    self.src=e.path;
+                    var param={};
+                    var header={};
+                    var path={};
+
+                    var SalesID =self.goods.Code //以货品编码命名图片名字
+
+                    path.file=e.path;
+                    var net=weex.requireModule("net"); //&SalesID='+SalesID
+                    net.postFile(pref.getString('ip')+'/common.do?uploadImages&SalesID='+SalesID,param,header,path,()=>{
+                        //start
+                    },(e)=>{
+                        //succcess
+                        var modal=weex.requireModule("modal")
+
+                        modal.toast({message:'上传成功！url:'+e.res.obj})
+                    },()=>{
+                        //compelete
+
+                    },()=>{
+                        //exception
+                        var modal=weex.requireModule("modal")
+                        modal.toast({message:'上传异常！'})
+                    })
+                });
+            },
             scrollHandler: function(e) {
                 this.scrollHnadlerCallCount = this.scrollHnadlerCallCount + 1;
                 this.offsetXRatio = e.offsetXRatio;
@@ -345,11 +382,128 @@
                     ? '是'
                     : '否'} \n 选中的id: ${checkedList.map(item => item.ColorID)} \n选中列表：${checkedList.map(item => item.title).join(',')}`);
                 if(this.colorData[selectIndex].title =='增加'){
-                    this.alert('这是一个跳转页面的按扭')
+                    //this.alert('这是一个跳转页面的按扭')
+                    nav.pushFull({url:'root:basecheck.js',param:{send:'getGoodsColor',editflag:true}},(res)=>{
+                        this.log('res的返回值：'+JSON.stringify(res))
+                        if(res == undefined || res==null || JSON.stringify(res)=='{}'){
+                            return
+                        }
+                        for(var k=0;k<res.item.length;k++){
+                            var map=_this.checkcolor(res.item[k])
+                            if(map==undefined){ //代表无
+                                _this.colorData.unshift(res.item[k])
+                            }
+
+                        }
+                    })
                 }
-            },del(index){
+            },checkcolor(map){ //检查颜色列表，是否已有colorid
+                for(var i=0;i<this.colorData.length;i++){
+                    if(map.ColorID==this.colorData[i].ColorID){
+                        return this.colorData[i]
+                    }
+                }
+                return undefined
+            },
+            del(index){
                 this.alert(index)
             },rightClick(){
+
+            },save(){ //保存货品资料
+                var param={}
+                var saveurl=''
+                if(this.goods.Code=='' || this.goods.Name =='' || this.goods.GoodsTypeID==''){
+                    this.toast('请填写必填属性后，再提交')
+                    return
+                }
+                if(this.colorData.length >8){
+                    this.alert('颜色最多选8个，多的不做保存')
+                   // return
+                }
+
+                if(this.goods.GoodsID ==''){//为新增
+                    param.goodsCode=this.goods.Code
+                    param.goodsName=this.goods.Name
+                    param.goodsTypeId=this.goods.GoodsTypeID
+                    saveurl='/goodsInfo.do?saveGoodsInfo'
+                }else{//修改
+                    param.goodsId=this.goods.GoodsID
+                    saveurl='/goodsInfo.do?updateGoodsInfo'
+                }
+                param.goodsSubType =this.goods.SubType
+                param.brandId =this.goods.BrandID
+                param.brandSerialId=this.goods.BrandSerialID
+                param.kind=this.goods.Kind
+                param.age=this.goods.Age
+                param.season=this.goods.Season
+                param.supplierId=this.goods.SupplierID
+                param.supplierCode=this.goods.SupplierCode
+                param.purchasePrice=this.goods.PurchasePrice
+                param.tradePrice=this.goods.TradePrice
+                param.retailSales=this.goods.RetailSales
+                param.retailSales1=this.goods.RetailSales1
+                param.retailSales2=this.goods.RetailSales2
+                param.retailSales3=this.goods.RetailSales3
+                param.salesPrice1 =this.goods.SalesPrice1
+                param.salesPrice2 =this.goods.SalesPrice2
+                param.salesPrice3 =this.goods.SalesPrice3
+                 //货品颜色
+                if(this.colorData.length>0) {
+                    param.colorId1 = this.colorData[0].ColorID
+                   if(this.colorData.length>1)
+                    param.colorId2 = this.colorData[1].ColorID
+                    if(this.colorData.length>2)
+                    param.colorId3 = this.colorData[2].ColorID
+                    if(this.colorData.length>3)
+                    param.colorId4 = this.colorData[3].ColorID
+                    if(this.colorData.length>4)
+                    param.colorId5 = this.colorData[4].ColorID
+                    if(this.colorData.length>5)
+                    param.colorId6 = this.colorData[5].ColorID
+                    if(this.colorData.length>6)
+                     param.colorId7 = this.colorData[6].ColorID
+                    if(this.colorData.length>7)
+                    param.colorId8 = this.colorData[7].ColorID
+                }
+                var that=this
+                net.post(pref.getString('ip')+saveurl,param,{},function(){
+                    //start
+
+                    progress.showFull('正在保存',false)
+                },function(e){
+                    //success
+                    that.toast('保存成功')
+                    progress.dismiss()
+                    for(let k of Object.keys(param)) { //成功返回后清空 提交对象
+                        Vue.delete(param, k);
+                    }
+                        if(that.goods.GoodsID=='') { //新增
+                        param.GoodsID = e.res.obj || ''
+                        param.Code =that.goods.Code
+                        param.Name =that.goods.Name
+                        param.GoodsType=that.goods.GoodsType
+                        param.SubType =that.goods.SubType
+                        param.Season =that.goods.Season
+                        param.Age=that.goods.Age
+                        param.Supplier=that.goods.Supplier
+                        param.Brand=that.goods.Brand
+                        param.RetailSales=that.goods.RetailSales
+                        param.Quantity=''
+                        param.Amount=''
+                            nav.backFull(param,true)
+                    }else{
+                        nav.backFull(that.goods,true)
+                    }
+
+                },function(e){
+                    //compelete
+
+                },function(){
+                    //exception
+                    that.toast('保存失败')
+                    progress.dismiss()
+                })
+
 
             }
             }

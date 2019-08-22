@@ -13,31 +13,37 @@
                            @wxcSearchbarInputOnFocus="wxcSearchbarInputOnFocus"
                            @wxcSearchbarInputOnBlur="wxcSearchbarInputOnBlur"></wxc-searchbar>
         </div>
-        <scroller>
+        <scroller style="flex:1;">
             <div class="margin">
-                <!--               v-for="(num,key) in list"
+                <!--      <text class="checked-text">选中项 {{checkedList.toString()}}</text>         v-for="(num,key) in list"
                 <text>{{num.Customer}}</text>  -->
                         <wxc-checkbox-list :list="list"
                                              @wxcCheckBoxListChecked="wxcCheckBoxListChecked"></wxc-checkbox-list>
-                          <text class="checked-text">选中项 {{checkedList.toString()}}</text>
+
 
             </div>
-
-         <wxc-button text="确定"
+        </scroller>
+        <div style="left: 0;right: 0;bottom: 0;justify-content: center;align-items: center">
+          <wxc-button text="确定"
                      @wxcButtonClicked="wxcButtonClicked"></wxc-button>
-            </scroller>
+        </div>
+
      </div>
  </template>
 
  <script>
      import { WxcCheckbox,WxcCheckboxList,WxcButton,WxcSearchbar,Utils  } from 'weex-ui'
      const modal = weex.requireModule('modal');
-
+     const net = weex.requireModule('net');
+     const nav =weex.requireModule('navigator')
+     const  pref=weex.requireModule('pref');
      export default {
          components:{ WxcCheckbox, WxcCheckboxList,WxcButton,WxcSearchbar },
         data () {
          return {
              name: "basecheck",
+             currPage:1,
+             sendtype:'',
              list:[],
              checkedList: []
          }
@@ -53,33 +59,7 @@
 
          },
          created(){
-             var self=this
-             //self.alert(self.list.length)
-             //self.list.splice(0,self.list.length);
-             const net = weex.requireModule('net');
-             net.post('http://192.168.1.102:8080/FPOS/select.do?getCustomer',{currPage:"1"},{},function(){
-                 //start
-             },function(e){
-                 //success
-                 //  self.back=e.res;
-                 //  self.list.splice(0,self.list);
-               var array= e.res.obj;
 
-                 for (var i=0;i<array.length;i++) {
-                     var map = {};
-                     map.title = array[i].Customer;
-                     map.value=array[i].CustomerID;
-                     map.checked=false;
-                     self.list.push(map);
-                 }
-
-             },function(e){
-                 //compelete
-
-             },function(){
-                 //exception
-             });
-           //   this.alert('测试')
 
 
          },
@@ -95,15 +75,59 @@
 
          methods: {
              onLoad(p){
-              this.alert(p)
+                 var self=this
+                 //self.alert(self.list.length)
+                 //self.list.splice(0,self.list.length);
+                 self.sendtype=p.send
+                 net.post(pref.getString('ip')+'/select.do?'+self.sendtype,{currPage:self.currPage,param:''},{},function(){
+                     //start
+                 },function(e){
+                     //success
+                     //  self.back=e.res;
+                     //  self.list.splice(0,self.list);
+                     var array= e.res.obj;
+                     for (var i=0;i<array.length;i++) {
+                         var map = {};
+                         if(self.sendtype=='getGoodsColor') {
+                             map.title = array[i].Name;
+                             map.value = array[i].ColorID;
+                             map.checked = false;
+                         }
+                         self.list.push(map);
+                     }
+
+                 },function(e){
+                     //compelete
+
+                 },function(){
+                     //exception
+                 });
+                 //   this.alert('测试')
 
              },
-             wxcCheckBoxListChecked (e){
-                 this.checkedList = e.checkedList;
+             wxcCheckBoxListChecked (e){//为了不动weexui的组件，这里要再次 组装数据 已选中的
+                 this.checkedList.splice(0,this.checkedList.length)//清空后，再加，不然会重复添加
+                 for(var j=0;j<e.checkedList.length;j++) {
+                     var map={}
+                     for (var i = 0; i < this.list.length; i++) {
+                         if(e.checkedList[j]==this.list[i].value){
+
+                             map.GoodsID=''
+                             map.ColorID=e.checkedList[j]
+                             map.title=this.list[i].title
+                             map.checked=true
+                             map.tipqty=''
+                             this.checkedList.push(map)
+                         }
+                     }
+                 }
+                // this.alert(JSON.stringify(this.checkedList))
+                // this.checkedList = e.checkedList;
              }, wxcButtonClicked (e) {
                  //this.alert(this.checkedList)
                  let nav = weex.requireModule('navigator') ;
-                 nav.backFull({"userid":"123","CustomerID":"00A","Customer":"小陈",item: this.checkedList.toString()},true)
+
+                 nav.backFull({item: this.checkedList},true)
                /*  this.show(false);
                  this.$emit('choice', { item: this.checkedList.toString() }); */
                 // this.checkedList.splice(0,checkedList.length)
@@ -135,6 +159,32 @@
              },
              wxcSearchbarInputOnInput (e) {
                  this.value = e.value;
+                 var self=this
+                 setTimeout(()=>{
+                     net.post(pref.getString('ip')+'/select.do?'+self.sendtype,{currPage:self.currPage,param:self.value},{},function(){
+                         //start
+                     },function(e){
+                         //success
+                         //  self.back=e.res;
+                          self.list.splice(0,self.list.length);
+                         var array= e.res.obj;
+                         for (var i=0;i<array.length;i++) {
+                             var map = {};
+                             if(self.sendtype=='getGoodsColor') {
+                                 map.title = array[i].Name;
+                                 map.value = array[i].ColorID;
+                                 map.checked = false;
+                             }
+                             self.list.push(map);
+                         }
+
+                     },function(e){
+                         //compelete
+
+                     },function(){
+                         //exception
+                     });
+                 },2000)
              },
              wxcSearchbarCancelClicked () {
                  modal.toast({ 'message': 'cancel.click', 'duration': 1 });

@@ -139,34 +139,30 @@
                });
 
            },add(){
-                nav.pushFull({url:'root:simplegoods.js',param:{}},(res)=>{
-                    this.log('res的返回值：'+res)
-                })
+                    nav.pushFull({url:'root:simplegoods.js',param:{}},(res)=>{
+                        this.log('res的返回值：'+JSON.stringify(res))
+                        if(JSON.stringify(res)!='{}'){
+                            var map=this.checkdata(res)
+                            if(map==undefined){
+                                res.right= [
+                                    {text: "删除"},{text: "审核",style: { backgroundColor: "#F4333C", color: "white" }},{text: "反审",style: { backgroundColor: "orange", color: "white" }}
+                                ]
+                                this.data.unshift(res)
+                            }
+                        }
+
+
+
+                    })
+
            },search(){ //输入查询 要加个延时2秒
                let that=this
                setTimeout(()=>{
                    net.post(pref.getString('ip') + url,{Code:that.Code,page:that.page},{},function(){
                    },function(e){
-                       //let i = length; i < length + 5; i++
-                       for (let i = 0; i <e.res.attributes.goodslist.length; i++) {
-                           var map=e.res.attributes.goodslist[i]//{}
-
-                           var cm=that.hasmap(that.goodslist,map,0)//这里是每一项
-                           if(cm==undefined){
-                               that.goodslist.push(map);//i + 1
-                           } else if(cm !=undefined){
-                               for(var j=0;j<map.sizeData.length;j++){
-                                   var m=map.sizeData[j]
-                                   var zm=that.hasSize(cm.sizeData,m,1)
-                                   if( zm==undefined){
-                                       cm.sizeData.push(m)
-                                   }
-                               }
-
-                           }
+                       if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                           that.data =  e.res.obj || []
                        }
-                       that.templist =that.goodsfilter(JSON.parse(JSON.stringify(that.goodslist))) //刷新列表
-                       that.loadinging = false;
 
 
                    },function(e){
@@ -203,12 +199,25 @@
                 }else{
 
                     nav.pushFull({url:'root:simplegoods.js',param:{GoodsID:node.GoodsID,editflag:true}},(res)=>{
-                        this.log('res的返回值：'+res)
+                        this.log('res的返回值：'+JSON.stringify(res))
+
+
+
+
                     })
                 }
 
 
-            }, onPanEnd(e, node, i) {
+            },checkdata(map){ //查看 data中是否有这条数据
+               for(var i=0;i<this.data.length;i++){
+                   if(map.GoodsID==this.data[i].GoodsID){
+                       return this.data[i]
+                   }
+               }
+               return undefined
+            },
+
+            onPanEnd(e, node, i) {
                 if (Utils.env.isWeb()) {
                     const webEndX = e.changedTouches[0].pageX;
                     this.movingDistance(webEndX - this.webStarX, node, this.$refs.skid[i]);
