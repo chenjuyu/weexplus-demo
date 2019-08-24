@@ -10,7 +10,7 @@
         <wxc-cell title="密    码"
                   :has-arrow="false"
                   :has-top-border="false">
-            <input class="input" type="password" placeholder="输入密码" return-key-type="default" @return="wxcButtonClicked"  v-model="password" />
+            <input class="input" type="password" placeholder="输入密码" return-key-type="send" @return="wxcButtonClicked"  v-model="password" />
         </wxc-cell>
         <div class="demo">
             <wxc-button text="登录" type="white" style="height: 95px"

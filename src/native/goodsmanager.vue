@@ -15,23 +15,24 @@
                 <div :style='styles' class="swipe-action-center border">
 
                     <!--   <slot :val='{item: item, index: i}'/> -->
-                    <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
+                    <div style="justify-content: center;align-items: center;height: 350px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
                     <div class="left" >
                         <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.Code}}</text>
                         <text style="font-size: 35px;height: 60px">{{item.Name}}</text>
                         <text style="font-size: 35px;height: 60px">货品子类别:{{item.subType}}</text>
                         <text style="font-size: 35px;height: 60px">季节:{{item.Season}}</text>
                         <text style="font-size: 35px;height: 60px">厂商:{{item.Supplier}}</text>
-                        <text style="font-size: 35px;height: 60px">期初数据:{{item.Quantity}}</text>
+                        <text style="font-size: 35px;height: 60px;font-weight:bold;color: red">本次数量:{{item.Quantity}}</text>
                     </div>
 
 
                     <div class="right" style="position: absolute;right: 0;">
+                        <text style="font-size: 35px;height: 60px;font-weight:bold"></text>
                         <text style="font-size: 35px;height: 60px">{{item.GoodsType}}</text>
                         <text style="font-size: 35px;height: 60px">年份:{{item.Age}}</text>
                         <text style="font-size: 35px;height: 60px">品牌:{{item.Brand}}</text>
                         <text style="font-size: 35px;height: 60px">零售价:{{item.RetailSales}}</text>
-                        <text style="font-size: 35px;height: 60px">期初金额:{{item.Amount}}</text>
+                        <text style="font-size: 35px;height: 60px;font-weight:bold;color: red">本次金额:{{item.Amount}}</text>
                     </div>
 
                 </div>
@@ -61,6 +62,7 @@
     var nav = weex.requireModule('navigator') ;
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
+    const staticData = weex.requireModule("static")
     const url='/goodsInfo.do?glist'
     export default {
        components: {  },
@@ -101,7 +103,7 @@
                 ]
             }, height: {
                 type: Number,
-                default: 300
+                default: 350
             },
         },
         data(){
@@ -115,7 +117,8 @@
                 mobileX: 0,
                 webStarX: 0,
                 saveIdx: null,
-                isAndroid: Utils.env.isAndroid()
+                isAndroid: Utils.env.isAndroid(),
+                datalist:[]//用于新增单据服务器提交
 
             }
 
@@ -142,20 +145,37 @@
                     nav.pushFull({url:'root:simplegoods.js',param:{}},(res)=>{
                         this.log('res的返回值：'+JSON.stringify(res))
                         if(JSON.stringify(res)!='{}'){
-                            var map=this.checkdata(res)
+                            var map=this.checkdata(res.goods)
                             if(map==undefined){
                                 res.right= [
                                     {text: "删除"},{text: "审核",style: { backgroundColor: "#F4333C", color: "white" }},{text: "反审",style: { backgroundColor: "orange", color: "white" }}
                                 ]
-                                this.data.unshift(res)
+                                this.data.unshift(res.goods)
                             }
+                          //  this.alert('静太的数据：'+JSON.stringify(staticData.get('detaillist')))
+                            for(let i=0;i<res.detaillist.length;i++){
+                                 var map=this.hascolor(res.detaillist[i])
+                                 if(map ==undefined){
+                                     this.datalist.push(res.detaillist[i])
+                                 }
+                            }
+
                         }
 
 
 
                     })
 
-           },search(){ //输入查询 要加个延时2秒
+           },hascolor(map){ //同一个厂商，货品，颜色 替换，没有累加的 有就替换，没有就返回undefined
+               for(let i=0;i<this.datalist.length;i++){
+                 if(map.GoodsID ==this.datalist[i].GoodsID && map.ColorID ==this.datalist[i].ColorID && map.SupplierID ==this.datalist[i].SupplierID){
+                     this.datalist[i] =map
+                     return this.datalist[i]
+                 }
+               }
+               return undefined
+            }
+            ,search(){ //输入查询 要加个延时2秒
                let that=this
                setTimeout(()=>{
                    net.post(pref.getString('ip') + url,{Code:that.Code,page:that.page},{},function(){
@@ -187,6 +207,7 @@
                         transform: `translate(0, 0)`
                     });
             },onNodeClick(node, i) {
+              var qtysum=0,amtsum=0
                 if (this.mobileX < 0) {
                     this.mobileX = 0;
                     this.special(this.$refs.skid[this.saveIdx], {
@@ -197,11 +218,39 @@
                         transform: `translate(0, 0)`
                     });
                 }else{
+                     var dData=[]
+                    for(var i=0;i<this.datalist.length;i++){
+                        if(this.datalist[i].GoodsID==node.GoodsID){
+                            dData.push(this.datalist[i])
+                        }
+                    }
 
-                    nav.pushFull({url:'root:simplegoods.js',param:{GoodsID:node.GoodsID,editflag:true}},(res)=>{
-                        this.log('res的返回值：'+JSON.stringify(res))
+                    nav.pushFull({url:'root:simplegoods.js',param:{GoodsID:node.GoodsID,displaylist:dData,editflag:true}},(res)=>{
+                   //     this.log('res的返回值：'+JSON.stringify(res))
+                        //this.alert('静太的数据：'+JSON.stringify(staticData.get('detaillist')))
+                        if(JSON.stringify(res)!='{}') {
+                            for (let i = 0; i < res.detaillist.length; i++) {
+                                var map = this.hascolor(res.detaillist[i])
+                                if (map == undefined) {
+                                    this.datalist.push(res.detaillist[i])
+                                }
+                                qtysum=Number(qtysum)+Number(res.detaillist[i].Quantity)
+                                amtsum=Number(amtsum)+Number(res.detaillist[i].Amount)
 
 
+                            }
+                            //更新列表显示 数量 ，金额  单个
+                            for(let j=0;j<this.data.length;j++){
+                                if(this.data[j].GoodsID == node.GoodsID){
+                                   Vue.set(this.data[j],'Quantity',qtysum)
+                                   Vue.set(this.data[j],'Amount',amtsum)
+                                    this.log('单个货品行的返回：'+JSON.stringify(this.data[j]))
+                                    return
+                                }
+                            }
+
+
+                        }
 
 
                     })
@@ -215,6 +264,14 @@
                    }
                }
                return undefined
+            },total(){ //单个货品的数量，金额合计 更新
+              /* for(var i=0;i<this.datalist.length;i++){
+                     var m1=this.datalist[i]
+                   for(var j=0;j<this.data.length;j++){
+                       var m2=this.data[j]
+                   }
+
+               } */
             },
 
             onPanEnd(e, node, i) {

@@ -1,9 +1,8 @@
 <template>
     <div class="wrapper">
         <head :rightText="rightText" title="货品资料详情"  @rightClick="rightClick"></head>
-
-        <scroller class="scroller" >
-
+       <list class="scroller">
+        <cell>
         <div class="lightbox">
             <slider class="slider" interval="3000" auto-play="true" offset-x-accuracy="0.9" @scroll="scrollHandler" @change="changeHandler" infinite="true">
                 <div class="slider-pages" v-for="item in itemList">
@@ -23,7 +22,7 @@
                             @select="params => onSelect('res3', params)">
                 </gridselect>
                 <!-- :customStyles="customStyles" 自定义
-                     <text class="res">{{res3}}</text>  :style="{'height':getScreenHeight()}" -->
+                     <text class="res">{{res3}}</text>  :style="{'height':getScreenHeight()}"   -->
         </div>
         <div class="detail">
             <wxccell title="货品编码"
@@ -150,8 +149,55 @@
             </wxccell>
         </div>
 
-        </scroller>
+        </cell>
+        <!-- 录入颜色尺码的数据-->
 
+            <cell ref="skid" v-for="(ls,i) in detaillist" @click="onNodeClick(ls, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + ls.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, ls, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, ls, i)" @touchend="(e) => onPanEnd(e, ls, i)">
+                <!-- 整体包1-->
+                <div :style='styles' class="swipe-action-center border">
+
+                    <div style="flex-direction: row">
+                        <text style="font-size: 30px;color: red;">{{ls.Code}}</text>
+                        <text style="font-size: 30px;color:#000000; margin-left: 20px">{{ls.Name}}</text>
+                    </div>
+                    <!-- 图片与显示-->
+                    <div style="flex-direction: row;width: 750px">
+                        <div style="justify-content: center;align-items: center;height: 150px"> <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text> </div>
+                        <image v-if="ls.img" @click="piczoom(ls.img)" :src="ls.img" style="width: 150px;height: 150px;"></image>
+                        <image v-else  src="root:img/home_logo.png" @click="piczoom('root:img/home_logo.png')" style="width: 150px;height: 150px;"></image>
+
+                        <div style="margin-left: 20px">
+                            <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
+                            <text style="font-size: 30px;color:#000000;height: 50px">折扣率:{{ls.Discount}}</text>
+                            <text style="font-size: 30px;color:#000000;height: 50px">数量:{{ls.Quantity}}</text>
+                        </div>
+                        <div style="position: absolute;right: 10px;">
+                            <text style="font-size: 30px;color:#000000;height: 50px;">单价:{{ls.UnitPrice}}</text>
+                            <text style="font-size: 30px;color:#000000;height: 50px;">折扣:{{ls.DiscountRate}}</text>
+                            <text style="font-size: 30px;color:#000000;height: 50px;">金额:{{ls.Amount}}</text>
+                        </div>
+                    </div>
+                    <!-- 图片与显示-->
+                    <div style="flex-direction: row">
+                        <text style="font-size: 35px;color:red;margin-left: 5px;width: 45px;text-align: center" v-for="(lst,index1) in ls.sizetitle">{{lst.title}}</text>
+                    </div>
+                    <div style="flex-direction: row">
+                        <text style="font-size: 35px;color:#000000;margin-left: 5px;width: 45px;text-align: center" v-for="(lst2,index2) in ls.sizeData">{{lst2.Quantity }}</text>
+                    </div>
+
+                </div>  <!-- 整体包1结束-->
+                <!-- 菜单-->
+                <div class="swipe-action-right">
+                    <text class="swipe-action-child swipe-action-text" @click="onRightNode(ls, child, i)" v-for="(child, childIdx) of ls.right" :style="Object.assign({lineHeight: height + 'px'}, child.style || {})" :key="'child-' + childIdx">{{child.text}}</text>
+                </div>
+
+            </cell>
+        </list>
+        <wxcpopover ref="wxc-popover"
+                    :buttons="btns"
+                    :position="popoverPosition"
+                    :arrowPosition="popoverArrowPosition"
+                    @wxcPopoverButtonClicked="popoverButtonClicked"></wxcpopover>
         <div class="footer">
            <div class="btn" @click="save"><text style="font-size: 40px;color: white">保存</text></div>
         </div>
@@ -161,21 +207,36 @@
 <script>
     import gridselect from './component/wxc-grid-select.vue'
     import wxccell from './component/wxc-cell.vue'
+    import wxcpopover from './component/wxc-popover.vue';
+    import { Utils } from 'weex-ui';
+    import Binding from "weex-bindingx/lib/index.weex.js";
+    const animation = weex.requireModule("animation");
     var nav = weex.requireModule('navigator') ;
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
     const progress = weex.requireModule('progress');
+
+   const staticData = weex.requireModule("static")
+
     var url='/goodsInfo.do?goodsDetail'
     export default {
-        components:{gridselect,wxccell},
+        components:{gridselect,wxccell,wxcpopover},
         data(){
          return{
+             popoverPosition:{x:-14,y:110}
+             ,popoverArrowPosition:{pos:'top',x:-14}
+             ,btns:[{
+                 icon: '\ue61f',
+                 text:'录入单据',
+                 key:'add'
+             }],
              rightText:'\ue604',
+             detaillist:[],
+             mobileX: 0,
+             webStarX: 0,
+             saveIdx: null,
+             isAndroid: Utils.env.isAndroid(),
              editflag:false,//为真时，这个是修改货品，其他为新增
-             GoodsID:'',
-             Code:'',
-             Name:'',
-             GoodsType:'',
              goods:{
                  GoodsID:'',
                  Code:'',
@@ -263,9 +324,10 @@
                     },function(e){
                         //success
                         if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
-                            //that.alert(JSON.stringify(e))
+                            that.alert(JSON.stringify(e))
                             that.colorData =  e.res.attributes.datalist || []
                             that.goods =e.res.attributes.goods || {}
+                            that.detaillist =p.displaylist
                            // that.goods.DepartmentID =''
                           //  that.goods.Department=''
                         }
@@ -408,7 +470,7 @@
             del(index){
                 this.alert(index)
             },rightClick(){
-
+                this.$refs['wxc-popover'].wxcPopoverShow();
             },save(){ //保存货品资料
                 var param={}
                 var saveurl=''
@@ -448,24 +510,27 @@
                 param.salesPrice2 =this.goods.SalesPrice2
                 param.salesPrice3 =this.goods.SalesPrice3
                  //货品颜色
-                if(this.colorData.length>0) {
-                    param.colorId1 = this.colorData[0].ColorID
-                   if(this.colorData.length>1)
-                    param.colorId2 = this.colorData[1].ColorID
-                    if(this.colorData.length>2)
-                    param.colorId3 = this.colorData[2].ColorID
-                    if(this.colorData.length>3)
-                    param.colorId4 = this.colorData[3].ColorID
-                    if(this.colorData.length>4)
-                    param.colorId5 = this.colorData[4].ColorID
-                    if(this.colorData.length>5)
-                    param.colorId6 = this.colorData[5].ColorID
-                    if(this.colorData.length>6)
-                     param.colorId7 = this.colorData[6].ColorID
-                    if(this.colorData.length>7)
-                    param.colorId8 = this.colorData[7].ColorID
+                var p={},tmp={}
+               var colorarray= this.colorData.filter(map=>map.GoodsID)
+                if(colorarray.length>0) {
+                    param.colorId1 = colorarray[0].ColorID
+                   if(colorarray.length>1)
+                    param.colorId2 = colorarray[1].ColorID
+                    if(colorarray.length>2)
+                    param.colorId3 = colorarray[2].ColorID
+                    if(colorarray.length>3)
+                    param.colorId4 = colorarray[3].ColorID
+                    if(colorarray.length>4)
+                    param.colorId5 = colorarray[4].ColorID
+                    if(colorarray.length>5)
+                    param.colorId6 = colorarray[5].ColorID
+                    if(colorarray.length>6)
+                     param.colorId7 = colorarray[6].ColorID
+                    if(colorarray.length>7)
+                    param.colorId8 = colorarray[7].ColorID
                 }
                 var that=this
+
                 net.post(pref.getString('ip')+saveurl,param,{},function(){
                     //start
 
@@ -478,21 +543,42 @@
                         Vue.delete(param, k);
                     }
                         if(that.goods.GoodsID=='') { //新增
-                        param.GoodsID = e.res.obj || ''
-                        param.Code =that.goods.Code
-                        param.Name =that.goods.Name
-                        param.GoodsType=that.goods.GoodsType
-                        param.SubType =that.goods.SubType
-                        param.Season =that.goods.Season
-                        param.Age=that.goods.Age
-                        param.Supplier=that.goods.Supplier
-                        param.Brand=that.goods.Brand
-                        param.RetailSales=that.goods.RetailSales
-                        param.Quantity=''
-                        param.Amount=''
-                            nav.backFull(param,true)
+                        that.goods.GoodsID = e.res.obj
+                            tmp.GoodsID = e.res.obj || ''
+                            tmp.Code =that.goods.Code
+                            tmp.Name =that.goods.Name
+                            tmp.GoodsType=that.goods.GoodsType
+                            tmp.SubType =that.goods.SubType
+                            tmp.Season =that.goods.Season
+                            tmp.Age=that.goods.Age
+                            tmp.Supplier=that.goods.Supplier
+                            tmp.Brand=that.goods.Brand
+                            tmp.RetailSales=that.goods.RetailSales
+                            tmp.Quantity=''
+                            tmp.Amount=''
+                            param.goods=tmp
+                       if(that.detaillist.length >0){
+                       //    that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
+
+                           p.detaillist=that.detaillist
+                           staticData.set('detaillist',p)
+
+                         //  that.log('详情页的detaillist:'+SON.stringify(staticData.get('detaillist')))
+                          // that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
+                           param.detaillist =that.detaillist
+                       }
+                        nav.backFull(param,true)
                     }else{
-                        nav.backFull(that.goods,true)
+                            if(that.detaillist.length >0){
+                              //  that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
+                                p.detaillist=that.detaillist
+                                staticData.set('detaillist',p)
+                             //   that.log('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
+                             //   that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
+                                param.detaillist =that.detaillist
+                            }
+                            param.goods=that.goods
+                        nav.backFull(param,true)
                     }
 
                 },function(e){
@@ -505,8 +591,190 @@
                 })
 
 
+            },popoverButtonClicked (obj) {
+              //  modal.toast({ 'message': `key:${obj.key}, index:${obj.index}`, 'duration': 1 });
+                this.log('进入点击了:'+JSON.stringify(obj))
+                var that=this
+                if(obj.key=='add'){
+                    if(this.goods.GoodsID ==''){
+                        this.toast('请先保存货品后，再录入单据')
+                        return;
+                    }
+                    if(this.goods.SupplierID =='' || this.goods.DepartmentID==''){
+                        this.toast('请选择货品资料的厂商或者收货部门，再录入')
+                        return
+                    }
+                    if(this.colorData.length <=2){ //因为增加空的占了一个
+                        this.toast('请选择颜色后，再录入')
+                        return
+                    }
+                    //组装数据
+                     var colorlist=[]
+                     var sizelist=[]
+
+                        net.post(pref.getString('ip') + url, {GoodsID: this.goods.GoodsID}, {}, function () {
+                            //start
+                        }, function (e) {
+                            //success
+                            if (e != undefined && e != null && JSON.stringify(e) != '{}') {
+                                //that.alert(JSON.stringify(e))
+                                colorlist = e.res.attributes.datalist || []
+
+                                for (let n = 0; n < colorlist.length; n++) { //先删除掉一个没用的
+                                    if (colorlist[n].title == '增加') {
+                                        colorlist.splice(n, 1)
+                                    }
+                                }
+
+                                //再重新加上已填的数据
+                                for(let j=0;j<colorlist.length;j++) {
+                                for(let i=0;i<that.detaillist.length;i++){
+
+                                         if(colorlist[j].GoodsID ==that.detaillist[i].GoodsID && colorlist[j].ColorID ==that.detaillist[i].ColorID ) {
+                                             colorlist[j] = that.detaillist[i]
+                                             colorlist[j].title =colorlist[j].Color
+                                             colorlist[j].tipqty =that.detaillist[i].Quantity
+                                         }
+                                 }
+                                }
+                                that.log('colorlist最后的结果：' + JSON.stringify(colorlist))
+
+
+                                //这里只是单个货品的 尺码sizedata
+
+                                for (let n = 0; n < colorlist.length; n++) { //sizeData
+
+                                    for (let m = 0; m < colorlist[n].sizeData.length; m++) {
+                                        sizelist.push(colorlist[n].sizeData[m])
+                                    }
+
+                                }
+
+
+
+                                that.log('sizelist最后的结果：' + JSON.stringify(sizelist))
+
+                                nav.pushFull({
+                                    url: 'root:goodsDetail.js',
+                                    param: {colorlist: colorlist, sizelist: sizelist}
+                                }, (res) => {
+                                    if (JSON.stringify(res) != '{}') {
+                                        if(res !=null) {
+                                            that.detaillist = res.detaillist
+                                            //把厂商与收货部门加进去，后台要 根据这些生成单据的
+                                            for (let i = 0; i < that.detaillist.length; i++) {
+                                                that.detaillist[i].SupplierID = that.goods.SupplierID
+                                                that.detaillist[i].DepartmentID = that.goods.DepartmentID
+                                            }
+                                        }
+                                    }
+                                })
+
+
+                            }
+
+
+                        }, function (e) {
+                            //compelete
+
+                        }, function () {
+                            //exception
+                            that.alert('异常')
+                        });
+                    }
+
+
+                }
+            },  onRightNode(pNode, node, i) {//向左滑动相关
+                // node.onPress();
+                //this.alert(node)
+
+                if (pNode.autoClose)
+                    this.special(this.$refs.skid[i], {
+                        transform: `translate(0, 0)`
+                    });
+            },onNodeClick(node, i) {
+        //   this.alert("mobileX:"+this.mobileX)
+        if (this.mobileX < 0) {
+            this.mobileX = 0;
+            this.special(this.$refs.skid[this.saveIdx], {
+                transform: `translate(0, 0)`
+            });
+            this.isAndroid &&
+            this.special(this.$refs.skid[i], {
+                transform: `translate(0, 0)`
+            });
+        }},   onPanEnd(e, node, i) {
+                if (Utils.env.isWeb()) {
+                    const webEndX = e.changedTouches[0].pageX;
+                    this.movingDistance(webEndX - this.webStarX, node, this.$refs.skid[i]);
+                }
+            },
+            onPanStart: function(e, node, i) {
+                const { saveIdx } = this;
+                if (saveIdx !== i && saveIdx !== null && this.$refs.skid[saveIdx]) {
+                    this.special(this.$refs.skid[saveIdx], {
+                        transform: `translate(0, 0)`
+                    });
+                    this.mobileX = 0;
+                }
+                this.saveIdx = i;
+                !Utils.env.isWeb() ? this.mobile(e, node, i) : this.web(e, node, i);
+                e.stopPropagation();
+            },
+            web(e, node, i) {
+                this.webStarX = e.changedTouches[0].pageX;
+            },
+            mobile(e, node, i) {
+                var el = this.$refs["skid"][i];
+                Binding.bind(
+                    {
+                        anchor: el.ref,
+                        eventType: "pan",
+                        props: [
+                            {
+                                element: el.ref,
+                                property: "transform.translateX",
+                                expression: `x+${this.isAndroid ? 0 : this.mobileX}`
+                            }
+                        ]
+                    },
+                    e => {
+                        const { state, deltaX } = e;
+                        if (state === "end") {
+                            this.mobileX += deltaX;
+                            this.movingDistance(this.mobileX, node, el);
+                        }
+                    }
+                );
+            },
+            movingDistance(scope, node, el) {
+                const len = node.right ? node.right.length : 0;
+                const distance = len * -100;
+                if (scope < -30) {
+                    this.special(el, {
+                        transform: `translate(${distance}px, 0)`
+                    });
+                    this.mobileX = distance;
+                } else {
+                    this.special(el, {
+                        transform: `translate(0, 0)`
+                    });
+                    this.mobileX = 0;
+                }
+            }, special(dom, styles) {
+                animation.transition(dom, {
+                    styles,
+                    duration: 200, //ms
+                    timingFunction: "ease",
+                    delay: 100 //ms
+                });
             }
-            }
+
+
+
+
+
     }
 </script>
 
@@ -596,5 +864,24 @@
 flex: 1;
 margin-bottom: 80px;
 
+}
+.wxc-skid{
+    flex-direction: row;
+    border-bottom-width: 1px;
+    justify-content: center;
+    border-color: #dddddd
+}
+.swipe-action-center {
+    width: 750px;
+}
+.swipe-action-child {
+    width: 100px;
+    text-align: center;
+    color: #FFFFFF;
+    background-color: #dddddd;
+    line-height: 90px;
+}
+.swipe-action-text {
+    font-size: 30px;
 }
 </style>
