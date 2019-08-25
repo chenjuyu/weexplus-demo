@@ -48,8 +48,8 @@
                 <text class="indicator-text">Loading...</text>
             </loading>
         </list>
-        <div class="footer">
-            <text style="font-size: 35px;color: white">新品生成采购订单</text>
+        <div class="footer" @click="save">
+            <text style="font-size: 35px;color: white">生成采购收货单</text>
         </div>
     </div>
 </template>
@@ -63,7 +63,9 @@
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
     const staticData = weex.requireModule("static")
+    const progress = weex.requireModule('progress');
     const url='/goodsInfo.do?glist'
+    const delurl='/goodsInfo.do?deleteGoodsInfo'
     export default {
        components: {  },
         props: {
@@ -144,6 +146,9 @@
            },add(){
                     nav.pushFull({url:'root:simplegoods.js',param:{}},(res)=>{
                         this.log('res的返回值：'+JSON.stringify(res))
+                        if(res==undefined || res==null){
+                            return
+                        }
                         if(JSON.stringify(res)!='{}'){
                             var map=this.checkdata(res.goods)
                             if(map==undefined){
@@ -202,10 +207,89 @@
                     delay: 100 //ms
                 });
             }, onRightNode(pNode, node, i) {
+               var that=this
+                var AuditFlag=0
                 if (pNode.autoClose)
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
+                if(node.text=='审核' || node.text=='反审'){
+                    if(node.text=='审核') {
+                        if (pNode.GoodsAuditFlag) {
+                            this.toast('单据已是审核状态')
+                            return
+                        }
+                        AuditFlag =1
+                    }else{
+                        if (!pNode.GoodsAuditFlag) {
+                            this.toast('单据已是反审核状态')
+                            return
+                        }
+                        AuditFlag =0
+                    }
+                    net.post(pref.getString('ip') + '/goodsInfo.do?audit',{GoodsID:pNode.GoodsID,AuditFlag:AuditFlag},{},function(){
+                        progress.showFull('正在提交',false)
+                    },function(e){
+                        progress.dismiss()
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            that.toast(e.res.msg)
+                            if(e.res.success) {
+                                for (let j = 0; j < that.data.length; j++) { //不重载页面
+                                    if (that.data[j].GoodsID == pNode.GoodsID) {
+                                        if (AuditFlag == 1) {
+                                            Vue.set(that.data[j], 'GoodsAuditFlag', true)
+                                        } else {
+                                            Vue.set(that.data[j], 'GoodsAuditFlag', false)
+                                        }
+                                        return
+                                    }
+                                }
+                            }
+                        }
+
+
+                    },function(e){
+                        //compelete
+
+                    },function(){
+                        //exception
+                        progress.dismiss()
+                    });
+                }
+                if(node.text=='删除'){//代表没有审核
+
+                    if(pNode.GoodsAuditFlag)
+                    {
+                        that.toast('货品已审核不能删除')
+                        return;
+                    }
+
+                    net.post(pref.getString('ip') + delurl,{GoodsID:pNode.GoodsID},{},function(){
+                        progress.showFull('正在提交',false)
+                    },function(e){
+                        progress.dismiss()
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            that.toast(e.res.msg)
+                            if(e.res.success && e.res.msg=='删除成功'){
+                               for(var i=0;i<that.datalist.length;i++){
+                                   if(that.datalist[i].GoodsID ==pNode.GoodsID){
+                                       that.datalist.splice(i,1)
+                                   }
+                               }
+                            }
+                        }
+
+
+                    },function(e){
+                        //compelete
+
+                    },function(){
+                        //exception
+                        progress.dismiss()
+                    });
+                }
+
+
             },onNodeClick(node, i) {
               var qtysum=0,amtsum=0
                 if (this.mobileX < 0) {
@@ -228,7 +312,31 @@
                     nav.pushFull({url:'root:simplegoods.js',param:{GoodsID:node.GoodsID,displaylist:dData,editflag:true}},(res)=>{
                    //     this.log('res的返回值：'+JSON.stringify(res))
                         //this.alert('静太的数据：'+JSON.stringify(staticData.get('detaillist')))
+                        if(res==undefined || res==null){
+                            return
+                        }
                         if(JSON.stringify(res)!='{}') {
+
+                            for(let j=0;j<this.data.length;j++) {
+                                if (this.data[j].GoodsID == node.GoodsID) {
+                                    Vue.set(this.data[j],'Brand',res.goods.Brand)
+                                    Vue.set(this.data[j],'Code',res.goods.Code)
+                                    Vue.set(this.data[j],'Name',res.goods.Name)
+                                    Vue.set(this.data[j],'GoodsType',res.goods.GoodsType)
+                                    Vue.set(this.data[j],'SubType',res.goods.SubType)
+                                    Vue.set(this.data[j],'Age',res.goods.Age)
+                                    Vue.set(this.data[j],'Season',res.goods.Season)
+                                    Vue.set(this.data[j],'Supplier',res.goods.Supplier)
+                                    Vue.set(this.data[j],'RetailSales',res.goods.RetailSales)
+                                }
+                            }
+
+
+
+                            if(!res.hasOwnProperty('detaillist'))
+                            {
+                                return;
+                            }
                             for (let i = 0; i < res.detaillist.length; i++) {
                                 var map = this.hascolor(res.detaillist[i])
                                 if (map == undefined) {
@@ -395,7 +503,10 @@
                     this.loadinging = false;
                 },2000)
 
-           }
+           },save(){ //生成单据操作
+               this.log('datalist:'+JSON.stringify(this.datalist))
+
+            }
         }
     }
 </script>

@@ -221,6 +221,20 @@
     var url='/goodsInfo.do?goodsDetail'
     export default {
         components:{gridselect,wxccell,wxcpopover},
+        props: {
+            data: {
+                type: Array,
+                default: []
+            },
+            height: {
+                type: Number,
+                default: 290
+            },
+            styles: {
+                type: Object,
+                default: {}
+            }
+        },
         data(){
          return{
              popoverPosition:{x:-14,y:110}
@@ -312,380 +326,423 @@
              ]
          }
         } , methods : {
-            onLoad(p){
-                var that=this
+            onLoad(p) {
+                var that = this
                 this.alert(JSON.stringify(p))
-                if(p !=undefined && p!=null && JSON.stringify(p)!='{}') {
+                if (p != undefined && p != null && JSON.stringify(p) != '{}') {
                     this.GoodsID = p.GoodsID
-                    this.editflag=p.editflag || false
+                    this.editflag = p.editflag || false
 
-                    net.post(pref.getString('ip')+url,{GoodsID:this.GoodsID},{},function(){
+                    net.post(pref.getString('ip') + url, {GoodsID: this.GoodsID}, {}, function () {
                         //start
-                    },function(e){
+                    }, function (e) {
                         //success
-                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                        if (e != undefined && e != null && JSON.stringify(e) != '{}') {
                             that.alert(JSON.stringify(e))
-                            that.colorData =  e.res.attributes.datalist || []
-                            that.goods =e.res.attributes.goods || {}
-                            that.detaillist =p.displaylist
-                           // that.goods.DepartmentID =''
-                          //  that.goods.Department=''
+                            that.colorData = e.res.attributes.datalist || []
+                            that.goods = e.res.attributes.goods || {}
+                            that.detaillist = p.displaylist
+                            // that.goods.DepartmentID =''
+                            //  that.goods.Department=''
                         }
 
 
-                    },function(e){
+                    }, function (e) {
                         //compelete
 
-                    },function(){
+                    }, function () {
                         //exception
                     });
 
 
                 }
-            },wxcCellClicked(id){
-                var that=this
-                var submitmap={}
-                if(id==3){//货品类别  只有新增才可以修改
-                    if(this.editflag){
+            }, wxcCellClicked(id) {
+                var that = this
+                var submitmap = {}
+                if (id == 3) {//货品类别  只有新增才可以修改
+                    if (this.editflag) {
                         that.toast('修改状态下不能修改货品类别')
                         return
                     }
-                    submitmap.send ='getGoodsType'
-                }else if(id==11){ //厂商
-                    submitmap.send= 'getGoodsSupplier'
+                    submitmap.send = 'getGoodsType'
+                } else if (id == 11) { //厂商
+                    submitmap.send = 'getGoodsSupplier'
+
+                } else if (id == 15) {//收货部门
+                    submitmap.send = 'getWarehouse'
+
+                } else if (id == 44) {//品牌
+                    submitmap.send = 'getBrand'
 
                 }
-                else if(id==15){//收货部门
-                    submitmap.send= 'getWarehouse'
+                submitmap.condition = ''
+                submitmap.Type = ''
+                submitmap.customerid = ''
+                submitmap.mult = false
+                nav.pushFull({url: 'root:base.js', param: submitmap, animate: true, isPortrait: true},
+                    (res) => {
+                        this.alert(JSON.stringify(res))
+                        if (res == undefined || res == null || JSON.stringify(res) == '{}') {
+                            return
+                        }
+                        if (id == 3) {
+                            that.goods.GoodsTypeID = res.id
+                            that.goods.GoodsType = res.Name
+                        } else if (id == 11) {
+                            //  this.goods.SupplierID=res.id  这种的，返回固定列是可以的，值有，页面不刷新 坑，但如果有其他的就不行，就要用如下方法更新
+                            // this.goods.Supplier=res.Name
+                            Vue.set(this.goods, 'SupplierID', res.id)
+                            Vue.set(this.goods, 'Supplier', res.Name)
+                            //this.alert('goods.Supplier的值:'+this.goods.Supplier)
+                        } else if (id == 15) {
+                            //      this.goods.DepartmentID=res.id
+                            //  this.goods.Department=res.Name
+                            Vue.set(this.goods, 'DepartmentID', res.id)
+                            Vue.set(this.goods, 'Department', res.Name)
 
-                }else if(id==44){//品牌
-                    submitmap.send= 'getBrand'
+                            that.alert('departmentID的值：' + that.goods.DepartmentID)
+                        } else if (id == 44) {
+                            // that.goods.BrandID=res.id
+                            // that.goods.Brand=res.Name
+                            Vue.set(this.goods, 'BrandID', res.id)
+                            Vue.set(this.goods, 'Brand', res.Name)
+                        }
 
-                }
-                submitmap.condition=''
-                submitmap.Type=''
-                submitmap.customerid=''
-                submitmap.mult=false
-                nav.pushFull({url: 'root:base.js',param:submitmap,animate:true,isPortrait:true},
-                (res)=>{
-                    this.alert(JSON.stringify(res))
-                    if(res == undefined || res==null || JSON.stringify(res)=='{}'){
-                        return
-                    }
-                  if(id==3){
-                      that.goods.GoodsTypeID=res.id
-                      that.goods.GoodsType=res.Name
-                  }else if(id==11){
-                    //  this.goods.SupplierID=res.id  这种的，返回固定列是可以的，值有，页面不刷新 坑，但如果有其他的就不行，就要用如下方法更新
-                     // this.goods.Supplier=res.Name
-                      Vue.set(this.goods, 'SupplierID', res.id)
-                      Vue.set(this.goods, 'Supplier', res.Name)
-                      //this.alert('goods.Supplier的值:'+this.goods.Supplier)
-                  }else if(id==15){
-                //      this.goods.DepartmentID=res.id
-                    //  this.goods.Department=res.Name
-                     Vue.set(this.goods, 'DepartmentID', res.id)
-                     Vue.set(this.goods, 'Department', res.Name)
-
-                      that.alert('departmentID的值：'+that.goods.DepartmentID)
-                  }else if(id==44){
-                     // that.goods.BrandID=res.id
-                     // that.goods.Brand=res.Name
-                      Vue.set(this.goods, 'BrandID', res.id)
-                      Vue.set(this.goods, 'Brand', res.Name)
-                  }
-
-                });
+                    });
             },
-            open(){
-                var self=this;
-                if(self.goods.Code ==''){
+            open() {
+                var self = this;
+                if (self.goods.Code == '') {
                     self.toast('货品编码为空不能使用拍照功能')
                     return
                 }
 
                 const photo = weex.requireModule('photo');
-                photo.openCamera(500,800,'#000000',function(e){
-                    self.src=e.path;
-                    var param={};
-                    var header={};
-                    var path={};
+                photo.openCamera(500, 800, '#000000', function (e) {
+                    self.src = e.path;
+                    var param = {};
+                    var header = {};
+                    var path = {};
 
-                    var SalesID =self.goods.Code //以货品编码命名图片名字
+                    var SalesID = self.goods.Code //以货品编码命名图片名字
 
-                    path.file=e.path;
-                    var net=weex.requireModule("net"); //&SalesID='+SalesID
-                    net.postFile(pref.getString('ip')+'/common.do?uploadImages&SalesID='+SalesID,param,header,path,()=>{
+                    path.file = e.path;
+                    var net = weex.requireModule("net"); //&SalesID='+SalesID
+                    net.postFile(pref.getString('ip') + '/common.do?uploadImages&SalesID=' + SalesID, param, header, path, () => {
                         //start
-                    },(e)=>{
+                    }, (e) => {
                         //succcess
-                        var modal=weex.requireModule("modal")
+                        var modal = weex.requireModule("modal")
 
-                        modal.toast({message:'上传成功！url:'+e.res.obj})
-                    },()=>{
+                        modal.toast({message: '上传成功！url:' + e.res.obj})
+                    }, () => {
                         //compelete
 
-                    },()=>{
+                    }, () => {
                         //exception
-                        var modal=weex.requireModule("modal")
-                        modal.toast({message:'上传异常！'})
+                        var modal = weex.requireModule("modal")
+                        modal.toast({message: '上传异常！'})
                     })
                 });
             },
-            scrollHandler: function(e) {
+            scrollHandler: function (e) {
                 this.scrollHnadlerCallCount = this.scrollHnadlerCallCount + 1;
                 this.offsetXRatio = e.offsetXRatio;
             },
-            changeHandler: function(e) {
+            changeHandler: function (e) {
                 this.currIdx = e.index;
-            }, onSelect (res,{selectIndex, checked, checkedList }) {
+            }, onSelect(res, {selectIndex, checked, checkedList}) {
                 let _this = this
                 Vue.set(this, res, `本次选择的index：${selectIndex}\n是否选中：${checked
                     ? '是'
                     : '否'} \n 选中的id: ${checkedList.map(item => item.ColorID)} \n选中列表：${checkedList.map(item => item.title).join(',')}`);
-                if(this.colorData[selectIndex].title =='增加'){
+                if (this.colorData[selectIndex].title == '增加') {
                     //this.alert('这是一个跳转页面的按扭')
-                    nav.pushFull({url:'root:basecheck.js',param:{send:'getGoodsColor',editflag:true}},(res)=>{
-                        this.log('res的返回值：'+JSON.stringify(res))
-                        if(res == undefined || res==null || JSON.stringify(res)=='{}'){
+                    nav.pushFull({url: 'root:basecheck.js', param: {send: 'getGoodsColor', editflag: true}}, (res) => {
+                        this.log('res的返回值：' + JSON.stringify(res))
+                        if (res == undefined || res == null || JSON.stringify(res) == '{}') {
                             return
                         }
-                        for(var k=0;k<res.item.length;k++){
-                            var map=_this.checkcolor(res.item[k])
-                            if(map==undefined){ //代表无
+                        for (var k = 0; k < res.item.length; k++) {
+                            var map = _this.checkcolor(res.item[k])
+                            if (map == undefined) { //代表无
                                 _this.colorData.unshift(res.item[k])
                             }
 
                         }
                     })
                 }
-            },checkcolor(map){ //检查颜色列表，是否已有colorid
-                for(var i=0;i<this.colorData.length;i++){
-                    if(map.ColorID==this.colorData[i].ColorID){
+            }, checkcolor(map) { //检查颜色列表，是否已有colorid
+                for (var i = 0; i < this.colorData.length; i++) {
+                    if (map.ColorID == this.colorData[i].ColorID) {
                         return this.colorData[i]
                     }
                 }
                 return undefined
             },
-            del(index){
+            del(index) {
                 this.alert(index)
-            },rightClick(){
+            }, rightClick() {
                 this.$refs['wxc-popover'].wxcPopoverShow();
-            },save(){ //保存货品资料
-                var param={}
-                var saveurl=''
-                if(this.goods.Code=='' || this.goods.Name =='' || this.goods.GoodsTypeID==''){
+            }, save() { //保存货品资料
+                var param = {}
+                var saveurl = ''
+                if (this.goods.Code == '' || this.goods.Name == '' || this.goods.GoodsTypeID == '') {
                     this.toast('请填写必填属性后，再提交')
                     return
                 }
-                if(this.colorData.length >8){
+                if (this.colorData.length > 8) {
                     this.alert('颜色最多选8个，多的不做保存')
-                   // return
+                    // return
                 }
 
-                if(this.goods.GoodsID ==''){//为新增
-                    param.goodsCode=this.goods.Code
-                    param.goodsName=this.goods.Name
-                    param.goodsTypeId=this.goods.GoodsTypeID
-                    saveurl='/goodsInfo.do?saveGoodsInfo'
-                }else{//修改
-                    param.goodsId=this.goods.GoodsID
-                    saveurl='/goodsInfo.do?updateGoodsInfo'
+                if (this.goods.GoodsID == '') {//为新增
+                    param.goodsCode = this.goods.Code
+                    param.goodsName = this.goods.Name
+                    param.goodsTypeId = this.goods.GoodsTypeID
+                    saveurl = '/goodsInfo.do?saveGoodsInfo'
+                } else {//修改
+                    param.goodsId = this.goods.GoodsID
+                    saveurl = '/goodsInfo.do?updateGoodsInfo'
                 }
-                param.goodsSubType =this.goods.SubType
-                param.brandId =this.goods.BrandID
-                param.brandSerialId=this.goods.BrandSerialID
-                param.kind=this.goods.Kind
-                param.age=this.goods.Age
-                param.season=this.goods.Season
-                param.supplierId=this.goods.SupplierID
-                param.supplierCode=this.goods.SupplierCode
-                param.purchasePrice=this.goods.PurchasePrice
-                param.tradePrice=this.goods.TradePrice
-                param.retailSales=this.goods.RetailSales
-                param.retailSales1=this.goods.RetailSales1
-                param.retailSales2=this.goods.RetailSales2
-                param.retailSales3=this.goods.RetailSales3
-                param.salesPrice1 =this.goods.SalesPrice1
-                param.salesPrice2 =this.goods.SalesPrice2
-                param.salesPrice3 =this.goods.SalesPrice3
-                 //货品颜色
-                var p={},tmp={}
-               var colorarray= this.colorData.filter(map=>map.GoodsID)
-                if(colorarray.length>0) {
+                param.goodsSubType = this.goods.SubType
+                param.brandId = this.goods.BrandID
+                param.brandSerialId = this.goods.BrandSerialID
+                param.kind = this.goods.Kind
+                param.age = this.goods.Age
+                param.season = this.goods.Season
+                param.supplierId = this.goods.SupplierID
+                param.supplierCode = this.goods.SupplierCode
+                param.purchasePrice = this.goods.PurchasePrice
+                param.tradePrice = this.goods.TradePrice
+                param.retailSales = this.goods.RetailSales
+                param.retailSales1 = this.goods.RetailSales1
+                param.retailSales2 = this.goods.RetailSales2
+                param.retailSales3 = this.goods.RetailSales3
+                param.salesPrice1 = this.goods.SalesPrice1
+                param.salesPrice2 = this.goods.SalesPrice2
+                param.salesPrice3 = this.goods.SalesPrice3
+                //货品颜色
+                var p = {}, tmp = {}
+                var colorarray = this.colorData.filter(map => map.ColorID)
+                this.log('colorarray:'+JSON.stringify(colorarray))
+                if (colorarray.length > 0) {
                     param.colorId1 = colorarray[0].ColorID
-                   if(colorarray.length>1)
-                    param.colorId2 = colorarray[1].ColorID
-                    if(colorarray.length>2)
-                    param.colorId3 = colorarray[2].ColorID
-                    if(colorarray.length>3)
-                    param.colorId4 = colorarray[3].ColorID
-                    if(colorarray.length>4)
-                    param.colorId5 = colorarray[4].ColorID
-                    if(colorarray.length>5)
-                    param.colorId6 = colorarray[5].ColorID
-                    if(colorarray.length>6)
-                     param.colorId7 = colorarray[6].ColorID
-                    if(colorarray.length>7)
-                    param.colorId8 = colorarray[7].ColorID
+                }else{
+                    param.colorId1=''
                 }
-                var that=this
+                    if (colorarray.length > 1) {
+                        param.colorId2 = colorarray[1].ColorID
+                    }else {
+                        param.colorId2=''
+                    }
+                    if (colorarray.length > 2) {
+                        param.colorId3 = colorarray[2].ColorID
+                    }else{
+                        param.colorId3=''
+                    }
+                    if (colorarray.length > 3) {
+                        param.colorId4 = colorarray[3].ColorID
+                    }else{
+                        param.colorId4=''
+                    }
+                    if (colorarray.length > 4) {
+                        param.colorId5 = colorarray[4].ColorID
+                    }else{
+                        param.colorId5=''
+                    }
+                    if (colorarray.length > 5) {
+                        param.colorId6 = colorarray[5].ColorID
+                    }else{
+                        param.colorId6=''
+                    }
+                    if (colorarray.length > 6) {
+                        param.colorId7 = colorarray[6].ColorID
+                    }else {
+                        param.colorId7=''
+                    }
+                    if (colorarray.length > 7) {
+                        param.colorId8 = colorarray[7].ColorID
+                    }else{
+                        param.colorId8=''
+                    }
 
-                net.post(pref.getString('ip')+saveurl,param,{},function(){
+                var that = this
+
+                net.post(pref.getString('ip') + saveurl, param, {}, function () {
                     //start
 
-                    progress.showFull('正在保存',false)
-                },function(e){
+                    progress.showFull('正在保存', false)
+                }, function (e) {
                     //success
                     that.toast('保存成功')
                     progress.dismiss()
-                    for(let k of Object.keys(param)) { //成功返回后清空 提交对象
+                    for (let k of Object.keys(param)) { //成功返回后清空 提交对象
                         Vue.delete(param, k);
                     }
-                        if(that.goods.GoodsID=='') { //新增
+                    if (that.goods.GoodsID == '') { //新增
                         that.goods.GoodsID = e.res.obj
-                            tmp.GoodsID = e.res.obj || ''
-                            tmp.Code =that.goods.Code
-                            tmp.Name =that.goods.Name
-                            tmp.GoodsType=that.goods.GoodsType
-                            tmp.SubType =that.goods.SubType
-                            tmp.Season =that.goods.Season
-                            tmp.Age=that.goods.Age
-                            tmp.Supplier=that.goods.Supplier
-                            tmp.Brand=that.goods.Brand
-                            tmp.RetailSales=that.goods.RetailSales
-                            tmp.Quantity=''
-                            tmp.Amount=''
-                            param.goods=tmp
-                       if(that.detaillist.length >0){
-                       //    that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
+                        tmp.GoodsID = e.res.obj || ''
+                        tmp.Code = that.goods.Code
+                        tmp.Name = that.goods.Name
+                        tmp.GoodsType = that.goods.GoodsType
+                        tmp.SubType = that.goods.SubType
+                        tmp.Season = that.goods.Season
+                        tmp.Age = that.goods.Age
+                        tmp.Supplier = that.goods.Supplier
+                        tmp.Brand = that.goods.Brand
+                        tmp.RetailSales = that.goods.RetailSales
+                        tmp.Quantity = ''
+                        tmp.Amount = ''
+                        param.goods = tmp
+                        if (that.detaillist.length > 0) {
+                            //    that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
 
-                           p.detaillist=that.detaillist
-                           staticData.set('detaillist',p)
+                            p.detaillist = that.detaillist
+                            staticData.set('detaillist', p)
 
-                         //  that.log('详情页的detaillist:'+SON.stringify(staticData.get('detaillist')))
-                          // that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
-                           param.detaillist =that.detaillist
-                       }
-                        nav.backFull(param,true)
-                    }else{
-                            if(that.detaillist.length >0){
-                              //  that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
-                                p.detaillist=that.detaillist
-                                staticData.set('detaillist',p)
-                             //   that.log('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
-                             //   that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
-                                param.detaillist =that.detaillist
-                            }
-                            param.goods=that.goods
-                        nav.backFull(param,true)
+                            //  that.log('详情页的detaillist:'+SON.stringify(staticData.get('detaillist')))
+                            // that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
+                            param.detaillist = that.detaillist
+                        }
+                        nav.backFull(param, true)
+                    } else {
+                        if (that.detaillist.length > 0) {
+                            //  that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
+                            p.detaillist = that.detaillist
+                            staticData.set('detaillist', p)
+                            //   that.log('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
+                            //   that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
+                            param.detaillist = that.detaillist
+                        }
+                        param.goods = that.goods
+                        nav.backFull(param, true)
                     }
 
-                },function(e){
+                }, function (e) {
                     //compelete
 
-                },function(){
+                }, function () {
                     //exception
                     that.toast('保存失败')
                     progress.dismiss()
                 })
 
 
-            },popoverButtonClicked (obj) {
-              //  modal.toast({ 'message': `key:${obj.key}, index:${obj.index}`, 'duration': 1 });
-                this.log('进入点击了:'+JSON.stringify(obj))
-                var that=this
-                if(obj.key=='add'){
-                    if(this.goods.GoodsID ==''){
+            },colorchecked(arr){
+
+                for(var i=0;i<arr.length;i++){
+                    if(arr[i].hasOwnProperty('checked')){
+                        return true
+                    }
+                }
+                return false
+            }
+            ,popoverButtonClicked(obj) {
+                //  modal.toast({ 'message': `key:${obj.key}, index:${obj.index}`, 'duration': 1 });
+                this.log('进入点击了:' + JSON.stringify(obj))
+                var that = this
+                if (obj.key == 'add') {
+                    if (this.goods.GoodsID == '') {
                         this.toast('请先保存货品后，再录入单据')
                         return;
                     }
-                    if(this.goods.SupplierID =='' || this.goods.DepartmentID==''){
+                    if (this.goods.SupplierID == '' || this.goods.DepartmentID == '') {
                         this.toast('请选择货品资料的厂商或者收货部门，再录入')
                         return
                     }
-                    if(this.colorData.length <=2){ //因为增加空的占了一个
+                    if (this.colorData.length <= 2) { //因为增加空的占了一个
                         this.toast('请选择颜色后，再录入')
                         return
                     }
                     //组装数据
-                     var colorlist=[]
-                     var sizelist=[]
+                    var colorlist = []
+                    var sizelist = []
 
-                        net.post(pref.getString('ip') + url, {GoodsID: this.goods.GoodsID}, {}, function () {
-                            //start
-                        }, function (e) {
-                            //success
-                            if (e != undefined && e != null && JSON.stringify(e) != '{}') {
-                                //that.alert(JSON.stringify(e))
-                                colorlist = e.res.attributes.datalist || []
+                    net.post(pref.getString('ip') + url, {GoodsID: this.goods.GoodsID}, {}, function () {
+                        //start
+                    }, function (e) {
+                        //success
+                        if (e != undefined && e != null && JSON.stringify(e) != '{}') {
+                            //that.alert(JSON.stringify(e))
+                            colorlist = e.res.attributes.datalist || []
 
-                                for (let n = 0; n < colorlist.length; n++) { //先删除掉一个没用的
-                                    if (colorlist[n].title == '增加') {
-                                        colorlist.splice(n, 1)
+                            for (let n = 0; n < colorlist.length; n++) { //先删除掉一个没用的
+                                if (colorlist[n].title == '增加') {
+                                    colorlist.splice(n, 1)
+                                }
+                            }
+                            if(colorlist.length ==0){
+                                that.toast('请先保存颜色后，再增加单据')
+                                return
+                            }
+                            //判断是否有默认选择
+                        /*   if(!that.colorchecked(colorlist)){
+                               colorlist[0].checked =true
+                           } */
+                            //再重新加上已填的数据
+                            for (let j = 0; j < colorlist.length; j++) {
+                                for (let i = 0; i < that.detaillist.length; i++) {
+
+                                    if (colorlist[j].GoodsID == that.detaillist[i].GoodsID && colorlist[j].ColorID == that.detaillist[i].ColorID) {
+                                        colorlist[j] = that.detaillist[i]
+                                        colorlist[j].title = colorlist[j].Color
+                                        colorlist[j].tipqty = that.detaillist[i].Quantity
                                     }
                                 }
+                            }
+                            that.log('colorlist最后的结果：' + JSON.stringify(colorlist))
 
-                                //再重新加上已填的数据
-                                for(let j=0;j<colorlist.length;j++) {
-                                for(let i=0;i<that.detaillist.length;i++){
 
-                                         if(colorlist[j].GoodsID ==that.detaillist[i].GoodsID && colorlist[j].ColorID ==that.detaillist[i].ColorID ) {
-                                             colorlist[j] = that.detaillist[i]
-                                             colorlist[j].title =colorlist[j].Color
-                                             colorlist[j].tipqty =that.detaillist[i].Quantity
-                                         }
-                                 }
+                            //这里只是单个货品的 尺码sizedata
+
+                            for (let n = 0; n < colorlist.length; n++) { //sizeData
+
+                                for (let m = 0; m < colorlist[n].sizeData.length; m++) {
+                                    sizelist.push(colorlist[n].sizeData[m])
                                 }
-                                that.log('colorlist最后的结果：' + JSON.stringify(colorlist))
-
-
-                                //这里只是单个货品的 尺码sizedata
-
-                                for (let n = 0; n < colorlist.length; n++) { //sizeData
-
-                                    for (let m = 0; m < colorlist[n].sizeData.length; m++) {
-                                        sizelist.push(colorlist[n].sizeData[m])
-                                    }
-
-                                }
-
-
-
-                                that.log('sizelist最后的结果：' + JSON.stringify(sizelist))
-
-                                nav.pushFull({
-                                    url: 'root:goodsDetail.js',
-                                    param: {colorlist: colorlist, sizelist: sizelist}
-                                }, (res) => {
-                                    if (JSON.stringify(res) != '{}') {
-                                        if(res !=null) {
-                                            that.detaillist = res.detaillist
-                                            //把厂商与收货部门加进去，后台要 根据这些生成单据的
-                                            for (let i = 0; i < that.detaillist.length; i++) {
-                                                that.detaillist[i].SupplierID = that.goods.SupplierID
-                                                that.detaillist[i].DepartmentID = that.goods.DepartmentID
-                                            }
-                                        }
-                                    }
-                                })
-
 
                             }
 
 
-                        }, function (e) {
-                            //compelete
+                            that.log('sizelist最后的结果：' + JSON.stringify(sizelist))
 
-                        }, function () {
-                            //exception
-                            that.alert('异常')
-                        });
-                    }
+                            nav.pushFull({
+                                url: 'root:goodsDetail.js',
+                                param: {colorlist: colorlist, sizelist: sizelist}
+                            }, (res) => {
+                                if (JSON.stringify(res) != '{}') {
+                                    if (res != null) {
+                                        that.detaillist = res.detaillist
+                                        //把厂商与收货部门加进去，后台要 根据这些生成单据的
+                                        for (let i = 0; i < that.detaillist.length; i++) {
+                                            that.detaillist[i].SupplierID = that.goods.SupplierID
+                                            that.detaillist[i].DepartmentID = that.goods.DepartmentID
+                                            that.detaillist[i].right = [
+                                                {text: "删除", style: {backgroundColor: "#F4333C", color: "white"}}
+                                            ]
+                                        }
+                                        that.log('输出返回的detaillist' + JSON.stringify(that.detaillist));
+                                    }
+
+                                }
+                            })
 
 
+                        }
+
+
+                    }, function (e) {
+                        //compelete
+
+                    }, function () {
+                        //exception
+                        that.alert('异常')
+                    });
                 }
-            },  onRightNode(pNode, node, i) {//向左滑动相关
+
+
+            }, onRightNode(pNode, node, i) {//向左滑动相关
                 // node.onPress();
                 //this.alert(node)
 
@@ -693,25 +750,31 @@
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
-            },onNodeClick(node, i) {
-        //   this.alert("mobileX:"+this.mobileX)
-        if (this.mobileX < 0) {
-            this.mobileX = 0;
-            this.special(this.$refs.skid[this.saveIdx], {
-                transform: `translate(0, 0)`
-            });
-            this.isAndroid &&
-            this.special(this.$refs.skid[i], {
-                transform: `translate(0, 0)`
-            });
-        }},   onPanEnd(e, node, i) {
+            }, onNodeClick(node, i) {
+                //   this.alert("mobileX:"+this.mobileX)
+                if (this.mobileX < 0) {
+                    this.mobileX = 0;
+                    this.special(this.$refs.skid[this.saveIdx], {
+                        transform: `translate(0, 0)`
+                    });
+                    this.isAndroid &&
+                    this.special(this.$refs.skid[i], {
+                        transform: `translate(0, 0)`
+                    });
+                }else{
+                    var obj={}
+                    obj.key = 'add'
+                    this.popoverButtonClicked(obj)
+                }
+            },
+            onPanEnd(e, node, i) {
                 if (Utils.env.isWeb()) {
                     const webEndX = e.changedTouches[0].pageX;
                     this.movingDistance(webEndX - this.webStarX, node, this.$refs.skid[i]);
                 }
             },
-            onPanStart: function(e, node, i) {
-                const { saveIdx } = this;
+            onPanStart: function (e, node, i) {
+                const {saveIdx} = this;
                 if (saveIdx !== i && saveIdx !== null && this.$refs.skid[saveIdx]) {
                     this.special(this.$refs.skid[saveIdx], {
                         transform: `translate(0, 0)`
@@ -740,7 +803,7 @@
                         ]
                     },
                     e => {
-                        const { state, deltaX } = e;
+                        const {state, deltaX} = e;
                         if (state === "end") {
                             this.mobileX += deltaX;
                             this.movingDistance(this.mobileX, node, el);
@@ -772,7 +835,7 @@
             }
 
 
-
+        }//methods 结束
 
 
     }

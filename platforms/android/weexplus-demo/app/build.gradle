@@ -98,7 +98,7 @@ dependencies {
   //  api project(':lottie')
   //  api project(':seekbar')
     api project(':jpush')
-   // api project(':zoomImage')
+    api project(':zoomImage')
     api project(':sysShare')
     api project(':office')
     api project(':amap')

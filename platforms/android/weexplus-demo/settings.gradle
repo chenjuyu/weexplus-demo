@@ -107,8 +107,8 @@ include ':jpush'
 project(':jpush').projectDir = new File('../../../plugins/jpush/android/jpush')
 
 
-//include ':zoomImage'
-//project(':zoomImage').projectDir = new File('../../../plugins/zoomImage/android/zoomImage')
+include ':zoomImage'
+project(':zoomImage').projectDir = new File('../../../plugins/zoomImage/android/zoomImage')
 
 
 include ':sysShare'
