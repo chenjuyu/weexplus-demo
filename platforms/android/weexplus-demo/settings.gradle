@@ -121,3 +121,7 @@ project(':office').projectDir = new File('../../../plugins/office/android/office
 
 include ':amap'
 project(':amap').projectDir = new File('../../../plugins/amap/android/amap')
+
+
+include ':photoplus'
+project(':photoplus').projectDir = new File('../../../plugins/photoplus/android/photoplus')

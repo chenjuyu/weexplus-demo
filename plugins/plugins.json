@@ -1,0 +1,18 @@
+{
+	"sysShare": {
+		"version": "latest",
+		"url": "https://github.com/farwolf2010/sysShare"
+	},
+	"office": {
+		"version": "latest",
+		"url": "https://github.com/farwolf2010/office"
+	},
+	"amap": {
+		"version": "latest",
+		"url": "https://github.com/farwolf2010/amap"
+	},
+	"photoplus": {
+		"version": "latest",
+		"url": "https://github.com/farwolf2010/photoplus"
+	}
+}

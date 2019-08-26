@@ -280,10 +280,10 @@
              offsetXRatio: 0,
              currIdx: 0,
              itemList: [
-                 {itemId: '520421163634', title: 'item1', pictureUrl: 'https://gd2.alicdn.com/bao/uploaded/i2/T14H1LFwBcXXXXXXXX_!!0-item_pic.jpg'},
-                 {itemId: '522076777462', title: 'item2', pictureUrl: 'https://gd1.alicdn.com/bao/uploaded/i1/TB1PXJCJFXXXXciXFXXXXXXXXXX_!!0-item_pic.jpg'},
-                 {itemId: '522076777462', title: 'item3', pictureUrl: 'https://gd3.alicdn.com/bao/uploaded/i3/TB1x6hYLXXXXXazXVXXXXXXXXXX_!!0-item_pic.jpg'},
-                 {itemId: '522076777467', title: 'item4', pictureUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1491837948&di=3dcecd1b1d709196873a91f9fd585962&imgtype=jpg&er=1&src=http%3A%2F%2Fphotocdn.sohu.com%2F20160304%2Fmp61863731_1457078539188_3.gif'}
+                 {itemId: '', title: '', pictureUrl: 'https://gd2.alicdn.com/bao/uploaded/i2/T14H1LFwBcXXXXXXXX_!!0-item_pic.jpg'}
+               //  {itemId: '522076777462', title: 'item2', pictureUrl: 'https://gd1.alicdn.com/bao/uploaded/i1/TB1PXJCJFXXXXciXFXXXXXXXXXX_!!0-item_pic.jpg'},
+               //  {itemId: '522076777462', title: 'item3', pictureUrl: 'https://gd3.alicdn.com/bao/uploaded/i3/TB1x6hYLXXXXXazXVXXXXXXXXXX_!!0-item_pic.jpg'},
+               //  {itemId: '522076777467', title: 'item4', pictureUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1491837948&di=3dcecd1b1d709196873a91f9fd585962&imgtype=jpg&er=1&src=http%3A%2F%2Fphotocdn.sohu.com%2F20160304%2Fmp61863731_1457078539188_3.gif'}
              ],
              colorData:[
                 /* {   'GoodsID':'00AQ',
@@ -328,7 +328,7 @@
         } , methods : {
             onLoad(p) {
                 var that = this
-                this.alert(JSON.stringify(p))
+               // this.alert(JSON.stringify(p))
                 if (p != undefined && p != null && JSON.stringify(p) != '{}') {
                     this.GoodsID = p.GoodsID
                     this.editflag = p.editflag || false
@@ -338,7 +338,7 @@
                     }, function (e) {
                         //success
                         if (e != undefined && e != null && JSON.stringify(e) != '{}') {
-                            that.alert(JSON.stringify(e))
+                          //  that.alert(JSON.stringify(e))
                             that.colorData = e.res.attributes.datalist || []
                             that.goods = e.res.attributes.goods || {}
                             that.detaillist = p.displaylist
@@ -417,29 +417,39 @@
                     return
                 }
 
-                const photo = weex.requireModule('photo');
-                photo.openCamera(500, 800, '#000000', function (e) {
-                    self.src = e.path;
+                const photo = weex.requireModule('photoplus');//photo 这个模块是有裁剪功能的
+                //type:   video,photo
+                //action:  camera 相机 ；choose:相册
+                photo.open({action:'camera'}, function (res) {
+                    self.src = res.res[0].path;
                     var param = {};
                     var header = {};
                     var path = {};
 
                     var SalesID = self.goods.Code //以货品编码命名图片名字
 
-                    path.file = e.path;
+                    path.file = res.res[0].path;
                     var net = weex.requireModule("net"); //&SalesID='+SalesID
                     net.postFile(pref.getString('ip') + '/common.do?uploadImages&SalesID=' + SalesID, param, header, path, () => {
                         //start
+                        progress.showFull('正在上传',false)
                     }, (e) => {
                         //succcess
+
                         var modal = weex.requireModule("modal")
 
-                        modal.toast({message: '上传成功！url:' + e.res.obj})
+                       // modal.toast({message: '上传成功！url:' + e.res.obj})
+                        if(e.res.success) {
+                            self.itemList[0].pictureUrl = e.res.obj
+                        }else{
+                            modal.toast({message: e.res.msg})
+                        }
                     }, () => {
                         //compelete
-
+                        progress.dismiss()
                     }, () => {
                         //exception
+                        progress.dismiss()
                         var modal = weex.requireModule("modal")
                         modal.toast({message: '上传异常！'})
                     })
@@ -481,7 +491,7 @@
                 return undefined
             },
             del(index) {
-                this.alert(index)
+               // this.alert(index)
             }, rightClick() {
                 this.$refs['wxc-popover'].wxcPopoverShow();
             }, save() { //保存货品资料
@@ -745,11 +755,16 @@
             }, onRightNode(pNode, node, i) {//向左滑动相关
                 // node.onPress();
                 //this.alert(node)
-
                 if (pNode.autoClose)
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
+
+                if(node.text=='删除'){
+                  this.detaillist.splice(i,1)
+                }
+
+
             }, onNodeClick(node, i) {
                 //   this.alert("mobileX:"+this.mobileX)
                 if (this.mobileX < 0) {

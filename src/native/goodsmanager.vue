@@ -506,6 +506,18 @@
            },save(){ //生成单据操作
                this.log('datalist:'+JSON.stringify(this.datalist))
 
+                for(var i=0;i<this.datalist.length;i++){
+                  if(this.datalist[i].SupplierID==''){
+                      this.alert('货号：'+this.datalist[i].Code+'的厂商没有填写，不能生成单据')
+                      return
+                  }
+                    if(this.datalist[i].DepartmentID==''){
+                        this.alert('货号：'+this.datalist[i].Code+'的收货部门为空，收货仓库会默认选择为【总仓】')
+                    }
+                }
+
+
+
             }
         }
     }

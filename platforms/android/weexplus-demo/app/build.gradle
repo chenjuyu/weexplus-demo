@@ -102,4 +102,5 @@ dependencies {
     api project(':sysShare')
     api project(':office')
     api project(':amap')
+    api project(':photoplus')
 }
