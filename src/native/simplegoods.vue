@@ -341,7 +341,7 @@
                           //  that.alert(JSON.stringify(e))
                             that.colorData = e.res.attributes.datalist || []
                             that.goods = e.res.attributes.goods || {}
-                            that.detaillist = p.displaylist
+                            that.detaillist = p.displaylist || []
                             // that.goods.DepartmentID =''
                             //  that.goods.Department=''
                         }
@@ -533,7 +533,7 @@
                 param.salesPrice2 = this.goods.SalesPrice2
                 param.salesPrice3 = this.goods.SalesPrice3
                 //货品颜色
-                var p = {}, tmp = {}
+                var p = {}, tmp = {},p1={}
                 var colorarray = this.colorData.filter(map => map.ColorID)
                 this.log('colorarray:'+JSON.stringify(colorarray))
                 if (colorarray.length > 0) {
@@ -604,26 +604,35 @@
                         tmp.RetailSales = that.goods.RetailSales
                         tmp.Quantity = ''
                         tmp.Amount = ''
+                        tmp.right=[
+                            {text: "删除"},{text: "审核",style: { backgroundColor: "#F4333C", color: "white" }},{text: "反审",style: { backgroundColor: "orange", color: "white" }}
+                        ]
                         param.goods = tmp
                         if (that.detaillist.length > 0) {
                             //    that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
 
-                            p.detaillist = that.detaillist
+                            p.detaillist = that.detaillist ||[]
                             staticData.set('detaillist', p)
 
                             //  that.log('详情页的detaillist:'+SON.stringify(staticData.get('detaillist')))
                             // that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
-                            param.detaillist = that.detaillist
+                            param.detaillist = that.detaillist || []
                         }
-                        nav.backFull(param, true)
+                        p1.GoodsID =e.res.obj
+                        p1.editflag =false
+                        p1.displaylist=[]
+                        that.onLoad(p1) //重新拉取数据
+                        that.log('第一次aa')
+                        //nav.backFull(param, true)  新增后可以增加单据数据 ，先不返回货品列表
                     } else {
+                        that.log('第二次bb')
                         if (that.detaillist.length > 0) {
                             //  that.log('detaillist原始值:'+JSON.stringify(that.detaillist))
-                            p.detaillist = that.detaillist
+                            p.detaillist = that.detaillist || []
                             staticData.set('detaillist', p)
                             //   that.log('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
                             //   that.alert('详情页的detaillist:'+JSON.stringify(staticData.get('detaillist')))
-                            param.detaillist = that.detaillist
+                            param.detaillist = that.detaillist || []
                         }
                         param.goods = that.goods
                         nav.backFull(param, true)

@@ -158,6 +158,10 @@
                                 this.data.unshift(res.goods)
                             }
                           //  this.alert('静太的数据：'+JSON.stringify(staticData.get('detaillist')))
+                            if(!res.hasOwnProperty('detaillist')){
+                                return;
+                            }
+
                             for(let i=0;i<res.detaillist.length;i++){
                                  var map=this.hascolor(res.detaillist[i])
                                  if(map ==undefined){
@@ -515,6 +519,40 @@
                         this.alert('货号：'+this.datalist[i].Code+'的收货部门为空，收货仓库会默认选择为【总仓】')
                     }
                 }
+                //提交的参数
+                var param={}
+                var that=this
+                param.PurchaseID=''
+                param.supplierid=''
+                param.departmentid=''
+                param.employeeId=''
+                param.brandId=''
+                param.businessDeptId=''
+                param.memo='手机端生成'
+                param.type='采购'
+                param.direction=1
+                param.typeEName=''
+                param.data =this.datalist
+                net.post(pref.getString('ip')+'/purchase.do?savePurchaseX',param,{},function(){
+                    //start
+                    progress.showFull('正在保存',false)
+                },function(e){
+                    //success
+                    progress.dismiss()
+                    if(e.res.success){
+                        that.toast(e.res.msg)
+                        that.datalist.splice(0,that.datalist.length)
+                    }else{
+                        that.toast(e.res.msg)
+                    }
+
+
+                },function(e){
+                    //compelete
+
+                },function(){
+                    //exception
+                });
 
 
 
