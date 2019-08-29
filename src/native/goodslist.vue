@@ -64,6 +64,9 @@
                 refreshing: false,
                 Code:'',//搜索条件&page=1
                 page:1,//当前页数
+                CustomerID:'',
+                SupplierID:'',
+                Type:'',
                 submitmap:{},
                 templist:[],
                 selectedlist:[],//已选列表，修改界面，点增加按扭进来，要保存单据已有的数据
@@ -298,13 +301,16 @@
                // this.goodslist =p.detaillist || []
                if(p !=null && p !=undefined && JSON.stringify(p) !="{}"){
                    this.addflag =p.hasOwnProperty("addflag")?p.addflag:false
+                   this.CustomerID =p.hasOwnProperty("CustomerID")?p.CustomerID:''
+                   this.SupplierID =p.hasOwnProperty("SupplierID")?p.SupplierID:''
+                   this.Type =p.hasOwnProperty("Type")?p.Type:''
                }
                 //有数据时单据
                 this.selectedlist =p.detaillist || []//JSON.parse(JSON.stringify(this.goodslist.filter(map =>(map.Quantity !==0 && map.Quantity !=='')))) || []
 
                 this.totalSelectedQuantity()
 
-                net.post(pref.getString('ip') + url,{Code:this.Code,page:this.page,CustomerID:p.CustomerID,Type:p.Type},{},function(){
+                net.post(pref.getString('ip') + url,{Code:this.Code,page:this.page,CustomerID:p.CustomerID,SupplierID:that.SupplierID,Type:p.Type},{},function(){
                     //start
                 },function(e){
                     //success
@@ -364,7 +370,7 @@
                 that.page =Number(that.page)+Number(1)
                 setTimeout(() => {
                     const length = that.goodslist.length;
-                    net.post(pref.getString('ip') + url,{Code:that.Code,page:that.page},{},function(){
+                    net.post(pref.getString('ip') + url,{Code:that.Code,page:that.page,CustomerID:that.CustomerID,SupplierID:that.SupplierID,Type:that.Type},{},function(){
 
                     },function(e){
                          //let i = length; i < length + 5; i++
@@ -656,7 +662,7 @@
                 // this.value = e.value;
                // this.alert("e的值:"+e.value)
                // if(e.value.length >3) {
-                    net.post(pref.getString('ip') + url, {Code:e.value, page:1}, {}, function () {
+                    net.post(pref.getString('ip') + url, {Code:e.value, page:1,CustomerID:that.CustomerID,SupplierID:that.SupplierID,Type:that.Type}, {}, function () {
                         //start
                     }, function (e) {
                         //success
