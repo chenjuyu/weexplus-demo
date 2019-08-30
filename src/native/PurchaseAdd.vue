@@ -133,8 +133,8 @@
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; border-radius:20px " @click="save">  <text style="font-size: 40px;color: #FFFFFF;">保存</text></div>
             <!-- <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px" @click="receival"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
          -->
-         </div>
-         <!--单据类别 -->
+        </div>
+        <!--单据类别 -->
         <wxc-mask height="500"
                   width="500"
                   border-radius="0"
@@ -207,7 +207,6 @@
     .master {
         width: 750px;
         background-color: #f2f3f4;
-
     }
     .listbutton{
         display: block;
@@ -218,7 +217,6 @@
     }
     .detail{
         height: 380px;
-
     }
     .footer{
         position: absolute;
@@ -233,13 +231,10 @@
         position: absolute;
         left: 300;
         top: 90;
-
         width:170px;
         height:135px;
         justify-content: center;
         align-items: center;
-
-
     }
 </style>
 <script>
@@ -253,7 +248,6 @@
     const  pref=weex.requireModule('pref')
     const net = weex.requireModule('net');
     const progress = weex.requireModule('progress');
-
     const dom = weex.requireModule('dom')
     import module1 from './jstools/mytool'// 引用方式
     let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
@@ -331,10 +325,7 @@
         }
         ,methods:{
             onLoad(p){
-
                 //   this.alert("页面高度:"+this.pageheight) //dom.scrollToElement(el, {offset:0}) 不用到定位功能可以用list 列表flex:1
-
-
                 var that=this
                 that.detaillist.slice(0,that.detaillist.length) //重新进入都清一次
                 //  this.alert(JSON.stringify(p))
@@ -343,42 +334,37 @@
                 }
                 this.PurchaseID=p.hasOwnProperty("PurchaseID")?p.PurchaseID:''   //|| 'DN000XW'//''
                 this.direction =p.hasOwnProperty("direction")?p.direction:1
+                this.title =p.hasOwnProperty('title')?p.title:''
                 this.log('PurchaseID:'+this.PurchaseID)
                 if(this.PurchaseID ==''){ //可能是新增单据，也有可能是从其他页面点的返回键
                     return
                 }
                 this.log('PurchaseID:'+this.PurchaseID)
-
                 this.memo =p.hasOwnProperty("Memo")?p.Memo:''
                 this.DateStr =p.hasOwnProperty("Date")?p.Date:timestr
                 this.Department.DepartmentID =p.hasOwnProperty("DepartmentID")?p.DepartmentID:''
                 this.Department.Department =p.hasOwnProperty("Department")?p.Department:''
                 this.Supplier.SupplierID =p.hasOwnProperty("SupplierID")?p.SupplierID:''
                 this.Supplier.Supplier =p.hasOwnProperty("Supplier")?p.Supplier:''
-               // this.customer.customerid =p.hasOwnProperty("CustomerID")?p.CustomerID:''
-              //  this.customer.customer =p.hasOwnProperty("Customer")?p.Customer:''
-              //  this.customer.lastAmt = p.hasOwnProperty("LastNeedRAmount")?p.LastNeedRAmount:''
+                // this.customer.customerid =p.hasOwnProperty("CustomerID")?p.CustomerID:''
+                //  this.customer.customer =p.hasOwnProperty("Customer")?p.Customer:''
+                //  this.customer.lastAmt = p.hasOwnProperty("LastNeedRAmount")?p.LastNeedRAmount:''
                 this.emp.EmpID = p.hasOwnProperty("EmployeeID")?p.EmployeeID:''
                 this.emp.Name =p.hasOwnProperty("Name")?p.Name:''
                 this.AuditFlag =p.hasOwnProperty("AuditFlag")?p.AuditFlag:false
-             /*   this.ReceivalType[0].PaymentTypeID =p.hasOwnProperty("PaymentTypeID")?p.PaymentTypeID:''
-                this.ReceivalType[0].PaymentType =p.hasOwnProperty("PaymentType")?p.PaymentType:''
-                this.ReceivalType[0].ReceivalAmount =p.hasOwnProperty("ReceivalAmount")?p.ReceivalAmount:''
-               // this.lastARAmount = p.hasOwnProperty("ReceivalAmount")?p.ReceivalAmount:'' //收款金额
-               */
+                /*   this.ReceivalType[0].PaymentTypeID =p.hasOwnProperty("PaymentTypeID")?p.PaymentTypeID:''
+                   this.ReceivalType[0].PaymentType =p.hasOwnProperty("PaymentType")?p.PaymentType:''
+                   this.ReceivalType[0].ReceivalAmount =p.hasOwnProperty("ReceivalAmount")?p.ReceivalAmount:''
+                  // this.lastARAmount = p.hasOwnProperty("ReceivalAmount")?p.ReceivalAmount:'' //收款金额
+                  */
                 this.title =p.hasOwnProperty("title")?p.title:''
-
                 if(this.AuditFlag) {
                     //this.alert("页面高度a:"+this.pageheight)
                     // this.alert("页面高度:"+this.pageheight)
                     this.pageheight = weex.config.env.deviceHeight
                 }else{
                     this.pageheight = Utils.env.getPageHeight()- Number(160)//Number(this.pageheight) - Number(200) //动态获取页面的高度不用flex:1 这里用到定位功能
-
                 }
-
-
-
                 net.post(pref.getString('ip') + url,{PurchaseID:this.PurchaseID,direction:this.direction},{},function(){
                     //start
                     progress.showFull('加载中',false)
@@ -388,9 +374,6 @@
                         that.log('进入此方法了')
                         that.detaillist = e.res.obj;
                         //  that.alert("网络返回的："+JSON.stringify(that.detaillist[3])+",长度："+that.detaillist[3].sizeData.length)
-
-
-
                         /*   for(var i=0;i<that.detaillist[0].right.length;i++) {
                               // that.alert("style:" +that.detaillist[0].right[i].style)
                                //that.detaillist[0].right[i].style =JSON.parse(JSON.stringify(that.detaillist[0].right[i].style))
@@ -402,15 +385,10 @@
                     progress.dismiss()
                 },function(e){
                     //compelete
-
                 },function(){
                     //exception
                     progress.dismiss()
                 });
-
-
-
-
             }
             ,total(){
                 var  sumqty =0,sumamt=0,sumdiscount=0
@@ -425,13 +403,11 @@
                 this.totalDiscount =sumdiscount
                 this.totalAmt=sumamt
                 if(this.totalDiscount){
-
                     this.totalDiscount =parseFloat(this.totalDiscount).toFixed(2)
                 }
                 if(this.totalAmt){
                     this.totalAmt =parseFloat(this.totalAmt).toFixed(2)
                 }
-
             }
             ,wxcCellClicked(id){
                 // var obj=   lodash.pick(this.testlist,['GoodsID','ColorID','Quantity'])
@@ -440,7 +416,6 @@
                     this.toast('单据已审核不能修改')
                     return
                 }
-
                 var p={}
                 if(id==1){//发货部门
                     p.send='getWarehouse'
@@ -448,7 +423,6 @@
                 }else if(id==2){//客户
                     p.send ='getGoodsSupplier'
                     p.condition=''
-
                 }else if(id==3){ //经手人
                     p.send ='getEmployee'
                     p.condition=''
@@ -457,40 +431,29 @@
                 nav.pushFull({url:'root:base.js',param: p,
                     animate:true,
                     isPortrait:true},(res)=>{
-
                     if (res !=undefined) {
                         if (id==1){ //发货部门
-
                             this.Department.DepartmentID=res.id
                             this.Department.Department =res.Name
-
-
                         }else if(id===2){ //v客户
                             this.Supplier.SupplierID=res.id
                             this.Supplier.Supplier =res.Name
                             this.Supplier.DiscountRate=res.DiscountRate
-                          /*  this.customer.customerid=res.id
-                            this.customer.customer =res.Name
-                            this.customer.DiscountRate=res.DiscountRate
-                            this.customer.DistrictID=res.DistrictID
-                            this.customer.OrderDiscount=res.OrderDiscount
-                            this.customer.AllotDiscount=res.AllotDiscount
-                            this.customer.ReplenishDiscount=res.ReplenishDiscount
-                            this.customer.lastAmt='' */
-
+                            /*  this.customer.customerid=res.id
+                              this.customer.customer =res.Name
+                              this.customer.DiscountRate=res.DiscountRate
+                              this.customer.DistrictID=res.DistrictID
+                              this.customer.OrderDiscount=res.OrderDiscount
+                              this.customer.AllotDiscount=res.AllotDiscount
+                              this.customer.ReplenishDiscount=res.ReplenishDiscount
+                              this.customer.lastAmt='' */
                         }else if(id==3){
-
                             this.emp.EmpID = res.id;
                             //  this.alert("employeeid:"+this.emp.employeeId)
                             this.emp.Name = res.Name;
                         }
-
                     }
-
                 });
-
-
-
             }
             ,selectType(e){
                 // var pop=weex.requireModule("centerpop")
@@ -499,7 +462,6 @@
                     this.toast('单据已审核不能修改')
                     return
                 }
-
                 for(var i=0 ;i< this.list.length ;i++){
                     var map=this.list[i]
                     if(this.billType.Name == map.value){
@@ -514,13 +476,10 @@
                 this.showpicurl =''//图片放大是否显示
             }
             , wxcRadioListChecked (e) {
-
                 this.alert("e的值："+JSON.stringify(e))
-
                 this.checkedInfo = e;
                 // var pop=weex.requireModule("centerpop")
                 // pop.dismiss();
-
                 this.billType.Name =e.value
                 this.billType.id='PriceType'
                 /* if(e.value=='批发'){
@@ -532,8 +491,6 @@
                  }else if(e.value =='补货'){
                      this.billType.id='ReplenishType'
                  } */
-
-
                 this.show=false
             }
             //左滑方法开始
@@ -548,23 +505,18 @@
             onRightNode(pNode, node, i) {
                 // node.onPress();
                 //this.alert(node)
-
                 if (pNode.autoClose)
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
-
                 if(this.AuditFlag){
                     this.toast('单据已审核不可删除')
                     return
                 }
-
                 if(node.text=='删除'){
                     this.detaillist.splice(i,1);//删除元素，以i 为参数
                     this.total()
                 }
-
-
             },
             onNodeClick(node, i) {
                 //   this.alert("mobileX:"+this.mobileX)
@@ -602,11 +554,8 @@
                                 title: obj.Color,
                                 Amount:obj.Amount,
                                 sizeData :obj.sizeData
-
-
                             }
                         })
-
                         // this.alert('obj：' + JSON.stringify(obj)+',记录数：'+obj.length)
                         var arr = [] ,   sizearr=[]
                         for (var i = 0; i < obj.length; i++) {
@@ -625,38 +574,21 @@
                             map.tipqty = obj[i].tipqty
                             map.title = obj[i].title
                             if(arr.length>0) {
-
                                 var  m=this.hasmap(arr,map,0) //合并相同颜色的 数量金额
                                 if(JSON.stringify(m)=='{}' || m==undefined){
-
                                     arr.push(map)
                                 }
-
                             }else {
                                 arr.push(map)
                             }
-
                             //尺码集体
                             var sizeMap= obj[i]
-
                             for(var k=0;k <sizeMap.sizeData.length; k++){
                                 //这里不存在重复尺码与颜色的
                                 sizearr.push(sizeMap.sizeData[k])
-
-
                             }
-
                         }
-
-
-
-
-
                     }
-
-
-
-
                     arr[0].checked = true
                     this.submitmap.colorlist = arr
                     this.submitmap.sizelist = sizearr//node.sizeData//this.testlist
@@ -672,9 +604,7 @@
                                     return
                                 }
                                 if(e.detaillist.length >0) {
-
                                     for(var i=0;i<e.detaillist.length ;i++){
-
                                         var backdata=e.detaillist[i]
                                         if(this.detaillist.length>0){
                                             var m=this.hasmap(this.detaillist,backdata,1) //1 替换
@@ -689,28 +619,17 @@
                                         }else{
                                             this.detaillist.unshift(backdata)
                                         }
-
-
-
                                     }
-
                                     //  this.alert(JSON.stringify(this.detaillist))
-
                                 }
                                 this.total()
                             }
-
                         })
-
                 }
-
-
-
             },
             save(){ //保存单据
                 //提交前，先算好，零售金额
                 var that=this
-
                 if(this.Department.DepartmentID ==''){
                     that.alert('请选择收货部门')
                     return
@@ -723,8 +642,6 @@
                     that.alert('当前无数据可提交')
                     return;
                 }
-
-
                 for(var i=0;i<this.detaillist.length;i++){
                     var map=this.detaillist[i] //只算到颜色那一层，尺码暂不管
                     map.RetailAmount =Number(map.Quantity) *  Number(map.RetailSales)
@@ -748,7 +665,6 @@
                 p.notUseNegativeInventoryCheck="true" //没有负库存开单 猜的
                 p.wxflag =true  //标志来源
                 p.data=this.detaillist //单据子表数据 关键
-
                 net.post(pref.getString('ip') + saveurl,p,{},function(){
                     //start
                     progress.showFull('正在保存单据',false)
@@ -757,21 +673,18 @@
                     progress.dismiss()
                     that.PurchaseID =e.res.attributes.PurchaseID
                     that.toast('保存成功')
-                    that.push('root:purchaselist.js')
+
+                    that.push('root:purchaselist.js',{direction:that.direction,title:that.title})
                     //var p={}
                     // p.SalesID=e.res.attributes.SalesID
                     //that.onLoad(p)
-
                 },function(e){
                     //compelete
-
                 },function(){
                     //exception
                     that.alert('异常')
                     progress.dismiss()
                 });
-
-
             },receival(){//收款
                 var that=this
                 var p={}
@@ -792,11 +705,8 @@
                             that.ReceivalType[0].ReceivalAmount=e.ReceivalAmount
                             that.ReceivalType[0].PaymentTypeID=e.PaymentTypeID
                             that.ReceivalType[0].PaymentType=e.PaymentType
-
-
                         }
                     })
-
             }
             ,hasmap(arr,map,isback){ //有一个就返回，最后判断，没有返回undefined,isback代表从其他页面返回的结果
                 var m={}
@@ -837,17 +747,13 @@
                     }
                 }
                 return m
-
-
             },hasSize(arr,map,flag){  //flag 0  从详情页返回 替换 1 扫码追加
                 var m={}
                 for (var j = 0; j < arr.length; j++) {
-
                     if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID && flag==0) {
                         arr[j].Quantity = map.Quantity
                         arr[j].Amount =map.Amount
                         m  = arr[j]
-
                     }else if (arr[j].GoodsID == map.GoodsID && arr[j].ColorID == map.ColorID && arr[j].SizeID ==map.SizeID && flag==1){
                         arr[j].Quantity =Number(arr[j].Quantity)+Number(map.Quantity)
                         arr[j].Amount =Number(arr[j].Amount)+ Number(map.Amount)
@@ -917,7 +823,6 @@
             }
             //左滑方法结束
             ,addgoods(e){ //如果有就是修改
-
                 if(this.Supplier.SupplierID == '') {
                     this.toast('请先选择厂商')
                     return
@@ -926,12 +831,10 @@
                     this.toast('请先选择单据类别')
                     return
                 }
-
                 if(this.AuditFlag){
                     this.toast('单据已审核无法再修改')
                     return;
                 }
-
                 this.submitmap.detaillist=this.detaillist || []
                 this.submitmap.CustomerID=this.customer.customerid
                 this.submitmap.SupplierID=this.Supplier.SupplierID
@@ -944,22 +847,16 @@
                             return
                         }
                         if(e.detaillist.length >0){
-
                             this.detaillist =e.detaillist
                             this.total()
-
                         }
                     })
-
             },input(){
                 this.search()
             }
             ,search(){
-
-
                 for(var i=0;i<this.detaillist.length;i++) {
                     var map  =  this.detaillist[i]
-
                     //this.log("外层的："+i)
                     //   this.log(map) indexOf(this.keyword) !=-1
                     if(map.Code.indexOf(this.keyword) !=-1){
@@ -967,11 +864,9 @@
                         //  this.log("输出："+this.$refs["skid"][i])
                         const el = this.$refs["skid"][i] //this.$refs.item10[0]
                         dom.scrollToElement(el, {})
-
                     }
                 }
             },qrcodeclick(){
-
                 if(this.Department.DepartmentID ==''){
                     that.alert('请选择收货部门')
                     return
@@ -980,7 +875,6 @@
                     that.alert('请选择厂商')
                     return;
                 }
-
                 if(this.AuditFlag){
                     this.toast('单据已审核无法再修改')
                     return;
@@ -1025,18 +919,13 @@
                         }
                         that.toast('成功添加货号：'+e.res.obj.Code)
                         that.total()
-
                     },function(e){
                         //compelete
-
                     },function(){
                         //exception
                         that.alert('异常')
                     });
-
-
                 })
-
             },rightClick(){
                 // this.toast('更多功能开发中，敬请期待')
                 this.$refs['wxc-popover'].wxcPopoverShow();
@@ -1046,9 +935,6 @@
                 this.picshow=true
                 this.showpicurl =  imgurl
             }
-
         }
     }
 </script>
-
-
