@@ -67,7 +67,7 @@
             </div>
               -->
 
-       </scroller>
+        </scroller>
     </div>
 </template>
 
@@ -107,8 +107,8 @@
                     {id:2,name:'货品拍照',img_src:'\ue7bc',url:''},
                 ]
                 ,purchase:[
-                    {id:1,name:'采购收货单',img_src:'\ue629',url:''},
-                    {id:2,name:'采购退货单',img_src:'\ue628',url:''},
+                    {id:1,name:'采购收货单',img_src:'\ue629',url:'purchaselist.js'},
+                    {id:2,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'},
                 ]
                 ,sales:[
                     {id:1,name:'订单',img_src:'\ue606',url:''},
@@ -122,7 +122,6 @@
                     {id:2,name:'日结',img_src:'\ue6b7'},
                     {id:3,name:'缴费',img_src:'\ue601'},
                     {id:4,name:'报表',img_src:'\ue6af'}
-
                 ]
             };
         },props:{
@@ -148,18 +147,23 @@
                        }
                    } */
             },touchend:function(ls){
-              //  this.alert(JSON.stringify(ls))
+                //  this.alert(JSON.stringify(ls))
                 var that = this;
-               // var url=''
-               // if(ls.name=='发货单')
-              if(ls.url !==''){
-                nav.pushFull({url: 'root:'+ls.url,param:{},animate:true},
-                    (e)=>{
+                var direction =1
+                // var url=''
+                 if(ls.name=='发货单' || ls.name=='采购收货单'){
+                     direction =1
+                 }else if(ls.name=='退货单' || ls.name=='采购退货单'){
+                     direction =-1
+                 }
 
-                    })
-              }
+
+                if(ls.url !==''){
+                    nav.pushFull({url: 'root:'+ls.url,param:{direction:direction,title:ls.name},animate:true},
+                        (e)=>{
+                        })
+                }
                 that.curSelect = null;
-
             }
         }
     }
