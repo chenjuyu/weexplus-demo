@@ -418,6 +418,12 @@
                          //success
                          if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
                              that.data =  e.res.obj || []
+                             for(var i=0;i<that.data.length;i++){
+                                 if(!that.data[i].img){
+                                     Vue.set(that.data[i],'img','root:img/nopic.jpg')
+                                 }
+                                 Vue.set(that.data[i],'right',[{text: "相册",style: { backgroundColor: "orange", color: "white" }}])
+                             }
                          }
 
 
@@ -451,6 +457,11 @@
                          if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
                              var array=e.res.obj || []
                              for(var i=0;i<array.length;i++){
+                                 if(!array[i].img){
+                                     Vue.set(array[i],'img','root:img/nopic.jpg')
+                                 }
+                                 Vue.set(array[i],'right',[{text: "相册",style: { backgroundColor: "orange", color: "white" }}])
+
                                  that.data.push(array[i])
                              }
                          }
