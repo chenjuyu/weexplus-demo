@@ -20,8 +20,8 @@
            <cell v-for="(item,i) in templist " @click="onNodeClick(item, i)" style="flex-direction: row;height:170px;border-bottom-width: 1px;border-color: #dddddd">
             <div style="width: 150px;height: 150px;margin-left: 20px;justify-content: center;align-items: center">
 
-            <image v-if="item.img"  :src="item.img" style="width: 100px;height: 100px;"></image>
-            <image v-else  src="root:img/nopic.jpg" style="width: 100px;height: 100px;"></image>
+            <image   :src="item.img?item.img:'root:img/nopic.jpg'" style="width: 100px;height: 100px;"></image>
+          <!-- v-if="item.img"  <image v-else  src="root:img/nopic.jpg" style="width: 100px;height: 100px;"></image> -->
 
             <text v-if="item.Quantity" style="font-size: 35px;color:#FFFFFF;position:absolute;bottom: 0;left:0;right: 0;height: 40px;background-color: orange;text-align: center">{{item.Quantity}}</text>
             </div>

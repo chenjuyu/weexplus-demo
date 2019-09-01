@@ -91,7 +91,7 @@
                     {id:1,name:'订单',img_src:'\ue606',url:'salesorderlist.js'},
                     {id:2,name:'发货单',img_src:'\ue6bc',url:'saleslist.js'},
                     {id:3,name:'退货单',img_src:'\ue82a',url:'saleslist.js'},
-                    {id:4,name:'收款单',img_src:'\ue71d',url:''},
+                    {id:4,name:'收款单',img_src:'\ue71d',url:'reclist.js'},
                     {id:5,name:'费用单',img_src:'\ue609',url:''}
                 ],
                 possales:[
