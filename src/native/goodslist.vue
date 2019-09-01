@@ -19,8 +19,10 @@
 
            <cell v-for="(item,i) in templist " @click="onNodeClick(item, i)" style="flex-direction: row;height:170px;border-bottom-width: 1px;border-color: #dddddd">
             <div style="width: 150px;height: 150px;margin-left: 20px;justify-content: center;align-items: center">
-            <image v-if="item.img" :src="item.img" style="width: 100px;height: 100px;"></image>
-            <image v-else  src="root:img/home_logo.png" style="width: 100px;height: 100px;"></image>
+
+            <image v-if="item.img"  :src="item.img" style="width: 100px;height: 100px;"></image>
+            <image v-else  src="root:img/nopic.jpg" style="width: 100px;height: 100px;"></image>
+
             <text v-if="item.Quantity" style="font-size: 35px;color:#FFFFFF;position:absolute;bottom: 0;left:0;right: 0;height: 40px;background-color: orange;text-align: center">{{item.Quantity}}</text>
             </div>
             <div style="margin-left: 30px">
@@ -428,6 +430,7 @@
                     return {
                         GoodsID: obj.GoodsID,
                         Code:obj.Code,
+                        img:obj.img,
                         Name:obj.Name,
                         RetailSales:obj.RetailSales,
                         ColorID: obj.ColorID,
@@ -450,6 +453,7 @@
                     var map = {}
                     map.GoodsID = obj[i].GoodsID
                     map.Code = obj[i].Code
+                    map.img=obj[i].img
                     map.Name=obj[i].Name
                     map.RetailSales=obj[i].RetailSales
                     map.ColorID = obj[i].ColorID
@@ -492,7 +496,7 @@
 
                 nav.pushFull({url: 'root:goodsDetail.js',param:this.submitmap,animate:true}
                     , (e) => {
-                        this.alert('e:'+e)
+                     //   this.alert('e:'+e)
                         if (e !== undefined){ //返回结果  这里返回 的一个货号的
                             // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                              if(e ==null){ //无结果返回，指的是点左上角返回菜单的返回
@@ -528,7 +532,7 @@
                               //  this.alert('selectedlist:'+JSON.stringify(this.selectedlist))
                                 this.totalSelectedQuantity()
                                 this.templist =this.goodsfilter(JSON.parse(JSON.stringify(this.goodslist)))
-                                this.alert(JSON.stringify(this.goodslist))
+                              //  this.alert(JSON.stringify(this.goodslist))
 
                             }
 

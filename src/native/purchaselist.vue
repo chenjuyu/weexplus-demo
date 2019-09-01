@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <head :rightText="rightText" title="采购收货单"  @rightClick="rightClick"></head>
+        <head :rightText="rightText" :title="title"  @rightClick="rightClick"></head>
         <div class="search">
             <input type="text" style="width: 500px;height: 80px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" return-key-type="search" v-model="No" @input="search" placeholder="输入单号查询"/>
             <div style="border-width: 5px;border-color: #00B4FF;height: 80px;width: 200px;align-items:center;justify-content: center"><text @click="add" style="font-size: 35px;">增加单据</text> </div>
@@ -55,17 +55,14 @@
     var nav = weex.requireModule('navigator') ;
     const  pref=weex.requireModule('pref')
     const net = weex.requireModule('net');
-
     var date = new Date();//获取当前时间
     date.setDate(date.getDate()-8);//设置天数 -1 天
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
-
     var url='/purchase.do?purchaselist'
     var auditurl ='/purchase.do?auditOrder'
     export default {
         components: {
-
         },
         props: {
             data: {
@@ -104,7 +101,6 @@
                                 },
                                 style: { backgroundColor: "#F4333C", color: "white" }
                             }
-
                         ]
                     },
                     {
@@ -140,12 +136,8 @@
                                 },
                                 style: { backgroundColor: "#F4333C", color: "white"  }
                             }
-
-
                         ]
                     }
-
-
                 ]
             },
             height: {
@@ -159,6 +151,7 @@
         },
         data() {
             return {
+                title:'',
                 No:'',
                 totalQty:'',
                 totalAmt:'',
@@ -166,68 +159,26 @@
                 mobileX: 0,
                 webStarX: 0,
                 saveIdx: null,
-                isAndroid: Utils.env.isAndroid(),
-                data: [
-                    {
-                        title: "标题1",
-                        right: [
-                            {
-                                text: "置顶",
-                                onPress: function() {
-                                    modal.toast({
-                                        message: "置顶",
-                                        duration: 0.3
-                                    });
-                                }
-                            },
-                            {
-                                text: "删除",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "删除",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "#F4333C", color: "white" }
-                            }
-                        ]
-                    },
-                    {
-                        title: "标题2",
-                        right: [
-                            {
-                                text: "删除",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "删除",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "#F4333C", color: "white" }
-                            }
-                        ]
-                    },
-                    {
-                        title: "标题3",
-                        right: [
-                            {
-                                text: "删除",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "删除",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "#F4333C", color: "white" }
-                            }
-                        ]
-                    }
-                ]
+                isAndroid: Utils.env.isAndroid()
+
             };
         },
         methods: {
             onLoad(p){
                 //   this.alert(this.data)
+
+                var page=weex.requireModule("page")
+                page.enableBackKey(true);
+                page.setBackKeyCallback(()=>{
+                    nav.push('root:GridViewList.js')
+                    return
+                })
+
+
+                if(p ==null || p==undefined || JSON.stringify(p)=='{}')
+                {
+                    return
+                }
                 var that=this
                 var param={}
                 param.currPage=this.currPage
@@ -238,8 +189,9 @@
                 param.departmentId=''
                 param.customerId=''
                 param.employeeId=''
-                param.direction=1
-
+                param.direction=p.hasOwnProperty('direction')?p.direction:1
+                this.direction =p.hasOwnProperty('direction')?p.direction:1
+                that.title=p.hasOwnProperty('title')?p.title:''
                 net.post(pref.getString('ip') + url,param,{},function(){
                     //start
                 },function(e){
@@ -249,15 +201,11 @@
                         that.data =e.res.obj
                         that.total()
                     }
-
                 },function(e){
                     //compelete
-
                 },function(){
                     //exception
                 });
-
-
             },total(){
                 var q=Number(0)
                 var a=Number(0)
@@ -272,7 +220,7 @@
                 }
             }
             ,add(e){
-                nav.push('root:PurchaseAdd.js')
+                nav.pushParam('root:PurchaseAdd.js',{title:this.title,direction:this.direction})
             },search(){
                 var that=this
                 var param={}
@@ -295,10 +243,8 @@
                             that.data =e.res.obj
                             that.total()
                         }
-
                     },function(e){
                         //compelete
-
                     },function(){
                         //exception
                     });
@@ -315,14 +261,20 @@
             onRightNode(pNode, node, i) {
                 var that =this
                 //node.onPress();
-
                 var p={}
+
+                if(pNode.TallyFlag){
+                    that.toast('单据已记账，无法修改')
+                    return
+                }
+
+
                 if(node.text =='审核'){
                     if(pNode.AuditFlag){
                         that.toast('单据已审核')
                         return
                     }
-                    p.direction ='1'
+                    p.direction =that.direction
                     p.PurchaseID =pNode.PurchaseID
                     p.departmentid =pNode.DepartmentID
                     p.AuditFlag =1
@@ -332,8 +284,8 @@
                         return
                     }
                     p.AuditFlag =0
-                    p.direction ='1'
-                    p.SalesID =pNode.SalesID
+                    p.direction =that.direction
+                    p.PurchaseID =pNode.PurchaseID
                     p.departmentid =''
                 }
                 if(node.text =='审核' || node.text =='反审') {
@@ -342,14 +294,19 @@
                     }, function (e) {
                         //success
                         if(e !=null && e !=undefined){
-                            that.toast(e.res.msg)
-                            var page=weex.requireModule("page")
-                            page.reload();
-                        }
 
+                                if (p.AuditFlag == 0){
+                                    that.data[i].AuditFlag=false
+                                }else if(p.AuditFlag ==1){
+                                    that.data[i].AuditFlag=true
+                                }
+
+                            that.toast(e.res.msg)
+                           // var page=weex.requireModule("page")
+                           // page.reload();
+                        }
                     }, function (e) {
                         //compelete
-
                     }, function () {
                         //exception
                         that.alert('异常')
@@ -359,7 +316,6 @@
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
-
             },
             onNodeClick(node, i) {
                 if (this.mobileX < 0) {
@@ -383,17 +339,17 @@
                     p.Name=node.Name
                     p.EmployeeID=node.EmployeeID
                     p.Date=node.Date
+                    //this.alert("direction:"+this.direction)
                     p.direction =this.direction
+                    p.title =this.title
                     //    p.LastNeedRAmount=node.LastNeedRAmount
                     p.AuditFlag =node.AuditFlag
                     p.PaymentTypeID =node.PaymentTypeID
                     p.PaymentType =node.PaymentType
                     p.PaymentAmount =node.PaymentAmount
                     this.push('root:PurchaseAdd.js',p)
-
                 }
             },
-
             onPanEnd(e, node, i) {
                 if (Utils.env.isWeb()) {
                     const webEndX = e.changedTouches[0].pageX;
@@ -476,13 +432,10 @@
         flex-direction: row;
         align-items: center;
     }
-
     .swipe-action-center {
         width: 750px;
         flex-direction: row;
-
     }
-
     /* .box-center {
       width: 735px;
       line-height: 90px;
@@ -497,14 +450,12 @@
       margin-left: 0;
       padding-left: 15px;
     } */
-
     .swipe-action-child {
         width: 100px;
         text-align: center;
         color: #FFFFFF;
         background-color: #dddddd;
         line-height: 90px;
-
     }
     .swipe-action-text {
         font-size: 30px;

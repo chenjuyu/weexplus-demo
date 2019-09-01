@@ -27,7 +27,7 @@
                         icon: '',
                         image: '\ue631',//http://gtms01.alicdn.com/tps/i1/TB1qw.hMpXXXXagXXXX9t7RGVXX-46-46.png',
                         selectedImage:'\ue631', //'http://gtms04.alicdn.com/tps/i4/TB16jjPMpXXXXazXVXX9t7RGVXX-46-46.png',
-                        src:'index.js?No=123&madeby=ddddd',
+                        src:'salesmanager.js',
                         //   src: 'component/tabbar/tabbar-item.js?itemId=tab1',
                         visibility: 'visible'//'visible',
                     },
@@ -38,7 +38,7 @@
                         icon: '',
                         image:'\ue62a', //'http://gtms03.alicdn.com/tps/i3/TB1LEn9MpXXXXaUXpXX9t7RGVXX-46-46.png',
                         selectedImage: '\ue62a',//'http://gtms02.alicdn.com/tps/i2/TB1qysbMpXXXXcnXXXX9t7RGVXX-46-46.png',
-                        src: 'GridViewList.js',// ?No=123&madeby=ddddd'component/tabbar/tabbar-item.js?itemId=tab2',
+                        src: 'purchasemanager.js',// ?No=123&madeby=ddddd'component/tabbar/tabbar-item.js?itemId=tab2',
                         visibility: 'hidden',
                     },
                     {
@@ -62,12 +62,12 @@
                     },
                     {
                         index: 4,
-                        title: '设置',
+                        title: '基本资料',
                         titleColor: '#000000',
                         icon: '',
                         image: '\ue634',//'http://gtms01.alicdn.com/tps/i1/TB1B0v5MpXXXXcvXpXX9t7RGVXX-46-46.png',
                         selectedImage:'\ue634',// 'http://gtms04.alicdn.com/tps/i4/TB1NxY5MpXXXXcrXpXX9t7RGVXX-46-46.png',
-                        src: '',// ?index=1&userid=ddddd'component/tabbar/tabbar-item.js?itemId=tab3',
+                        src: 'basemanager.js',// ?index=1&userid=ddddd'component/tabbar/tabbar-item.js?itemId=tab3',
                         visibility: 'hidden',
                     }
                 ],
@@ -91,12 +91,17 @@
                 })
             }
             ,tabBarOnClick: function (e) {
-                console.log('tabBarOnClick', e.index)
+                this.log('tabBarOnClick:'+e.index)
+                if(e.index ==3){
+                    this.toast('功能开发中')
+                }
             },diplay(){
                 var baseURL ='root:'
                 for(var i = 0; i < this.tabItems.length; i++) {
                     var tabItem = this.tabItems[i];
-                    tabItem.src =baseURL+tabItem.src;
+                    if(tabItem.src) {
+                        tabItem.src = baseURL + tabItem.src;
+                    }
                 }
             }
 

@@ -6,40 +6,39 @@
             <div style="border-width: 5px;border-color: #00B4FF;height: 80px;width: 200px;align-items:center;justify-content: center"><text @click="add" style="font-size: 35px;">增加单据</text> </div>
         </div>
         <list style="flex: 1; margin-top: 20px;margin-bottom: 80px;">
-                <cell ref="skid" v-for="(item, i) of data" @click="onNodeClick(item, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + item.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, item, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, item, i)" @touchend="(e) => onPanEnd(e, item, i)">
-                    <div :style='styles' class="swipe-action-center border">
+            <cell ref="skid" v-for="(item, i) of data" @click="onNodeClick(item, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + item.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, item, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, item, i)" @touchend="(e) => onPanEnd(e, item, i)">
+                <div :style='styles' class="swipe-action-center border">
 
-                        <!--   <slot :val='{item: item, index: i}'/> -->
-                        <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
-                       <div class="left">
-                       <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.No}}</text>
-                       <text style="font-size: 35px;height: 60px">{{item.Customer}}</text>
-                       <text style="font-size: 35px;height: 60px">类型:{{item.Type}}</text>
-                       <text style="font-size: 35px;height: 60px">经手人:{{item.Name}}</text>
-                       <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
-                     </div>
-
-                        <image src="root:img/Audit.png" class="input_bg" v-if="item.AuditFlag"></image>
-
-                        <div class="right" style="position: absolute;right: 0">
-                            <text style="font-size: 35px;height: 60px">审核日期:{{item.AuditDate}}</text>
-                            <text style="font-size: 35px;height: 60px">{{item.MadeByDate}}</text>
-                            <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
-                            <text style="font-size: 35px;height: 60px">应收余额:{{item.LastNeedRAmount}}</text>
-                            <text style="font-size: 35px;height: 60px">金额:{{item.AmountSum}}</text>
-                        </div>
-
-                      </div>
-                      <!-- <text :style="{lineHeight: height + 'px'}" :class="['box-center', 'border', 'text', i + 1 === data.length && 'box-center-last']">{{item.title}}</text> -->
-                    <div class="swipe-action-right">
-                        <text class="swipe-action-child swipe-action-text" @click="onRightNode(item, child, i)" v-for="(child, childIdx) of item.right" :style="Object.assign({lineHeight: height + 'px'}, child.style || {})" :key="'child-' + childIdx">{{child.text}}</text>
+                    <!--   <slot :val='{item: item, index: i}'/> -->
+                    <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
+                    <div class="left">
+                        <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.No}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Customer}}</text>
+                        <text style="font-size: 35px;height: 60px">类型:{{item.Type}}</text>
+                        <text style="font-size: 35px;height: 60px">经手人:{{item.Name}}</text>
+                        <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
                     </div>
-                </cell>
+
+                    <image src="root:img/Audit.png" class="input_bg" v-if="item.AuditFlag"></image>
+
+                    <div class="right" style="position: absolute;right: 0">
+                        <text style="font-size: 35px;height: 60px">审核日期:{{item.AuditDate}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Date}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
+                        <text style="font-size: 35px;height: 60px">金额:{{item.AmountSum}}</text>
+                    </div>
+
+                </div>
+                <!-- <text :style="{lineHeight: height + 'px'}" :class="['box-center', 'border', 'text', i + 1 === data.length && 'box-center-last']">{{item.title}}</text> -->
+                <div class="swipe-action-right">
+                    <text class="swipe-action-child swipe-action-text" @click="onRightNode(item, child, i)" v-for="(child, childIdx) of item.right" :style="Object.assign({lineHeight: height + 'px'}, child.style || {})" :key="'child-' + childIdx">{{child.text}}</text>
+                </div>
+            </cell>
 
         </list>
         <div class="footer">
-        <div style="height: 80px;justify-content: center;align-items: center"><text style="font-size: 40px;color: #FFFFFF";>合计：{{totalQty}}</text></div>
-        <div style="height: 80px;justify-content: center;align-items: center;position: absolute;right: 0;bottom: 0"> <text style="font-size: 40px;color: #FFFFFF;">￥{{totalAmt}}</text></div>
+            <div style="height: 80px;justify-content: center;align-items: center"><text style="font-size: 40px;color: #FFFFFF";>合计：{{totalQty}}</text></div>
+            <div style="height: 80px;justify-content: center;align-items: center;position: absolute;right: 0;bottom: 0"> <text style="font-size: 40px;color: #FFFFFF;">￥{{totalAmt}}</text></div>
         </div>
     </div>
 </template>
@@ -60,8 +59,8 @@
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
 
-    var url='/sales.do?saleslist'
-    var auditurl ='/sales.do?auditOrder'
+    var url='/salesOrder.do?salesOrderlist'
+    var auditurl ='/salesOrder.do?auditOrder'
     export default {
         components: {
 
@@ -72,8 +71,8 @@
                 default: [
                     {
                         No:'DN0002507',Date:'2019-07-08',AuditFlag:true,AuditDate:'2019-07-08',MadeByDate:'2019-07-08 08:30:35',CustomerID:'008',Customer:'李二狗',DepartmentID:'00A',Department:'广州总公司',WarehouseID:'00B',Warehouse:'云南分店'
-                       ,Type:'批发',EmployeeID:'0GA',Name:'张三',LastNeedRAmount:2000,QuantitySum:80,AmountSum:1600.00
-                       ,right:[
+                        ,Type:'批发',EmployeeID:'0GA',Name:'张三',LastNeedRAmount:2000,QuantitySum:80,AmountSum:1600.00
+                        ,right:[
                             {
                                 text: "审核",
                                 onPress: function() {
@@ -121,7 +120,7 @@
         },
         data() {
             return {
-                title:'销售发货单',
+                title:'销售订单',
                 direction:1,
                 No:'',
                 totalQty:'',
@@ -136,7 +135,7 @@
         },
         methods: {
             onLoad(p){
-             //   this.alert(this.data)
+                //   this.alert(this.data)
                 var page=weex.requireModule("page")
                 page.enableBackKey(true);
                 page.setBackKeyCallback(()=>{
@@ -149,7 +148,7 @@
                     return
                 }
                 var that=this
-               var param={}
+                var param={}
                 param.currPage=this.currPage
                 param.audit=''
                 param.no=''
@@ -158,17 +157,14 @@
                 param.departmentId=''
                 param.customerId=''
                 param.employeeId=''
-                param.direction=p.hasOwnProperty('direction')?p.direction:1
-               that.direction= p.hasOwnProperty('direction')?p.direction:1
-               if(that.direction ==-1){
-                   that.title='销售退货单'
-               }
+
+
 
                 net.post(pref.getString('ip') + url,param,{},function(){
                     //start
                 },function(e){
                     //success
-                  //  self.back=e.res;
+                    //  self.back=e.res;
                     if(e !=null && e !=undefined ){
                         that.data =e.res.obj
                         that.total()
@@ -196,7 +192,7 @@
                 }
             }
             ,add(e){
-                nav.pushParam('root:SalesAdd.js',{direction:this.direction,title:this.title})
+                nav.pushParam('root:SalesOrderAdd.js',{direction:this.direction,title:this.title})
             },search(){
                 var that=this
                 var param={}
@@ -209,22 +205,22 @@
                 param.customerId=''
                 param.employeeId=''
                 setTimeout(() => {
-                net.post(pref.getString('ip') + url,param,{},function(){
-                    //start
-                },function(e){
-                    //success
-                    //  self.back=e.res;
-                    if(e !=null && e !=undefined ){
-                        that.data =e.res.obj
-                        that.total()
-                    }
+                    net.post(pref.getString('ip') + url,param,{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        //  self.back=e.res;
+                        if(e !=null && e !=undefined ){
+                            that.data =e.res.obj
+                            that.total()
+                        }
 
-                },function(e){
-                    //compelete
+                    },function(e){
+                        //compelete
 
-                },function(){
-                    //exception
-                });
+                    },function(){
+                        //exception
+                    });
                 }, 2000);//setTimeout 结束
             },
             special(dom, styles) {
@@ -241,19 +237,13 @@
 
                 var p={}
 
-                if(pNode.TallyFlag){
-                    that.toast('单据已记账，无法修改')
-                    return
-                }
-
 
                 if(node.text =='审核'){
                     if(pNode.AuditFlag){
                         that.toast('单据已审核')
                         return
                     }
-                    p.direction =that.direction
-                    p.SalesID =pNode.SalesID
+                    p.SalesOrderID =pNode.SalesOrderID
                     p.departmentid =pNode.DepartmentID
                     p.AuditFlag =1
                 }else if(node.text =='反审'){
@@ -262,34 +252,33 @@
                         return
                     }
                     p.AuditFlag =0
-                    p.direction =that.direction
-                    p.SalesID =pNode.SalesID
-                    p.departmentid =''
+                    p.SalesOrderID =pNode.SalesOrderID
+                    p.departmentid =pNode.DepartmentID
                 }
-               if(node.text =='审核' || node.text =='反审') {
-                   net.post(pref.getString('ip') + auditurl, p, {}, function () {
-                       //start
-                   }, function (e) {
-                       //success
-                       if(e !=null && e !=undefined){
-                           if(p.AuditFlag ==0) {
-                               that.data[i].AuditFlag=false
-                           }else if(p.AuditFlag ==1){
-                               that.data[i].AuditFlag=true
-                           }
-                           that.toast(e.res.msg)
-                          // var page=weex.requireModule("page")
-                          // page.reload();
-                       }
+                if(node.text =='审核' || node.text =='反审') {
+                    net.post(pref.getString('ip') + auditurl, p, {}, function () {
+                        //start
+                    }, function (e) {
+                        //success
+                        if(e !=null && e !=undefined){
+                            if(p.AuditFlag ==0) {
+                                that.data[i].AuditFlag=false
+                            }else if(p.AuditFlag ==1){
+                                that.data[i].AuditFlag=true
+                            }
+                            that.toast(e.res.msg)
+                            // var page=weex.requireModule("page")
+                            // page.reload();
+                        }
 
-                   }, function (e) {
-                       //compelete
+                    }, function (e) {
+                        //compelete
 
-                   }, function () {
-                       //exception
-                       that.alert('异常')
-                   });
-               }
+                    }, function () {
+                        //exception
+                        that.alert('异常')
+                    });
+                }
                 if (pNode.autoClose)
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
@@ -309,7 +298,7 @@
                 } else {
                     //this.$emit("onNodeClick", node, i);
                     var p={}
-                    p.SalesID=node.SalesID
+                    p.SalesOrderID=node.SalesOrderID
                     p.DepartmentID =node.DepartmentID
                     p.Department =node.Department
                     p.Memo=node.Memo
@@ -325,7 +314,8 @@
                     p.ReceivalAmount =node.ReceivalAmount
                     p.direction =this.direction
                     p.title=this.title
-                    this.push('root:SalesAdd.js',p)
+                    p.No =node.No
+                    this.push('root:SalesOrderAdd.js',p)
 
                 }
             },
@@ -395,7 +385,7 @@
 
 <style scoped>
     .container {
-      /* background-color: #dddddd; */
+        /* background-color: #dddddd; */
         border-top-width: 1px;
         border-top-color: #dddddd;
         flex:1;

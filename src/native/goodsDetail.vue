@@ -2,14 +2,14 @@
     <div class="wrapper">
         <head rightText="" backClick="back" title="录入界面" rightButton=""></head>
         <div class="goodsimg">
-            <image style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
+            <image  style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
             <div class="dec">
                 <text class="size" style="height: 60px;margin-top: 10px">货品名称:{{goods.Name}}</text>
                 <text class="size" style="height: 60px;">货品编码:{{goods.Code}}</text>
                 <text class="size" style="height: 60px;">零售价￥:{{goods.RetailSales}}</text>
                 <div class="unitprice">
-                    <text class="size" style="height:60px;">单价:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.UnitPrice">
-                    <text class="size" style="height: 60px;">折扣:</text><input type="number" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.DiscountRate">
+                    <text class="size" style="height:60px;">单价:</text><input type="number" @input="uinput(1)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.UnitPrice">
+                    <text class="size" style="height: 60px;">折扣:</text><input type="number" @input="uinput(2)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.DiscountRate">
                 </div>
             </div>
         </div>
@@ -113,7 +113,7 @@
                 retailsales:99.00,
                 unitprice:80.00,
                 discountrate:8.0,
-                imgurl:'root:img/home_logo.png',
+                imgurl:'root:img/nopic.png',
                 res1: '',
                 res2: '',
                 res3: '',
@@ -246,6 +246,7 @@
                 _this.sizelist =p.sizelist
                 _this.colorid=(_this.testData3.filter(map=>map.checked))[0].ColorID
                 _this.goods.Code=(_this.testData3.filter(map=>map.checked))[0].Code
+                _this.imgurl =_this.testData3[0].img || 'root:img/nopic.jpg'
                 _this.goods.Name =(_this.testData3.filter(map=>map.checked))[0].Name
                 _this.goods.UnitPrice =(_this.testData3.filter(map=>map.checked))[0].UnitPrice
                 _this.goods.DiscountRate =(_this.testData3.filter(map=>map.checked))[0].DiscountRate
@@ -441,6 +442,7 @@
 
 
                     }
+                    this.log('temparr:'+JSON.stringify(temparr))
                     p.detaillist =temparr
                    // templist.slice(0,templist.length) //清空
                     nav.backFull(p,false)
@@ -497,7 +499,27 @@
                 }
                 return _this.qtysum
 
-            },total(){
+            },uinput(id){
+               //单价输入
+               this.log("进入输入控制的方法了")
+                    if(this.goods.UnitPrice){
+                        this.log("进入输入控制的方法了aaa")
+                        for(let i=0;i<this.sizelist.length;i++)
+                        {
+                            if(this.goods.DiscountRate && Number(this.goods.DiscountRate) !=0 ){
+                                this.log("进入输入控制的方法了b")
+                                this.sizelist[i].Amount = Number(this.sizelist[i].Quantity) * Number(this.goods.UnitPrice)*Number(this.goods.DiscountRate)/Number(10)
+                            }else{
+                                this.log("进入输入控制的方法了c")
+                                this.sizelist[i].Amount = Number(this.sizelist[i].Quantity) * Number(this.goods.UnitPrice)
+                            }
+
+                        }
+                        this.total()
+                    }
+
+
+           } ,total(){
                 let q=Number(0)
                 let a=Number(0)
                 for(let i=0;i<this.sizelist.length;i++)

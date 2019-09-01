@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <head :rightText="rightText" title="销售发货单单据" @rightClick="rightClick"></head>
+        <head :rightText="rightText" :title="title" @rightClick="rightClick"></head>
     <div class="search" >
     <input type="text" style="width: 500px;height: 80px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" placeholder="请输入货号查找" @input="input"  v-model="keyword"/>
      <div style="height: 80px;width: 220px;margin-right: 5px;border-width: 5px;justify-content: center;align-items: center;border-color: #00B4FF;"  @click="search">
@@ -34,7 +34,7 @@
 
       <div class="input_bg" v-if="AuditFlag">  <image src="root:img/Audit.png" style="width: 170px;height: 125px;"  ></image> </div>
 
-        <wxc-cell label="发货部门:"
+        <wxc-cell :label="deptlable"
                   :has-arrow="true"
                   :cell-style="{'height':'80px'}"
                   @wxcCellClicked="wxcCellClicked(1)"
@@ -83,9 +83,9 @@
                  <!-- 图片与显示-->
                <div style="flex-direction: row;width: 750px">
                   <div style="justify-content: center;align-items: center;height: 150px"> <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text> </div>
-                   <image v-if="ls.img" @click="piczoom(ls.img)" :src="ls.img" style="width: 150px;height: 150px;"></image>
-                   <image v-else  src="root:img/home_logo.png" @click="piczoom('root:img/home_logo.png')" style="width: 150px;height: 150px;"></image>
 
+                   <image v-if="ls.img"  @click="piczoom(ls.img)" :src="ls.img" style="width: 150px;height: 150px;"></image>
+                   <image v-else   src="root:img/nopic.jpg" style="width: 150px;height: 150px;"></image>
                    <div style="margin-left: 20px">
                    <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
                    <text style="font-size: 30px;color:#000000;height: 50px">折扣率:{{ls.Discount}}</text>
@@ -115,13 +115,13 @@
 
             <!-- ===================================分隔线 -->
             <cell style="height: 80px;border-bottom-width: 1px;justify-content: center;border-color: #dddddd">
-                <text style="font-size: 30px;color: #666666;">发货数量合计:{{totalQty}}</text>
+                <text style="font-size: 30px;color: #666666;">{{totalqtytype}}{{totalQty}}</text>
             </cell>
             <cell style="height: 80px;border-bottom-width: 1px;justify-content: center;border-color: #dddddd">
                 <text style="font-size: 30px;color: #666666;">折扣合计:{{totalDiscount}}</text>
             </cell>
             <cell style="height: 80px;border-bottom-width: 1px;justify-content: center;border-color: #dddddd">
-                <text style="font-size: 30px;color: #666666;">发货金额合计:{{totalAmt}}</text>
+                <text style="font-size: 30px;color: #666666;">{{totalamttype}}{{totalAmt}}</text>
             </cell>
 
 
@@ -131,7 +131,7 @@
     </list> <!-- 包整体-->
         <div class="footer" v-if="AuditFlag == false">
             <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; border-radius:20px " @click="save">  <text style="font-size: 40px;color: #FFFFFF;">保存</text></div>
-            <div style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px" @click="receival"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
+            <div v-if="direction ==1" style="background-color: orange;justify-content:center;align-items:center;width: 200px; margin-right: 20px;border-radius:20px" @click="receival"><text style="font-size: 40px;color: #FFFFFF;">收款</text></div>
         </div>
         <!--单据类别 -->
         <wxc-mask height="500"
@@ -252,7 +252,7 @@
            const  pref=weex.requireModule('pref')
            const net = weex.requireModule('net');
            const progress = weex.requireModule('progress');
-
+           var pstatic=weex.requireModule("static")
            const dom = weex.requireModule('dom')
            import module1 from './jstools/mytool'// 引用方式
            let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
@@ -281,6 +281,11 @@
                }
                ,data() {
                    return {
+                       title:'销售发货单单据',
+                       deptlable:'发货部门:',
+                       totalqtytype:'发货数量合计:',
+                       totalamttype:'发货金额合计:',
+                       direction :1,//销售发货，退货标志
                        popoverPosition:{x:-14,y:110}
                        ,popoverArrowPosition:{pos:'top',x:-14}
                        ,btns:[{
@@ -311,139 +316,10 @@
                      ,totalQty:0
                      ,totalAmt:0.0
                      ,totalDiscount:0.00
-                     ,Department:{Department:'',DepartmentID:''}
+                     ,Department:{Department:pstatic.getString('Department'),DepartmentID:pstatic.getString('DepartmentID')}
                      ,customer:{customer:'',customerid:'',lastAmt:''}
                      ,emp:{Name:'',EmpID:''}
-                     ,detaillist:[ /*
-                         {GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorID:'0BA',Color:'黑色',
-                               Discount:0.0,DiscountRate:8.0,Quantity:2,Amount:34.5,
-                               sizetitle:[
-                                   {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
-                                   ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
-                                   {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
-                                   ,{filed:'x_10',title:'5L'}
-                               ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_1',Quantity:1,SizeID:'00A',Size:'均码',Amount:''},
-                                   {GoodsID:'00AG',ColorID:'0BA',Color:'黑色',x:'x_2',Quantity:1,SizeID:'00A',Size:'XS',Amount:''}]
-                             ,right: [
-                                 {
-                                     text: "置顶",
-                                     onPress: function() {
-                                         modal.toast({
-                                             message: "置顶",
-                                             duration: 0.3
-                                         });
-                                     }
-                                 },
-                                 {
-                                     text: "删除",
-                                     onPress: () => {
-                                         modal.toast({
-                                             message: "删除",
-                                             duration: 0.3
-                                         });
-                                     },
-                                     style: { backgroundColor: "#F4333C", color: "white" }
-                                 }
-                             ]
-                         }
-                           ,{GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BB',Color:'白色',
-                               Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
-                               sizetitle:[
-                                   {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
-                                   ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
-                                   {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
-                                   ,{filed:'x_10',title:'5L'}
-                               ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BB',x:'x_1',Quantity:1,SizeID:'00A',Color:'白色',Size:'37',Amount:''},
-                                   {GoodsID:'00AG',ColorID:'0BB',Color:'白色',x:'x_2',Quantity:2,SizeID:'00B',Size:'38',Amount:''}]
-                               ,right: [
-                                     {
-                                         text: "置顶",
-                                         onPress: function() {
-                                             modal.toast({
-                                                 message: "置顶",
-                                                 duration: 0.3
-                                             });
-                                         }
-                                     },
-                                   {
-                                       text: "删除",
-                                       onPress: () => {
-                                           modal.toast({
-                                               message: "删除",
-                                               duration: 0.3
-                                           });
-                                       },
-                                       style: { backgroundColor: "#F4333C", color: "white" }
-                                   }
-                               ]
-                           }
-                           ,{GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BC',Color:'黄色',
-                               Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
-                               sizetitle:[
-                                   {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
-                                   ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
-                                   {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
-                                   ,{filed:'x_10',title:'5L'}
-                               ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BC',x:'x_1',Size:'均码',Color:'黄色',SizeID:'00B',Quantity:1,Amount:''},
-                                   {GoodsID:'00AG',ColorID:'0BC',Color:'黄色',x:'x_2',SizeID:'00C',Size:'XS',Quantity:2,Amount:''}]
-                               ,right: [
-                                   {
-                                         text: "置顶",
-                                         onPress: function() {
-                                             modal.toast({
-                                                 message: "置顶",
-                                                 duration: 0.3
-                                             });
-                                         }
-                                     },
-                                   {
-                                       text: "删除",
-                                       onPress: () => {
-                                           modal.toast({
-                                               message: "删除",
-                                               duration: 0.3
-                                           });
-                                       },
-                                       style: { backgroundColor: "#F4333C", color: "white" }
-                                   }
-                               ]
-                           }
-                           ,{GoodsID:'00AG',Code:'192B1210017',Name:'外披',ColorTitle:'颜色',ColorID:'0BD',Color:'绿色',
-                               Discount:0.0,DiscountRate:8.0,Quantity:3,Amount:34.5,
-                               sizetitle:[
-                                   {field:'x_1',title:'均码'},{field:'x_2',title:'XS'},{filed:'x_3',title:'S'}
-                                   ,{filed:'x_4',title:'M'},{filed:'x_5',title:'L'},{filed:'x_6',title:'1L'},
-                                   {filed:'x_7',title:'2L'},{filed:'x_8',title:'3L'},{filed:'x_9',title:'4L'}
-                                   ,{filed:'x_10',title:'5L'}
-                               ],
-                               sizeData:[{GoodsID:'00AG',ColorID:'0BD',x:'x_1',SizeID:'00A',Size:'均码',Quantity:1,Amount:''},
-                                   {GoodsID:'00AG',ColorID:'0BD',x:'x_2',SizeID:'00D',Size:'XS',Quantity:2,Amount:''}]
-                               ,right: [
-                                    {
-                                         text: "置顶",
-                                         onPress: function() {
-                                             modal.toast({
-                                                 message: "置顶",
-                                                 duration: 0.3
-                                             });
-                                         }
-                                     },
-                                   {
-                                       text: "删除",
-                                       onPress: () => {
-                                           modal.toast({
-                                               message: "删除",
-                                               duration: 0.3
-                                           });
-                                       },
-                                       style: { backgroundColor: "#F4333C", color: "white" }
-                                   }
-                               ]
-                       } */
-                      ]
+                     ,detaillist:[]
                      ,list: [
                            { title: '批发', value: '批发' },
                            { title: '订货', value: '订货' },//checked: true
@@ -460,12 +336,23 @@
 
 
                        var that=this
-                       that.detaillist.slice(0,that.detaillist.length) //重新进入都清一次
+                       if(that.detaillist.length >0) {
+                           that.detaillist.slice(0, that.detaillist.length) //重新进入都清一次
+                       }
+
                      //  this.alert(JSON.stringify(p))
                        if(p==null){
                            p={}
                        }
                       this.SalesID=p.hasOwnProperty("SalesID")?p.SalesID:''   //|| 'DN000XW'//''
+                      this.direction= p.hasOwnProperty("direction")?p.direction:1
+                      this.title = p.hasOwnProperty("title")?p.title:''
+                       this.log('direction的值：'+this.direction)
+                       if(this.direction ==-1) {
+                           this.deptlable='收货部门:'
+                           this.totalqtytype ='退货数量合计:'
+                           this.totalamttype='退货金额合计:'
+                       }
 
                        if(this.SalesID ==''){ //可能是新增单据，也有可能是从其他页面点的返回键
                            return
@@ -499,7 +386,7 @@
 
 
 
-                       net.post(pref.getString('ip') + url,{SalesID:this.SalesID},{},function(){
+                       net.post(pref.getString('ip') + url,{SalesID:this.SalesID,direction:this.direction},{},function(){
                            //start
                            progress.showFull('加载中',false)
                        },function(e){
@@ -631,7 +518,7 @@
                    }
                   , wxcRadioListChecked (e) {
 
-                       this.alert("e的值："+JSON.stringify(e))
+                     //  this.alert("e的值："+JSON.stringify(e))
 
                        this.checkedInfo = e;
                       // var pop=weex.requireModule("centerpop")
@@ -707,6 +594,7 @@
                                        SalesID:obj.hasOwnProperty("SalesID")?obj.SalesID:'',
                                        GoodsID: obj.GoodsID,
                                        Code:obj.Code,
+                                       img:obj.img,
                                        Name:obj.Name,
                                        RetailSales:obj.RetailSales,
                                        ColorID: obj.ColorID,
@@ -731,6 +619,7 @@
                                    map.SalesID=obj[i].SalesID
                                    map.GoodsID = obj[i].GoodsID
                                    map.Code=obj[i].Code
+                                   map.img =obj[i].img
                                    map.Name=obj[i].Name
                                    map.RetailSales=obj[i].RetailSales
                                    map.ColorID = obj[i].ColorID
@@ -825,26 +714,32 @@
                    save(){ //保存单据
                        //提交前，先算好，零售金额
                        var that=this
-
+                       var msg=''
                        if(this.Department.DepartmentID ==''){
-                           that.alert('请选择发货部门')
+                           if(this.direction==-1) {
+                               msg = '请选择退货部门'
+                           }else{
+                               msg = '请选择发货部门'
+                           }
+                           that.toast(msg)
                            return
                        }
                        if(this.customer.customerid ==''){
-                           that.alert('请选择客户')
+                           that.toast('请选择客户')
                            return;
                        }
-                      if(this.detaillist.length <=0){
-                          that.alert('当前无数据可提交')
+                      if(this.detaillist.length ==0){
+                          that.toast('当前无数据可提交')
                           return;
                       }
+                      this.log('detaillist提交的：'+JSON.stringify(this.detaillist))
 
 
                        for(var i=0;i<this.detaillist.length;i++){
                            var map=this.detaillist[i] //只算到颜色那一层，尺码暂不管
                            map.RetailAmount =Number(map.Quantity) *  Number(map.RetailSales)
                        }
-                       var p={}
+                       var p={},param={}
                        p.SalesID =this.SalesID
                        p.customerid=this.customer.customerid
                        p.discountRateSum ='' //整单折扣 字段
@@ -858,7 +753,7 @@
                        p.paymentTypeId=this.ReceivalType[0].PaymentTypeID//结算方式
                        p.memo ='手机APP生成' //备注
                        p.type =this.billType.Name //单据类别
-                       p.direction =1 //发货单标志
+                       p.direction =this.direction //发货单标志
                        p.typeEName ='' //暂无使用些字段，有参数要地求要有
                        p.notUseNegativeInventoryCheck="true" //没有负库存开单 猜的
                        p.wxflag =true  //标志来源
@@ -872,7 +767,9 @@
                            progress.dismiss()
                            that.SalesID =e.res.attributes.SalesID
                            that.toast('保存成功')
-                           that.push('root:saleslist.js')
+                           param.direction =p.direction
+                           param.title=that.title
+                           nav.pushParam('root:saleslist.js',param)
                            //var p={}
                           // p.SalesID=e.res.attributes.SalesID
                            //that.onLoad(p)

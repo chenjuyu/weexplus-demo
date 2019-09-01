@@ -1,6 +1,6 @@
 <template>
     <div class="layout">
-        <div class="ig">  <image class="img" src="root:img/logo.png" @click="gonext"></image> </div>
+        <div class="ig">  <image class="img" :src="src" @click="gonext"></image> </div>
         <wxc-cell title="用户名"
                   :has-arrow="false"
                   :has-top-border="false">
@@ -30,6 +30,7 @@
     import { WxcButton,WxcCell,Utils } from 'weex-ui'
     const net = weex.requireModule('net');
     const  pref=weex.requireModule('pref');
+    var pstatic=weex.requireModule("static")
     const url='/login.do?login';
     export default{
         components: { WxcButton ,WxcCell },
@@ -38,6 +39,7 @@
                 height:Utils.env.getPageHeight(),
                 username:'',
                 password:'',
+                src:'',
                 list:[]
             }
         },
@@ -46,6 +48,7 @@
             onLoad(p){
                 let navbar=weex.requireModule('navbar')
                 navbar.setStatusBarStyle('black')//#1EA5FC
+                this.src ='root:img/home_logo.png'
             },
             gonext(){
                 //  debugger
@@ -83,7 +86,17 @@
                         if (e.res.success) {
                             console.log("res对象:" + e.res);
                             console.log("res对象里的obj对象中的username:" + e.res.obj.UserName);
-                            self.push('root:possalesdetail.js');
+                            pstatic.setString('DepartmentID',e.res.obj.DepartmentID)
+                            pstatic.setString('Department',e.res.obj.Department)
+                            var obj={};
+                            obj.salesMenuRight=e.res.obj.salesOrderMenuRight
+                            obj.salesMenuRight=e.res.obj.salesMenuRight
+                            obj.salesReturnMenuRight=e.res.obj.salesReturnMenuRight
+                            obj.purchaseMenuRight=e.res.obj.purchaseMenuRight
+                            obj.purchaseReturnMenuRight=e.res.obj.purchaseReturnMenuRight
+                            obj.stockMoveMenuRight=e.res.obj.stockMoveMenuRight
+                            pstatic.set('objkey',obj)
+                            self.push('root:testtabbar.js');
                         } else{
                             self.alert('用户名密码错误')
                         }
@@ -127,12 +140,16 @@
         align-items:center;
         background-color:#eeeeee;
         justify-content: center;
+        margin-bottom: 50px;
     }
     .img{
         align-items: center;
         width: 200px;
         height: 200px;
         margin-top: 10px;
+        border-radius:100px;
+        -webkit-border-radius:100px;
+        -moz-border-radius:100px;
     }
     .size{
         color: black;

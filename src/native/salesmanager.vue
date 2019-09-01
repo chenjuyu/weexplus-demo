@@ -1,37 +1,13 @@
 <template>
     <div class="layout">
 
-        <head leftButton="" title="主页" rightButton=""></head>
+        <head leftButton="" title="销售管理" rightButton=""></head>
         <scroller style="flex: 1;">
             <!--九宫格显示  <text class="iconfont bar-ic">&#xe614;</text> 动态显示要 即：字体编码后前四位是Unicode编码，想使用字符串来传递的话,只要将 “&#xe64b;” 改为 “\ue64b” 即可。-->
 
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
-                <text style="font-size:40px;font-weight:bold">基本资料</text>
-            </div>
-            <div class="sudoku_row">
-                <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in base" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
-                    <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color: #0085ee;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 120px;">{{sudoku.name}} </text>
-                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color: orange;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 120px;">{{sudoku.name}} </text>
 
-                </div>
-            </div>
             <!--九宫格显示 -->
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
-                <text style="font-size:40px;font-weight:bold">采购管理</text>
-            </div>
-            <div class="sudoku_row">
-                <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in purchase" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
-                    <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:mediumorchid;justify-content: center;align-items: center;">
-                        <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
-                    </div>
-                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
-                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:50px;border-width: 1px;border-color:#FFFFFF;background-color: mediumspringgreen;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
 
-                </div>
-            </div>
 
             <!--九宫格显示 sudoku_item  代替每一个 -->
             <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
@@ -138,12 +114,12 @@
         },
         methods:{
             onLoad(p){
-           /* page.doubleBack();
-                page.enableBackKey(true);
-                page.setBackKeyCallback(()=>{
-                    page.exit();
+                /* page.doubleBack();
+                     page.enableBackKey(true);
+                     page.setBackKeyCallback(()=>{
+                         page.exit();
 
-                }) */
+                     }) */
             },
             touchstart:function(e){
                 /* this.alert(e)

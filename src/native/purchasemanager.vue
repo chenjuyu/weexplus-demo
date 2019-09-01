@@ -1,22 +1,10 @@
 <template>
     <div class="layout">
 
-        <head leftButton="" title="主页" rightButton=""></head>
+        <head leftButton="" title="采购管理" rightButton=""></head>
         <scroller style="flex: 1;">
             <!--九宫格显示  <text class="iconfont bar-ic">&#xe614;</text> 动态显示要 即：字体编码后前四位是Unicode编码，想使用字符串来传递的话,只要将 “&#xe64b;” 改为 “\ue64b” 即可。-->
 
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
-                <text style="font-size:40px;font-weight:bold">基本资料</text>
-            </div>
-            <div class="sudoku_row">
-                <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in base" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
-                    <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color: #0085ee;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 120px;">{{sudoku.name}} </text>
-                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color: orange;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 120px;">{{sudoku.name}} </text>
-
-                </div>
-            </div>
             <!--九宫格显示 -->
             <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
                 <text style="font-size:40px;font-weight:bold">采购管理</text>
@@ -33,18 +21,7 @@
                 </div>
             </div>
 
-            <!--九宫格显示 sudoku_item  代替每一个 -->
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
-                <text style="font-size:40px;font-weight:bold">分销管理</text>
-            </div>
-            <div class="sudoku_row">
-                <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"    v-for="(sudoku,index) in sales" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
-                    <div v-if="sudoku.name =='订单' ||  sudoku.name =='退货单'  "  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color: orange;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.name =='订单' ||  sudoku.name =='退货单'  " style="font-size: 30px;text-align: center;margin-top: 15px;width: 100px;">{{sudoku.name}} </text>
-                    <div v-if="sudoku.name =='发货单' ||  sudoku.name =='收款单' || sudoku.name =='费用单' "  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color:#0085ee;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.name =='发货单' ||  sudoku.name =='收款单' || sudoku.name =='费用单' " style="font-size: 30px;text-align: center;margin-top: 15px;width: 100px;">{{sudoku.name}} </text>
-                </div>
-            </div>
+
 
             <!--九宫格显示
             <div style="margin-top: 10px;"><text>库存管理</text></div>
@@ -112,7 +89,7 @@
                     {id:2,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'},
                 ]
                 ,sales:[
-                    {id:1,name:'订单',img_src:'\ue606',url:'salesorderlist.js'},
+                    {id:1,name:'订单',img_src:'\ue606',url:''},
                     {id:2,name:'发货单',img_src:'\ue6bc',url:'saleslist.js'},
                     {id:3,name:'退货单',img_src:'\ue82a',url:'saleslist.js'},
                     {id:4,name:'收款单',img_src:'\ue71d',url:''},
@@ -138,12 +115,12 @@
         },
         methods:{
             onLoad(p){
-           /* page.doubleBack();
-                page.enableBackKey(true);
-                page.setBackKeyCallback(()=>{
-                    page.exit();
+                /* page.doubleBack();
+                     page.enableBackKey(true);
+                     page.setBackKeyCallback(()=>{
+                         page.exit();
 
-                }) */
+                     }) */
             },
             touchstart:function(e){
                 /* this.alert(e)

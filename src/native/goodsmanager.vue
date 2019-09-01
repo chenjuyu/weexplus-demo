@@ -220,13 +220,13 @@
                 if(node.text=='审核' || node.text=='反审'){
                     if(node.text=='审核') {
                         if (pNode.GoodsAuditFlag) {
-                            this.toast('单据已是审核状态')
+                            this.toast('货品已是审核状态')
                             return
                         }
                         AuditFlag =1
                     }else{
                         if (!pNode.GoodsAuditFlag) {
-                            this.toast('单据已是反审核状态')
+                            this.toast('货品已是反审核状态')
                             return
                         }
                         AuditFlag =0
