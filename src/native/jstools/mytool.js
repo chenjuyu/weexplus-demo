@@ -32,6 +32,10 @@ var module1 = new Object({
     }
     format || (format = "yyyy-MM-dd hh:mm:ss");
     return format.replace(/([a-z])(\1)*/ig,function(m){return cfg[m];});
+},
+ AddDays:function(date,value)  //没有返回值
+{
+    date.setDate(date.getDate()+value);
 }
  
  

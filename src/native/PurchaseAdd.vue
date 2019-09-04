@@ -995,6 +995,7 @@
             },rightClick(){
                 // this.toast('更多功能开发中，敬请期待')
                 this.$refs['wxc-popover'].wxcPopoverShow();
+
             },popoverButtonClicked (obj) {
                 modal.toast({ 'message': `key:${obj.key}, index:${obj.index}`, 'duration': 1 });
             },piczoom(imgurl){

@@ -92,6 +92,30 @@
                              map.title = array[i].Name;
                              map.value = array[i].ColorID;
                              map.checked = false;
+                         }else if(self.sendtype=='getWarehouse'){
+                             map.title = array[i].Name;
+                             map.value = array[i].DepartmentID;
+                             map.checked = false;
+                         }else if(self.sendtype=='getGoodsType'){
+                             map.title = array[i].Name;
+                             map.value = array[i].GoodsTypeID;
+                             map.checked = false;
+                         }else if(self.sendtype=='getBrand'){
+                             map.title = array[i].Name;
+                             map.value = array[i].BrandID;
+                             map.checked = false;
+                         }else if(self.sendtype=='getGoodsSupplier'){
+                             map.title = array[i].Name;
+                             map.value = array[i].SupplierID;
+                             map.checked = false;
+                         }else if(self.sendtype=='getEmployee'){
+                             map.title = array[i].Name;
+                             map.value = array[i].EmployeeID;
+                             map.checked = false;
+                         }else if(self.sendtype=='getPosSalesGoods'){
+                             map.title = array[i].Name;
+                             map.value = array[i].GoodsID;
+                             map.checked = false;
                          }
                          self.list.push(map);
                      }
@@ -106,17 +130,22 @@
 
              },
              wxcCheckBoxListChecked (e){//为了不动weexui的组件，这里要再次 组装数据 已选中的
-                 this.checkedList.splice(0,this.checkedList.length)//清空后，再加，不然会重复添加
+                 var self=this
+                 this.checkedList.splice(0,this.checkedList.length)//清空后，再加，不然会重复添加 checkedList 每次点都会返回 全部已选的
                  for(var j=0;j<e.checkedList.length;j++) {
                      var map={}
                      for (var i = 0; i < this.list.length; i++) {
                          if(e.checkedList[j]==this.list[i].value){
-
-                             map.GoodsID=''
-                             map.ColorID=e.checkedList[j]
-                             map.title=this.list[i].title
-                             map.checked=true
-                             map.tipqty=''
+                             if(self.sendtype=='getGoodsColor') {
+                                 map.GoodsID = ''
+                                 map.ColorID = e.checkedList[j]
+                                 map.title = this.list[i].title
+                                 map.checked = true
+                                 map.tipqty = ''
+                             }else {
+                                 map.Name =this.list[i].title
+                                 map.id=e.checkedList[j]
+                             }
                              this.checkedList.push(map)
                          }
                      }
@@ -173,6 +202,30 @@
                              if(self.sendtype=='getGoodsColor') {
                                  map.title = array[i].Name;
                                  map.value = array[i].ColorID;
+                                 map.checked = false;
+                             }else if(self.sendtype=='getWarehouse'){
+                                 map.title = array[i].Name;
+                                 map.value = array[i].DepartmentID;
+                                 map.checked = false;
+                             }else if(self.sendtype=='getGoodsType'){
+                                 map.title = array[i].Name;
+                                 map.value = array[i].GoodsTypeID;
+                                 map.checked = false;
+                             }else if(self.sendtype=='getBrand'){
+                                 map.title = array[i].Name;
+                                 map.value = array[i].BrandID;
+                                 map.checked = false;
+                             }else if(self.sendtype=='getGoodsSupplier'){
+                                 map.title = array[i].Name;
+                                 map.value = array[i].SupplierID;
+                                 map.checked = false;
+                             }else if(self.sendtype=='getEmployee'){
+                                 map.title = array[i].Name;
+                                 map.value = array[i].EmployeeID;
+                                 map.checked = false;
+                             }else if(self.sendtype=='getPosSalesGoods'){
+                                 map.title = array[i].Name;
+                                 map.value = array[i].GoodsID;
                                  map.checked = false;
                              }
                              self.list.push(map);

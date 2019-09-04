@@ -57,7 +57,7 @@
                         icon: '',
                         image: '\ue60c',//'http://gtms03.alicdn.com/tps/i3/TB1LEn9MpXXXXaUXpXX9t7RGVXX-46-46.png',
                         selectedImage:'\ue60c', //'http://gtms02.alicdn.com/tps/i2/TB1qysbMpXXXXcnXXXX9t7RGVXX-46-46.png',
-                        src: '',// ?No=123&madeby=ddddd'component/tabbar/tabbar-item.js?itemId=tab2',
+                        src: 'datareport.js',// ?No=123&madeby=ddddd'component/tabbar/tabbar-item.js?itemId=tab2',
                         visibility: 'hidden',
                     },
                     {
@@ -92,7 +92,7 @@
             }
             ,tabBarOnClick: function (e) {
                 this.log('tabBarOnClick:'+e.index)
-                if(e.index ==3){
+                if(!e.src){
                     this.toast('功能开发中')
                 }
             },diplay(){
