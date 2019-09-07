@@ -6,40 +6,49 @@
             <div style="border-width: 5px;border-color: #00B4FF;height: 80px;width: 200px;align-items:center;justify-content: center"><text @click="add" style="font-size: 35px;">增加单据</text> </div>
         </div>
         <list style="flex: 1; margin-top: 20px;margin-bottom: 80px;">
-                <cell ref="skid" v-for="(item, i) of data" @click="onNodeClick(item, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + item.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, item, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, item, i)" @touchend="(e) => onPanEnd(e, item, i)">
-                    <div :style='styles' class="swipe-action-center border">
+            <cell ref="skid" v-for="(item, i) of data" @click="onNodeClick(item, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + item.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, item, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, item, i)" @touchend="(e) => onPanEnd(e, item, i)">
+                <div :style='styles' class="swipe-action-center border">
 
-                        <!--   <slot :val='{item: item, index: i}'/> -->
-                        <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
-                       <div class="left">
-                       <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.No}}</text>
-                       <text style="font-size: 35px;height: 60px">{{item.Customer}}</text>
-                       <text style="font-size: 35px;height: 60px">类型:{{item.Type}}</text>
-                       <text style="font-size: 35px;height: 60px">经手人:{{item.Name}}</text>
-                       <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
-                     </div>
-
-                        <image src="root:img/Audit.png" class="input_bg" v-if="item.AuditFlag"></image>
-
-                        <div class="right" style="position: absolute;right: 0">
-                            <text style="font-size: 35px;height: 60px">审核日期:{{item.AuditDate}}</text>
-                            <text style="font-size: 35px;height: 60px">{{item.MadeByDate}}</text>
-                            <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
-                            <text style="font-size: 35px;height: 60px">应收余额:{{item.LastNeedRAmount}}</text>
-                            <text style="font-size: 35px;height: 60px">金额:{{item.AmountSum}}</text>
-                        </div>
-
-                      </div>
-                      <!-- <text :style="{lineHeight: height + 'px'}" :class="['box-center', 'border', 'text', i + 1 === data.length && 'box-center-last']">{{item.title}}</text> -->
-                    <div class="swipe-action-right">
-                        <text class="swipe-action-child swipe-action-text" @click="onRightNode(item, child, i)" v-for="(child, childIdx) of item.right" :style="Object.assign({lineHeight: height + 'px'}, child.style || {})" :key="'child-' + childIdx">{{child.text}}</text>
+                    <!--   <slot :val='{item: item, index: i}'/> -->
+                    <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
+                    <div class="left">
+                        <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.No}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Customer}}</text>
+                        <text style="font-size: 35px;height: 60px">类型:{{item.Type}}</text>
+                        <text style="font-size: 35px;height: 60px">经手人:{{item.Name}}</text>
+                        <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
                     </div>
-                </cell>
+
+                    <image src="root:img/Audit.png" class="input_bg" v-if="item.AuditFlag"></image>
+
+                    <div class="right" style="position: absolute;right: 0">
+                        <text style="font-size: 35px;height: 60px">审核日期:{{item.AuditDate}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.MadeByDate}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
+                        <text style="font-size: 35px;height: 60px">应收余额:{{item.LastNeedRAmount}}</text>
+                        <text style="font-size: 35px;height: 60px">金额:{{item.AmountSum}}</text>
+                    </div>
+
+                </div>
+                <!-- <text :style="{lineHeight: height + 'px'}" :class="['box-center', 'border', 'text', i + 1 === data.length && 'box-center-last']">{{item.title}}</text> -->
+                <div class="swipe-action-right">
+                    <text class="swipe-action-child swipe-action-text" @click="onRightNode(item, child, i)" v-for="(child, childIdx) of item.right" :style="Object.assign({lineHeight: height + 'px'}, child.style || {})" :key="'child-' + childIdx">{{child.text}}</text>
+                </div>
+            </cell>
+
+
+            <!--  用于给列表添加上拉加载更多的功能-->
+            <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                <loading-indicator class="indicator"></loading-indicator>
+                <text class="indicator-text">Loading...</text>
+            </loading>
+
+
 
         </list>
         <div class="footer">
-        <div style="height: 80px;justify-content: center;align-items: center"><text style="font-size: 40px;color: #FFFFFF";>合计：{{totalQty}}</text></div>
-        <div style="height: 80px;justify-content: center;align-items: center;position: absolute;right: 0;bottom: 0"> <text style="font-size: 40px;color: #FFFFFF;">￥{{totalAmt}}</text></div>
+            <div style="height: 80px;justify-content: center;align-items: center"><text style="font-size: 40px;color: #FFFFFF";>合计：{{totalQty}}</text></div>
+            <div style="height: 80px;justify-content: center;align-items: center;position: absolute;right: 0;bottom: 0"> <text style="font-size: 40px;color: #FFFFFF;">￥{{totalAmt}}</text></div>
         </div>
     </div>
 </template>
@@ -53,18 +62,16 @@
     const modal = weex.requireModule("modal");
     var nav = weex.requireModule('navigator') ;
     const  pref=weex.requireModule('pref')
+    const  pstatic=weex.requireModule("static")
     const net = weex.requireModule('net');
-
     var date = new Date();//获取当前时间
     date.setDate(date.getDate()-8);//设置天数 -1 天
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
-
     var url='/sales.do?saleslist'
     var auditurl ='/sales.do?auditOrder'
     export default {
         components: {
-
         },
         props: {
             data: {
@@ -92,26 +99,24 @@
                 mobileX: 0,
                 webStarX: 0,
                 saveIdx: null,
-                isAndroid: Utils.env.isAndroid()
-
+                isAndroid: Utils.env.isAndroid(),
+                loadinging:false
             };
         },
         methods: {
             onLoad(p){
-             //   this.alert(this.data)
+                //   this.alert(this.data)
                 var page=weex.requireModule("page")
                 page.enableBackKey(true);
                 page.setBackKeyCallback(()=>{
                     nav.push('root:GridViewList.js')
                     return
                 })
-
-
                 if(p==null || p==undefined || JSON.stringify(p)=='{}'){
                     return
                 }
                 var that=this
-               var param={}
+                var param={}
                 param.currPage=this.currPage
                 param.audit=p.hasOwnProperty('audit')?p.audit:''
                 param.no=''
@@ -121,16 +126,17 @@
                 param.customerId=p.hasOwnProperty('customerId')?p.customerId:''
                 param.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
                 param.direction=p.hasOwnProperty('direction')?p.direction:1
-               that.direction= p.hasOwnProperty('direction')?p.direction:1
-               if(that.direction ==-1){
-                   that.title='销售退货单'
-               }
+                that.direction= p.hasOwnProperty('direction')?p.direction:1
+                if(that.direction ==-1){
+                    that.title='销售退货单'
+                }
+                pstatic.set('salesmaster',param)//用于加载更多使用
 
                 net.post(pref.getString('ip') + url,param,{},function(){
                     //start
                 },function(e){
                     //success
-                  //  self.back=e.res;
+                    //  self.back=e.res;
                     if(e !=null && e !=undefined ){
                         if(e.res.msg=='暂无数据'){
                             that.toast('暂无数据')
@@ -139,15 +145,11 @@
                             that.total()
                         }
                     }
-
                 },function(e){
                     //compelete
-
                 },function(){
                     //exception
                 });
-
-
             },total(){
                 var q=Number(0)
                 var a=Number(0)
@@ -176,22 +178,20 @@
                 param.employeeId=''
                 param.direction=this.direction
                 setTimeout(() => {
-                net.post(pref.getString('ip') + url,param,{},function(){
-                    //start
-                },function(e){
-                    //success
-                    //  self.back=e.res;
-                    if(e !=null && e !=undefined ){
-                        that.data =e.res.obj
-                        that.total()
-                    }
-
-                },function(e){
-                    //compelete
-
-                },function(){
-                    //exception
-                });
+                    net.post(pref.getString('ip') + url,param,{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        //  self.back=e.res;
+                        if(e !=null && e !=undefined ){
+                            that.data =e.res.obj
+                            that.total()
+                        }
+                    },function(e){
+                        //compelete
+                    },function(){
+                        //exception
+                    });
                 }, 2000);//setTimeout 结束
             },
             special(dom, styles) {
@@ -205,15 +205,11 @@
             onRightNode(pNode, node, i) {
                 var that =this
                 //node.onPress();
-
                 var p={}
-
                 if(pNode.TallyFlag){
                     that.toast('单据已记账，无法修改')
                     return
                 }
-
-
                 if(node.text =='审核'){
                     if(pNode.AuditFlag){
                         that.toast('单据已审核')
@@ -233,35 +229,32 @@
                     p.SalesID =pNode.SalesID
                     p.departmentid =''
                 }
-               if(node.text =='审核' || node.text =='反审') {
-                   net.post(pref.getString('ip') + auditurl, p, {}, function () {
-                       //start
-                   }, function (e) {
-                       //success
-                       if(e !=null && e !=undefined){
-                           if(p.AuditFlag ==0) {
-                               that.data[i].AuditFlag=false
-                           }else if(p.AuditFlag ==1){
-                               that.data[i].AuditFlag=true
-                           }
-                           that.toast(e.res.msg)
-                          // var page=weex.requireModule("page")
-                          // page.reload();
-                       }
-
-                   }, function (e) {
-                       //compelete
-
-                   }, function () {
-                       //exception
-                       that.alert('异常')
-                   });
-               }
+                if(node.text =='审核' || node.text =='反审') {
+                    net.post(pref.getString('ip') + auditurl, p, {}, function () {
+                        //start
+                    }, function (e) {
+                        //success
+                        if(e !=null && e !=undefined){
+                            if(p.AuditFlag ==0) {
+                                that.data[i].AuditFlag=false
+                            }else if(p.AuditFlag ==1){
+                                that.data[i].AuditFlag=true
+                            }
+                            that.toast(e.res.msg)
+                            // var page=weex.requireModule("page")
+                            // page.reload();
+                        }
+                    }, function (e) {
+                        //compelete
+                    }, function () {
+                        //exception
+                        that.alert('异常')
+                    });
+                }
                 if (pNode.autoClose)
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
-
             },
             onNodeClick(node, i) {
                 if (this.mobileX < 0) {
@@ -293,10 +286,8 @@
                     p.direction =this.direction
                     p.title=this.title
                     this.push('root:SalesAdd.js',p)
-
                 }
             },
-
             onPanEnd(e, node, i) {
                 if (Utils.env.isWeb()) {
                     const webEndX = e.changedTouches[0].pageX;
@@ -364,7 +355,6 @@
                 }else if(that.direction==-1){
                     p.tag=97
                 }
-
                 nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=> {
                     if (e !== undefined) {
                         if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
@@ -383,6 +373,41 @@
                         that.onLoad(p)
                     }
                 })
+            },onloading(event) { //上拉加载更多
+                var that=this
+                this.loadinging = true;
+                modal.toast({
+                    message: "loading",
+                    duration: 1
+                });
+                setTimeout(()=>{
+                    this.currPage=Number(this.currPage) +Number(1)
+                    var p=pstatic.get('salesmaster') ||{}
+
+                    p.currPage=this.currPage
+
+                    net.post(pref.getString('ip')+url,p,{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            if(e.res.msg=='暂无数据'){
+                                that.toast('数据已加载完')
+                            }else {
+                                var array = e.res.obj || []
+                                for (var i = 0; i < array.length; i++) {
+                                    that.data.push(array[i])
+                                }
+                                that.total()
+                            }
+                        }
+                    },function(e){
+                        //compelete
+                    },function(){
+                        //exception
+                    });
+                    this.loadinging = false;
+                },2000)
             }
         }
     }
@@ -390,7 +415,7 @@
 
 <style scoped>
     .container {
-      /* background-color: #dddddd; */
+        /* background-color: #dddddd; */
         border-top-width: 1px;
         border-top-color: #dddddd;
         flex:1;
@@ -407,13 +432,10 @@
         flex-direction: row;
         align-items: center;
     }
-
     .swipe-action-center {
         width: 750px;
         flex-direction: row;
-
     }
-
     /* .box-center {
       width: 735px;
       line-height: 90px;
@@ -428,14 +450,12 @@
       margin-left: 0;
       padding-left: 15px;
     } */
-
     .swipe-action-child {
         width: 100px;
         text-align: center;
         color: #FFFFFF;
         background-color: #dddddd;
         line-height: 90px;
-
     }
     .swipe-action-text {
         font-size: 30px;
@@ -460,5 +480,17 @@
     .input_bg{ /*position: absolute; background-color: #0085ee; top: 60px;bottom: 60px; 170*/
         top:50;
         width:170px;height:125px;
+    }
+    .indicator-text {
+        font-size: 42px;
+        text-align: center;
+        width: 750px;
+    }
+    .indicator {
+        margin-top: 16px;
+        height: 60px;
+        width: 60px;
+        margin-left: 345px;
+        color: blue;
     }
 </style>
