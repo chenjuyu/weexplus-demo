@@ -200,7 +200,7 @@
                 item:{},
                 BeginDate:module1.formatDate(new Date(),'yyyy-MM-dd'),
                 EndDate:module1.formatDate(new Date(),'yyyy-MM-dd'),
-                condition:[],//用于保存查询 条件转换
+                condition:'',//[],//用于保存查询 条件转换
                 selectIndex:0,
                 selectIndex2:0,
                 totalQty:7336,
@@ -227,6 +227,7 @@
         },methods:{
             onLoad(p){
                 this.modifymenu()
+                this.total()
             },modifymenu(){
                 if(this.selectIndex ==0){
                     this.btns=[
@@ -335,11 +336,15 @@
                     return false;
                 return   it.serial.length==0;
             },total(){
-                if(this.selectIndex==0){ //店铺报表 合计
-
-
-
-
+               //数量与金额统一用相同的字段
+                var qtysum=0,amtsum=0
+                for(var i=0;i<this.lists.length;i++){
+                    qtysum =Number(qtysum)+Number(this.lists[i].Quantity)
+                    amtsum =Number(amtsum)+Number(this.lists[i].Amount)
+                }
+                this.totalQty =qtysum
+                if(amtsum) {
+                    this.totalAmt = parseFloat(amtsum).toFixed(2)
                 }
             },choose2(e){
                 //this.alert(this.$refs)
@@ -375,14 +380,19 @@
                         //   this.BeginDate =e.BeginDate
                         //  this.EndDate=e.EndDate
                         //使用前先清空
-                        if(this.condition.length >0) {
-                            this.condition.splice(0, this.condition.length)
-                        }
+                        this.condition =''
                          var arr = e.item || []
-                         for(var i=0;i<arr.length;i++){
-                             this.condition.push(arr[i].id)
+                        if(arr.length ==1){
+                            this.condition=arr[0].id //不用，号
+                        }else if(arr.length >1) {
+                            for (var i = 0; i < arr.length; i++) {
+                                this.condition = this.condition + "'" + (arr[i].id) + ("',")
+                            }
+                        }
+                         if(this.condition.indexOf(',') !=-1){
+                             this.condition=this.condition.substring(0,this.condition.length-1)
                          }
-                         this.log('condition列表字符串:'+this.condition.join())
+                         this.log('condition列表字符串:'+this.condition)//this.condition.join() 如果是列表可以这样用
                     }
 
                 })

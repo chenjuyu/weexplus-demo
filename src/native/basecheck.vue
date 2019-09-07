@@ -3,7 +3,7 @@
       <!-- :style="cityExtendStyle"  <head :title="tit" @titleClick="clickT" :height="120" @rightClick="clickR">
             <text  slot="right" style="flex-direction: row;margin-top: 13px;">右边</text>
         </head> -->
-        <head :autoback="false" @backClick="back" rightButton=""></head>
+        <head  @backClick="back" title="资料选择" :rightText="rightText" @rightClick="rightClick"></head>
         <div>
             <wxc-searchbar ref="wxc-searchbar"
                            @wxcSearchbarCancelClicked="wxcSearchbarCancelClicked"
@@ -41,7 +41,7 @@
          components:{ WxcCheckbox, WxcCheckboxList,WxcButton,WxcSearchbar },
         data () {
          return {
-             name: "basecheck",
+             rightText:'\ue667',
              currPage:1,
              sendtype:'',
              list:[],
@@ -247,6 +247,8 @@
              },
              wxcSearchbarDepChooseClicked () {
                  modal.toast({ 'message': 'dep.choose.click', 'duration': 1 });
+             },rightClick(e){
+                 this.wxcButtonClicked(e)
              }
 
          }

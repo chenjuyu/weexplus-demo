@@ -68,76 +68,6 @@
             data: {
                 type: Array,
                 default: [
-                    {
-                        No:'DN0002507',Date:'2019-07-08',AuditFlag:true,AuditDate:'2019-07-08',MadeBy:'张一发',CustomerID:'008',Customer:'李二狗',SupplierID:'OAD',Supplier:'厂商1',DepartmentID:'00A',Department:'广州总公司',WarehouseID:'00B',Warehouse:'云南分店'
-                        ,Type:'批发',EmployeeID:'0GA',Name:'张三',QuantitySum:80,AmountSum:1600.00
-                        ,right:[
-                            {
-                                text: "删除",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "删除",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "orange", color: "white" }
-                            },
-                            {
-                                text: "审核",
-                                onPress: function() {
-                                    modal.toast({
-                                        message: "审核",
-                                        duration: 0.3
-                                    });
-                                }
-                            },
-                            {
-                                text: "反审",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "反审",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "#F4333C", color: "white" }
-                            }
-                        ]
-                    },
-                    {
-                        No:'DN0002506',Date:'2019-07-08',AuditFlag:false,AuditDate:'2019-07-08',MadeByDate:'2019-07-08 08:30:35',CustomerID:'008',Customer:'张三八',DepartmentID:'00A',Department:'广州总公司',WarehouseID:'00B',Warehouse:'云南分店'
-                        ,Type:'批发',EmployeeID:'0GA',Name:'李四',LastNeedRAmount:2100,QuantitySum:70,AmountSum:1600.00
-                        ,right:[
-                            {
-                                text: "删除",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "删除",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "orange", color: "white" }
-                            },
-                            {
-                                text: "审核",
-                                onPress: function() {
-                                    modal.toast({
-                                        message: "审核",
-                                        duration: 0.3
-                                    });
-                                }
-                            },
-                            {
-                                text: "反审",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "反审",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "#F4333C", color: "white"  }
-                            }
-                        ]
-                    }
                 ]
             },
             height: {
@@ -151,7 +81,8 @@
         },
         data() {
             return {
-                title:'',
+                rightText:'\ue621',
+                title:'采购收货单',
                 No:'',
                 totalQty:'',
                 totalAmt:'',
@@ -182,24 +113,33 @@
                 var that=this
                 var param={}
                 param.currPage=this.currPage
-                param.audit=''
+                param.audit=p.hasOwnProperty('audit')?p.audit:''
                 param.no=''
-                param.beginDate=beginTime
-                param.endDate=endTime
-                param.departmentId=''
-                param.customerId=''
-                param.employeeId=''
+                param.beginDate=p.hasOwnProperty('beginDate')?p.beginDate:beginTime
+                param.endDate=p.hasOwnProperty('endDate')?p.endDate:endTime
+                param.departmentId=p.hasOwnProperty('departmentId')?p.departmentId:''
+                param.supplierId=p.hasOwnProperty('supplierId')?p.customerId:''
+                param.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
                 param.direction=p.hasOwnProperty('direction')?p.direction:1
                 this.direction =p.hasOwnProperty('direction')?p.direction:1
-                that.title=p.hasOwnProperty('title')?p.title:''
+                //that.title=p.hasOwnProperty('title')?p.title:''
+
+                if(that.direction ==-1){
+                    that.title='采购退货单'
+                }
+
                 net.post(pref.getString('ip') + url,param,{},function(){
                     //start
                 },function(e){
                     //success
                     //  self.back=e.res;
                     if(e !=null && e !=undefined ){
-                        that.data =e.res.obj
-                        that.total()
+                        if(e.res.msg=='暂无数据'){
+                            that.toast(e.res.msg)
+                        }else {
+                            that.data = e.res.obj
+                            that.total()
+                        }
                     }
                 },function(e){
                     //compelete
@@ -408,6 +348,35 @@
                     });
                     this.mobileX = 0;
                 }
+            },rightClick(){
+
+                this.log('右击')
+                var that=this
+                var  p={}
+                if(that.direction==1){
+                    p.tag=22
+                }else if(that.direction==-1){
+                    p.tag=95
+                }
+
+                nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=> {
+                    if (e !== undefined) {
+                        if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
+                            return
+                        }
+                        p.supplierId=e.SupplierID
+                        p.supplier=e.Supplier
+                        p.audit =  e.AuditType
+                        p.beginDate=e.BeginDate
+                        p.endDate=e.EndDate
+                        p.departmentId=e.DepartmentID
+                        p.employeeId=e.EmployeeID
+                        that.currPage =1
+                        p.direction =that.direction
+                        p.no=''
+                        that.onLoad(p)
+                    }
+                })
             }
         }
     }

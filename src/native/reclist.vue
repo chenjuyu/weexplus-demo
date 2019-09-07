@@ -68,46 +68,7 @@
         props: {
             data: {
                 type: Array,
-                default: [
-                    {
-                        No:'DN0002507',Date:'2019-07-08',AuditFlag:true,AuditDate:'2019-07-08',MadeByDate:'2019-07-08 08:30:35',CustomerID:'008',Customer:'李二狗',DepartmentID:'00A',Department:'广州总公司',WarehouseID:'00B',Warehouse:'云南分店'
-                        ,Type:'批发',EmployeeID:'0GA',Name:'张三',LastNeedRAmount:2000,QuantitySum:80,AmountSum:1600.00
-                        ,right:[
-                            {
-                                text: "审核",
-                                onPress: function() {
-                                    modal.toast({
-                                        message: "审核",
-                                        duration: 0.3
-                                    });
-                                }
-                            },
-                            {
-                                text: "反审",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "反审",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "#F4333C", color: "white" }
-                            },
-                            {
-                                text: "拍照",
-                                onPress: () => {
-                                    modal.toast({
-                                        message: "拍照",
-                                        duration: 0.3
-                                    });
-                                },
-                                style: { backgroundColor: "orange", color: "white" }
-                            }
-
-                        ]
-                    }
-
-
-                ]
+                default: []
             },
             height: {
                 type: Number,
@@ -120,6 +81,7 @@
         },
         data() {
             return {
+                rightText:'\ue621',
                 title:'收款单',
                 direction:1,
                 No:'',
@@ -129,8 +91,8 @@
                 mobileX: 0,
                 webStarX: 0,
                 saveIdx: null,
-                isAndroid: Utils.env.isAndroid()
-
+                isAndroid: Utils.env.isAndroid(),
+                para:{currPage:1,audit:'',no:'',beginDate:'',endDate:'',departmentId:'',customerId:'',employeeId:''}//提交的查询条件
             };
         },
         methods: {
@@ -148,24 +110,27 @@
                     return
                 }
                 var that=this
-                var param={}
-                param.currPage=this.currPage
-                param.audit=''
-                param.no=''
-                param.beginDate=beginTime
-                param.endDate=endTime
-                param.departmentId=''
-                param.customerId=''
-                param.employeeId=''
+                that.para.currPage=this.currPage
+                that.para.audit=p.hasOwnProperty('audit')?p.audit:''
+                that.para.no=p.hasOwnProperty('no')?p.no:''
+                that.para.beginDate=p.hasOwnProperty('beginDate')?p.beginDate:beginTime
+                that.para.endDate=p.hasOwnProperty('endDate')?p.endDate:endTime
+                that.para.departmentId=p.hasOwnProperty('departmentId')?p.departmentId:''
+                that.para.customerId=p.hasOwnProperty('customerId')?p.customerId:''
+                that.para.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
 
-                net.post(pref.getString('ip') + url,param,{},function(){
+                net.post(pref.getString('ip') + url,that.para,{},function(){
                     //start
                 },function(e){
                     //success
                     //  self.back=e.res;
                     if(e !=null && e !=undefined ){
-                        that.data =e.res.obj
-                        that.total()
+                        if(e.res.msg=='暂无数据'){
+                            that.toast('暂无数据')
+                        }else {
+                            that.data = e.res.obj
+                            that.total()
+                        }
                     }
 
                 },function(e){
@@ -193,17 +158,20 @@
                 nav.pushParam('root:RecAdd.js',{title:this.title})
             },search(){
                 var that=this
-                var param={}
-                param.currPage=this.currPage
-                param.audit=''
-                param.no=that.No
-                param.beginDate=''
-                param.endDate=''
-                param.departmentId=''
-                param.customerId=''
-                param.employeeId=''
+                var p={}
+
+                p.no=that.No
+                p.currPage=this.currPage
+                p.audit=''
+                p.beginDate=''
+                p.endDate=''
+                p.departmentId=''
+                p.customerId=''
+                p.employeeId=''
+
+
                 setTimeout(() => {
-                    net.post(pref.getString('ip') + url,param,{},function(){
+                    net.post(pref.getString('ip') + url,p,{},function(){
                         //start
                     },function(e){
                         //success
@@ -382,6 +350,29 @@
                     });
                     this.mobileX = 0;
                 }
+            },rightClick(){ //高级查询
+                this.log('右击')
+                var that=this
+              var  p={}
+                p.tag=34
+                nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=> {
+                    if (e !== undefined) {
+                        if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
+                            return
+                        }
+                        that.para.customerId=e.CustomerID
+                        that.para.customer=e.Customer
+                        that.para.audit =  e.AuditType
+                        that.para.beginDate=e.BeginDate
+                        that.para.endDate=e.EndDate
+                        that.para.departmentId=e.DepartmentID
+                        that.para.employeeId=e.EmployeeID
+                        that.para.currPage=1
+                        that.onLoad(that.para)
+                    }
+                })
+
+
             }
         }
     }

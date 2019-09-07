@@ -92,7 +92,7 @@
             }
             ,tabBarOnClick: function (e) {
                 this.log('tabBarOnClick:'+e.index)
-                if(!e.src){
+                if(e.src==''){
                     this.toast('功能开发中')
                 }
             },diplay(){
