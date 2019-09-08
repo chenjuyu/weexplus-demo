@@ -35,6 +35,15 @@
                 </div>
             </cell>
 
+
+            <!--  用于给列表添加上拉加载更多的功能-->
+            <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                <loading-indicator class="indicator"></loading-indicator>
+                <text class="indicator-text">Loading...</text>
+            </loading>
+
+
+
         </list>
         <div class="footer">
             <div style="height: 80px;justify-content: center;align-items: center"><text style="font-size: 40px;color: #FFFFFF";>合计：{{totalQty}}</text></div>
@@ -53,17 +62,15 @@
     var nav = weex.requireModule('navigator') ;
     const  pref=weex.requireModule('pref')
     const net = weex.requireModule('net');
-
+    const  pstatic=weex.requireModule("static")
     var date = new Date();//获取当前时间
     date.setDate(date.getDate()-8);//设置天数 -1 天
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
-
     var url='/salesOrder.do?salesOrderlist'
     var auditurl ='/salesOrder.do?auditOrder'
     export default {
         components: {
-
         },
         props: {
             data: {
@@ -91,8 +98,8 @@
                 mobileX: 0,
                 webStarX: 0,
                 saveIdx: null,
-                isAndroid: Utils.env.isAndroid()
-
+                isAndroid: Utils.env.isAndroid(),
+                loadinging:false
             };
         },
         methods: {
@@ -104,8 +111,6 @@
                     nav.push('root:GridViewList.js')
                     return
                 })
-
-
                 if(p==null || p==undefined || JSON.stringify(p)=='{}'){
                     return
                 }
@@ -119,9 +124,7 @@
                 param.departmentId=p.hasOwnProperty('departmentId')?p.departmentId:''
                 param.customerId=p.hasOwnProperty('customerId')?p.customerId:''
                 param.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
-
-
-
+                pstatic.set('salesordermaster',param)//用于加载更多使用
                 net.post(pref.getString('ip') + url,param,{},function(){
                     //start
                 },function(e){
@@ -135,15 +138,11 @@
                             that.total()
                         }
                     }
-
                 },function(e){
                     //compelete
-
                 },function(){
                     //exception
                 });
-
-
             },total(){
                 var q=Number(0)
                 var a=Number(0)
@@ -180,10 +179,8 @@
                             that.data =e.res.obj
                             that.total()
                         }
-
                     },function(e){
                         //compelete
-
                     },function(){
                         //exception
                     });
@@ -200,10 +197,7 @@
             onRightNode(pNode, node, i) {
                 var that =this
                 //node.onPress();
-
                 var p={}
-
-
                 if(node.text =='审核'){
                     if(pNode.AuditFlag){
                         that.toast('单据已审核')
@@ -236,10 +230,8 @@
                             // var page=weex.requireModule("page")
                             // page.reload();
                         }
-
                     }, function (e) {
                         //compelete
-
                     }, function () {
                         //exception
                         that.alert('异常')
@@ -249,7 +241,6 @@
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
-
             },
             onNodeClick(node, i) {
                 if (this.mobileX < 0) {
@@ -282,10 +273,8 @@
                     p.title=this.title
                     p.No =node.No
                     this.push('root:SalesOrderAdd.js',p)
-
                 }
             },
-
             onPanEnd(e, node, i) {
                 if (Utils.env.isWeb()) {
                     const webEndX = e.changedTouches[0].pageX;
@@ -349,7 +338,6 @@
                 var that=this
                 var  p={}
                 p.tag=28
-
                 nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=> {
                     if (e !== undefined) {
                         if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
@@ -367,6 +355,39 @@
                         that.onLoad(p)
                     }
                 })
+            },onloading(event) { //上拉加载更多
+                var that=this
+                this.loadinging = true;
+                modal.toast({
+                    message: "loading",
+                    duration: 1
+                });
+                setTimeout(()=>{
+                    this.currPage=Number(this.currPage) +Number(1)
+                    var p=pstatic.get('salesordermaster') ||{}
+                    p.currPage=this.currPage
+                    net.post(pref.getString('ip')+url,p,{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            if(e.res.msg=='暂无数据'){
+                                that.toast('数据已加载完')
+                            }else {
+                                var array = e.res.obj || []
+                                for (var i = 0; i < array.length; i++) {
+                                    that.data.push(array[i])
+                                }
+                                that.total()
+                            }
+                        }
+                    },function(e){
+                        //compelete
+                    },function(){
+                        //exception
+                    });
+                    this.loadinging = false;
+                },2000)
             }
         }
     }
@@ -391,13 +412,10 @@
         flex-direction: row;
         align-items: center;
     }
-
     .swipe-action-center {
         width: 750px;
         flex-direction: row;
-
     }
-
     /* .box-center {
       width: 735px;
       line-height: 90px;
@@ -412,14 +430,12 @@
       margin-left: 0;
       padding-left: 15px;
     } */
-
     .swipe-action-child {
         width: 100px;
         text-align: center;
         color: #FFFFFF;
         background-color: #dddddd;
         line-height: 90px;
-
     }
     .swipe-action-text {
         font-size: 30px;
@@ -444,5 +460,17 @@
     .input_bg{ /*position: absolute; background-color: #0085ee; top: 60px;bottom: 60px; 170*/
         top:50;
         width:170px;height:125px;
+    }
+    .indicator-text {
+        font-size: 42px;
+        text-align: center;
+        width: 750px;
+    }
+    .indicator {
+        margin-top: 16px;
+        height: 60px;
+        width: 60px;
+        margin-left: 345px;
+        color: blue;
     }
 </style>

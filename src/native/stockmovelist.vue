@@ -13,20 +13,21 @@
                     <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
                     <div class="left">
                         <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.No}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.Customer}}</text>
-                        <text style="font-size: 35px;height: 60px">类型:{{item.Type}}</text>
+                        <text style="font-size: 35px;height: 60px">转进仓库:{{item.WarehouseIn}}</text>
+                        <text style="font-size: 35px;height: 60px">转出仓库:{{item.WarehouseOut}}</text>
+                        <text style="font-size: 35px;height: 60px">日期:{{item.Date}}</text>
+                        <text style="font-size: 35px;height: 60px">制单日期:{{item.MadeByDate}}</text>
                         <text style="font-size: 35px;height: 60px">经手人:{{item.Name}}</text>
-                        <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
                     </div>
 
                     <image src="root:img/Audit.png" class="input_bg" v-if="item.AuditFlag"></image>
 
                     <div class="right" style="position: absolute;right: 0">
                         <text style="font-size: 35px;height: 60px">审核日期:{{item.AuditDate}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.MadeByDate}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
-                        <text style="font-size: 35px;height: 60px">应收余额:{{item.LastNeedRAmount}}</text>
-                        <text style="font-size: 35px;height: 60px">金额:{{item.AmountSum}}</text>
+                        <text style="font-size: 35px;height: 60px">转进类型:{{item.MoveInType}}</text>
+                        <text style="font-size: 35px;height: 60px">转出类型:{{item.MoveOutType}}</text>
+                        <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
+                        <text style="font-size: 35px;height: 60px">制单人:{{item.MadeBy}}</text>
                     </div>
 
                 </div>
@@ -62,14 +63,14 @@
     const modal = weex.requireModule("modal");
     var nav = weex.requireModule('navigator') ;
     const  pref=weex.requireModule('pref')
-    const  pstatic=weex.requireModule("static")
     const net = weex.requireModule('net');
+    const  pstatic=weex.requireModule("static")
     var date = new Date();//获取当前时间
     date.setDate(date.getDate()-8);//设置天数 -1 天
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
-    var url='/sales.do?saleslist'
-    var auditurl ='/sales.do?auditOrder'
+    var url='/stockMove.do?stockmovelist'
+    var auditurl ='/stockMove.do?auditStockMove' //先不做取消审核的
     export default {
         components: {
         },
@@ -90,7 +91,7 @@
         data() {
             return {
                 rightText:'\ue621',
-                title:'销售发货单',
+                title:'转仓单',
                 direction:1,
                 No:'',
                 totalQty:'',
@@ -125,12 +126,7 @@
                 param.departmentId=p.hasOwnProperty('departmentId')?p.departmentId:''
                 param.customerId=p.hasOwnProperty('customerId')?p.customerId:''
                 param.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
-                param.direction=p.hasOwnProperty('direction')?p.direction:1
-                that.direction= p.hasOwnProperty('direction')?p.direction:1
-                if(that.direction ==-1){
-                    that.title='销售退货单'
-                }
-                pstatic.set('salesmaster',param)//用于加载更多使用
+                pstatic.set('stockmovemaster',param)//用于加载更多使用
                 net.post(pref.getString('ip') + url,param,{},function(){
                     //start
                 },function(e){
@@ -138,7 +134,7 @@
                     //  self.back=e.res;
                     if(e !=null && e !=undefined ){
                         if(e.res.msg=='暂无数据'){
-                            that.toast('暂无数据')
+                            that.toast(e.res.msg)
                         }else {
                             that.data = e.res.obj
                             that.total()
@@ -163,7 +159,7 @@
                 }
             }
             ,add(e){
-                nav.pushParam('root:SalesAdd.js',{direction:this.direction,title:this.title})
+                nav.pushParam('root:StockMoveAdd.js',{direction:this.direction,title:this.title})
             },search(){
                 var that=this
                 var param={}
@@ -175,7 +171,6 @@
                 param.departmentId=''
                 param.customerId=''
                 param.employeeId=''
-                param.direction=this.direction
                 setTimeout(() => {
                     net.post(pref.getString('ip') + url,param,{},function(){
                         //start
@@ -205,17 +200,12 @@
                 var that =this
                 //node.onPress();
                 var p={}
-                if(pNode.TallyFlag){
-                    that.toast('单据已记账，无法修改')
-                    return
-                }
                 if(node.text =='审核'){
                     if(pNode.AuditFlag){
                         that.toast('单据已审核')
                         return
                     }
-                    p.direction =that.direction
-                    p.SalesID =pNode.SalesID
+                    p.StockMoveID =pNode.StockMoveID
                     p.departmentid =pNode.DepartmentID
                     p.AuditFlag =1
                 }else if(node.text =='反审'){
@@ -224,9 +214,8 @@
                         return
                     }
                     p.AuditFlag =0
-                    p.direction =that.direction
-                    p.SalesID =pNode.SalesID
-                    p.departmentid =''
+                    p.StockMoveID =pNode.StockMoveID
+                    p.departmentid =pNode.DepartmentID
                 }
                 if(node.text =='审核' || node.text =='反审') {
                     net.post(pref.getString('ip') + auditurl, p, {}, function () {
@@ -268,23 +257,28 @@
                 } else {
                     //this.$emit("onNodeClick", node, i);
                     var p={}
-                    p.SalesID=node.SalesID
+                    p.StockMoveID=node.StockMoveID
                     p.DepartmentID =node.DepartmentID
                     p.Department =node.Department
+                    p.WarehouseOutID =node.WarehouseOutID //代表出仓
+                    p.WarehouseOut =node.WarehouseOut
+                    p.WarehouseInID =node.WarehouseInID //代表转进仓
+                    p.WarehouseIn =node.WarehouseIn
                     p.Memo=node.Memo
-                    p.Customer=node.Customer
-                    p.CustomerID=node.CustomerID
                     p.Name=node.Name
                     p.EmployeeID=node.EmployeeID
+                    p.CustomerID =node.CustomerID
                     p.Date=node.Date
-                    p.LastNeedRAmount=node.LastNeedRAmount
+                    p.MoveInType=node.MoveInType
                     p.AuditFlag =node.AuditFlag
-                    p.PaymentTypeID =node.PaymentTypeID
-                    p.PaymentType =node.PaymentType
-                    p.ReceivalAmount =node.ReceivalAmount
-                    p.direction =this.direction
+                    p.MoveOutType =node.MoveOutType
+                    p.QuantitySum=node.QuantitySum
+                    p.AuditDate =node.AuditDate
+                    p.MadeBy=node.MadeBy
+                    p.MadeByDate =node.MadeByDate
                     p.title=this.title
-                    this.push('root:SalesAdd.js',p)
+                    p.No =node.No
+                    this.push('root:StockMoveAdd.js',p)
                 }
             },
             onPanEnd(e, node, i) {
@@ -349,11 +343,7 @@
                 this.log('右击')
                 var that=this
                 var  p={}
-                if(that.direction==1){
-                    p.tag=30
-                }else if(that.direction==-1){
-                    p.tag=97
-                }
+                p.tag=28
                 nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=> {
                     if (e !== undefined) {
                         if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
@@ -366,8 +356,7 @@
                         p.endDate=e.EndDate
                         p.departmentId=e.DepartmentID
                         p.employeeId=e.EmployeeID
-                        that.currPage =1
-                        p.direction =that.direction
+                        p.currPage =1
                         p.no=''
                         that.onLoad(p)
                     }
@@ -381,7 +370,7 @@
                 });
                 setTimeout(()=>{
                     this.currPage=Number(this.currPage) +Number(1)
-                    var p=pstatic.get('salesmaster') ||{}
+                    var p=pstatic.get('stockmovemaster') ||{}
                     p.currPage=this.currPage
                     net.post(pref.getString('ip')+url,p,{},function(){
                         //start

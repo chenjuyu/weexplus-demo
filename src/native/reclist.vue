@@ -23,7 +23,7 @@
 
                     <div class="right" style="position: absolute;right: 0">
                         <text style="font-size: 35px;height: 60px">生效日期:{{item.ValidBeginDate}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.MadeByDate}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Date}}</text>
                         <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
                         <text style="font-size: 35px;height: 60px">收款金额:{{item.ReceivalAmount}}</text>
                     </div>
@@ -34,6 +34,14 @@
                     <text class="swipe-action-child swipe-action-text" @click="onRightNode(item, child, i)" v-for="(child, childIdx) of item.right" :style="Object.assign({lineHeight: height + 'px'}, child.style || {})" :key="'child-' + childIdx">{{child.text}}</text>
                 </div>
             </cell>
+
+
+            <!--  用于给列表添加上拉加载更多的功能-->
+            <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                <loading-indicator class="indicator"></loading-indicator>
+                <text class="indicator-text">Loading...</text>
+            </loading>
+
 
         </list>
         <div class="footer">
@@ -52,6 +60,7 @@
     const modal = weex.requireModule("modal");
     var nav = weex.requireModule('navigator') ;
     const  pref=weex.requireModule('pref')
+    const  pstatic=weex.requireModule("static")
     const net = weex.requireModule('net');
 
     var date = new Date();//获取当前时间
@@ -92,6 +101,7 @@
                 webStarX: 0,
                 saveIdx: null,
                 isAndroid: Utils.env.isAndroid(),
+                loadinging:false,
                 para:{currPage:1,audit:'',no:'',beginDate:'',endDate:'',departmentId:'',customerId:'',employeeId:''}//提交的查询条件
             };
         },
@@ -119,6 +129,8 @@
                 that.para.customerId=p.hasOwnProperty('customerId')?p.customerId:''
                 that.para.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
 
+                pstatic.set('recmaster',that.para)//用于加载更多使用
+
                 net.post(pref.getString('ip') + url,that.para,{},function(){
                     //start
                 },function(e){
@@ -145,17 +157,27 @@
                 var q=Number(0)
                 var a=Number(0)
                 for(var i=0;i<this.data.length;i++){
-                    q=q+Number(this.data[i].QuantitySum)
+                   // q=q+Number(this.data[i].QuantitySum)
                     a=a+Number(this.data[i].ReceivalAmount)
                 }
-                this.totalQty =q
+               // this.totalQty =q
                 this.totalAmt =a
                 if(this.totalAmt){ //这里表示 不等于0 与空
                     this.totalAmt =parseFloat(this.totalAmt).toFixed(2)
                 }
             }
             ,add(e){
+                var that =this
                 nav.pushParam('root:RecAdd.js',{title:this.title})
+             /*    nav.pushFull({url:'root:RecAdd.js',param:{title:this.title},animate:true},(e)=>{
+                    if (e !== undefined) {
+                        if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
+                            return
+                        }
+                    that.data.unshift(e)
+                    }
+                }) */
+
             },search(){
                 var that=this
                 var p={}
@@ -271,23 +293,41 @@
                 } else {
                     //this.$emit("onNodeClick", node, i);
                     var p={}
+                    var that=this
                     p.ReceivalID=node.ReceivalID
                     p.DepartmentID =node.DepartmentID
                     p.Department =node.Department
                     p.Memo=node.Memo
+                    p.No=node.No
+                    p.Type=node.Type
                     p.Customer=node.Customer
                     p.CustomerID=node.CustomerID
                     p.Name=node.Name
                     p.EmployeeID=node.EmployeeID
                     p.Date=node.Date
+                    p.ValidBeginDate =node.ValidBeginDate
                     p.LastNeedRAmount=node.LastNeedRAmount
                     p.AuditFlag =node.AuditFlag
                     p.PaymentTypeID =node.PaymentTypeID
                     p.PaymentType =node.PaymentType
                     p.ReceivalAmount =node.ReceivalAmount
-                    p.direction =this.direction
                     p.title=this.title
-                    this.push('root:RecAdd.js',p)
+
+
+                    nav.pushFull({url:'root:RecAdd.js',param:p,animate:true},(e)=>{
+                        if (e !== undefined) {
+                            if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
+                                return
+                            } //修改
+                            that.log("e的值："+JSON.stringify(e))
+                            for(var i=0;i<that.data.length;i++){
+                                if(that.data[i].ReceivalID ==e.ReceivalID){
+                                    Vue.set(that.data,i,e) //这种才能更新页面
+                                }
+
+                            }
+                        }
+                    })
 
                 }
             },
@@ -373,6 +413,39 @@
                 })
 
 
+            },onloading(event) { //上拉加载更多
+                var that=this
+                this.loadinging = true;
+                modal.toast({
+                    message: "loading",
+                    duration: 1
+                });
+                setTimeout(()=>{
+                    this.currPage=Number(this.currPage) +Number(1)
+                    var p=pstatic.get('recmaster') ||{}
+                    p.currPage=this.currPage
+                    net.post(pref.getString('ip')+url,p,{},function(){
+                        //start
+                    },function(e){
+                        //success
+                        if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                            if(e.res.msg=='暂无数据'){
+                                that.toast('数据已加载完')
+                            }else {
+                                var array = e.res.obj || []
+                                for (var i = 0; i < array.length; i++) {
+                                    that.data.push(array[i])
+                                }
+                                that.total()
+                            }
+                        }
+                    },function(e){
+                        //compelete
+                    },function(){
+                        //exception
+                    });
+                    this.loadinging = false;
+                },2000)
             }
         }
     }
@@ -450,5 +523,17 @@
     .input_bg{ /*position: absolute; background-color: #0085ee; top: 60px;bottom: 60px; 170*/
         top:50;
         width:170px;height:125px;
+    }
+    .indicator-text {
+        font-size: 42px;
+        text-align: center;
+        width: 750px;
+    }
+    .indicator {
+        margin-top: 16px;
+        height: 60px;
+        width: 60px;
+        margin-left: 345px;
+        color: blue;
     }
 </style>

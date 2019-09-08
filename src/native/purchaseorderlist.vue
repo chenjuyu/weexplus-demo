@@ -13,7 +13,7 @@
                     <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
                     <div class="left">
                         <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.No}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.Customer}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Supplier}}</text>
                         <text style="font-size: 35px;height: 60px">类型:{{item.Type}}</text>
                         <text style="font-size: 35px;height: 60px">经手人:{{item.Name}}</text>
                         <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
@@ -22,10 +22,11 @@
                     <image src="root:img/Audit.png" class="input_bg" v-if="item.AuditFlag"></image>
 
                     <div class="right" style="position: absolute;right: 0">
-                        <text style="font-size: 35px;height: 60px">审核日期:{{item.AuditDate}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.MadeByDate}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
-                        <text style="font-size: 35px;height: 60px">应收余额:{{item.LastNeedRAmount}}</text>
+                        <text style="font-size: 35px;height: 60px"></text>
+                        <text style="font-size: 35px;height: 60px">{{item.Date}}</text>
+                        <text style="font-size: 35px;height: 60px">部门:{{item.Department}}</text>
+                        <text style="font-size: 35px;height: 60px">制单人:{{item.MadeBy}}</text>
+                        <!--    <text style="font-size: 35px;height: 60px">应收余额:{{item.LastNeedRAmount}}</text> -->
                         <text style="font-size: 35px;height: 60px">金额:{{item.AmountSum}}</text>
                     </div>
 
@@ -42,7 +43,6 @@
                 <loading-indicator class="indicator"></loading-indicator>
                 <text class="indicator-text">Loading...</text>
             </loading>
-
 
 
         </list>
@@ -62,21 +62,22 @@
     const modal = weex.requireModule("modal");
     var nav = weex.requireModule('navigator') ;
     const  pref=weex.requireModule('pref')
-    const  pstatic=weex.requireModule("static")
     const net = weex.requireModule('net');
+    const  pstatic=weex.requireModule("static")
     var date = new Date();//获取当前时间
     date.setDate(date.getDate()-8);//设置天数 -1 天
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
-    var url='/sales.do?saleslist'
-    var auditurl ='/sales.do?auditOrder'
+    var url='/purchaseorder.do?purchaseorderlist'
+    var auditurl ='/purchaseorder.do?auditOrder'
     export default {
         components: {
         },
         props: {
             data: {
                 type: Array,
-                default: []
+                default: [
+                ]
             },
             height: {
                 type: Number,
@@ -90,8 +91,7 @@
         data() {
             return {
                 rightText:'\ue621',
-                title:'销售发货单',
-                direction:1,
+                title:'采购订单',
                 No:'',
                 totalQty:'',
                 totalAmt:'',
@@ -112,7 +112,8 @@
                     nav.push('root:GridViewList.js')
                     return
                 })
-                if(p==null || p==undefined || JSON.stringify(p)=='{}'){
+                if(p ==null || p==undefined || JSON.stringify(p)=='{}')
+                {
                     return
                 }
                 var that=this
@@ -123,14 +124,13 @@
                 param.beginDate=p.hasOwnProperty('beginDate')?p.beginDate:beginTime
                 param.endDate=p.hasOwnProperty('endDate')?p.endDate:endTime
                 param.departmentId=p.hasOwnProperty('departmentId')?p.departmentId:''
-                param.customerId=p.hasOwnProperty('customerId')?p.customerId:''
+                param.supplierId=p.hasOwnProperty('supplierId')?p.supplierId:''
                 param.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
                 param.direction=p.hasOwnProperty('direction')?p.direction:1
-                that.direction= p.hasOwnProperty('direction')?p.direction:1
-                if(that.direction ==-1){
-                    that.title='销售退货单'
-                }
-                pstatic.set('salesmaster',param)//用于加载更多使用
+                this.direction =p.hasOwnProperty('direction')?p.direction:1
+                //that.title=p.hasOwnProperty('title')?p.title:''
+
+                pstatic.set('purchaseordermaster',param)//用于加载更多使用
                 net.post(pref.getString('ip') + url,param,{},function(){
                     //start
                 },function(e){
@@ -138,7 +138,7 @@
                     //  self.back=e.res;
                     if(e !=null && e !=undefined ){
                         if(e.res.msg=='暂无数据'){
-                            that.toast('暂无数据')
+                            that.toast(e.res.msg)
                         }else {
                             that.data = e.res.obj
                             that.total()
@@ -163,7 +163,7 @@
                 }
             }
             ,add(e){
-                nav.pushParam('root:SalesAdd.js',{direction:this.direction,title:this.title})
+                nav.pushParam('root:PurchaseOrderAdd.js',{title:this.title,direction:this.direction})
             },search(){
                 var that=this
                 var param={}
@@ -173,9 +173,9 @@
                 param.beginDate=''
                 param.endDate=''
                 param.departmentId=''
-                param.customerId=''
+                param.supplierId=''
                 param.employeeId=''
-                param.direction=this.direction
+                //param.direction=this.direction
                 setTimeout(() => {
                     net.post(pref.getString('ip') + url,param,{},function(){
                         //start
@@ -215,7 +215,7 @@
                         return
                     }
                     p.direction =that.direction
-                    p.SalesID =pNode.SalesID
+                    p.PurchaseOrderID =pNode.PurchaseOrderID
                     p.departmentid =pNode.DepartmentID
                     p.AuditFlag =1
                 }else if(node.text =='反审'){
@@ -225,7 +225,7 @@
                     }
                     p.AuditFlag =0
                     p.direction =that.direction
-                    p.SalesID =pNode.SalesID
+                    p.PurchaseOrderID =pNode.PurchaseOrderID
                     p.departmentid =''
                 }
                 if(node.text =='审核' || node.text =='反审') {
@@ -234,7 +234,7 @@
                     }, function (e) {
                         //success
                         if(e !=null && e !=undefined){
-                            if(p.AuditFlag ==0) {
+                            if (p.AuditFlag == 0){
                                 that.data[i].AuditFlag=false
                             }else if(p.AuditFlag ==1){
                                 that.data[i].AuditFlag=true
@@ -268,23 +268,24 @@
                 } else {
                     //this.$emit("onNodeClick", node, i);
                     var p={}
-                    p.SalesID=node.SalesID
+                    p.PurchaseOrderID=node.PurchaseOrderID
                     p.DepartmentID =node.DepartmentID
                     p.Department =node.Department
                     p.Memo=node.Memo
-                    p.Customer=node.Customer
-                    p.CustomerID=node.CustomerID
+                    p.Supplier=node.Supplier
+                    p.SupplierID=node.SupplierID
                     p.Name=node.Name
                     p.EmployeeID=node.EmployeeID
                     p.Date=node.Date
-                    p.LastNeedRAmount=node.LastNeedRAmount
+                    //this.alert("direction:"+this.direction)
+                    p.direction =this.direction
+                    p.title =this.title
+                    //    p.LastNeedRAmount=node.LastNeedRAmount
                     p.AuditFlag =node.AuditFlag
                     p.PaymentTypeID =node.PaymentTypeID
                     p.PaymentType =node.PaymentType
-                    p.ReceivalAmount =node.ReceivalAmount
-                    p.direction =this.direction
-                    p.title=this.title
-                    this.push('root:SalesAdd.js',p)
+                    p.PaymentAmount =node.PaymentAmount
+                    this.push('root:PurchaseOrderAdd.js',p)
                 }
             },
             onPanEnd(e, node, i) {
@@ -349,18 +350,14 @@
                 this.log('右击')
                 var that=this
                 var  p={}
-                if(that.direction==1){
-                    p.tag=30
-                }else if(that.direction==-1){
-                    p.tag=97
-                }
+                p.tag=20
                 nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=> {
                     if (e !== undefined) {
                         if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
                             return
                         }
-                        p.customerId=e.CustomerID
-                        p.customer=e.Customer
+                        p.supplierId=e.SupplierID
+                        p.supplier=e.Supplier
                         p.audit =  e.AuditType
                         p.beginDate=e.BeginDate
                         p.endDate=e.EndDate
@@ -381,7 +378,7 @@
                 });
                 setTimeout(()=>{
                     this.currPage=Number(this.currPage) +Number(1)
-                    var p=pstatic.get('salesmaster') ||{}
+                    var p=pstatic.get('purchaseordermaster') ||{}
                     p.currPage=this.currPage
                     net.post(pref.getString('ip')+url,p,{},function(){
                         //start

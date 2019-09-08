@@ -118,6 +118,7 @@
                        } else if(p.send==='getWarehouse'){
                            map.id=array[i].DepartmentID
                            map.Name=array[i].Name
+                           map.SettleCustID=array[i].SettleCustID
                            map.MustExistsGoodsFlag=array[i].MustExistsGoodsFlag
                            self.list.push(map);
                        } else if (p.send==='getBrand'){

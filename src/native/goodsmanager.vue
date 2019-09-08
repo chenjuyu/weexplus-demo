@@ -110,7 +110,7 @@
         },
         data(){
             return{
-                rightText:'',
+                rightText:'\ue667',
                 Code:'',
                 page:1,
                 loadinging:false,
@@ -507,7 +507,10 @@
                     this.loadinging = false;
                 },2000)
 
-           },save(){ //生成单据操作
+           },rightClick() {
+              this.save()
+
+            },save(){ //生成单据操作
                this.log('datalist:'+JSON.stringify(this.datalist))
 
                 for(var i=0;i<this.datalist.length;i++){

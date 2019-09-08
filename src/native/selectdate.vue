@@ -27,7 +27,7 @@
         </wxccell>
 
         <wxccell title="厂商"
-                 v-if="tag==22 || tag==20 || tag==95 || tag==24"
+                 v-if="tag==22 || tag==20 || tag==95 || tag==24 || tag==26"
                  :has-arrow="true"
                  @wxcCellClicked="wxcCellClicked(2)"
                  :has-margin="true">

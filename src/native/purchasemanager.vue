@@ -11,12 +11,23 @@
             </div>
             <div class="sudoku_row">
                 <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in purchase" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
-                    <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:mediumorchid;justify-content: center;align-items: center;">
+                    <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:mediumspringgreen;justify-content: center;align-items: center;">
                         <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
                     </div>
                     <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
-                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:50px;border-width: 1px;border-color:#FFFFFF;background-color: mediumspringgreen;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
+                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:50px;border-width: 1px;border-color:#FFFFFF;background-color: orange;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
                     <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+
+                    <div v-if="sudoku.id ==3"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:mediumorchid;justify-content: center;align-items: center;">
+                        <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
+                    </div>
+                    <text v-if="sudoku.id ==3"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+
+                    <div v-if="sudoku.id ==4"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:orange;justify-content: center;align-items: center;">
+                        <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
+                    </div>
+                    <text v-if="sudoku.id ==4"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+
 
                 </div>
             </div>
@@ -85,8 +96,10 @@
                     {id:2,name:'货品拍照',img_src:'\ue7bc',url:'goodsphoto.js'},
                 ]
                 ,purchase:[
-                    {id:1,name:'采购收货单',img_src:'\ue629',url:'purchaselist.js'},
-                    {id:2,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'},
+                    {id:1,name:'采购订单',img_src:'\ue62d',url:'purchaseorderlist.js'},
+                    {id:2,name:'采购收货单',img_src:'\ue629',url:'purchaselist.js'},
+                    {id:3,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'},
+                    {id:4,name:'付款单',img_src:'\ue636',url:'paylist.js'},
                 ]
                 ,sales:[
                     {id:1,name:'订单',img_src:'\ue606',url:''},
@@ -161,6 +174,7 @@
         font-size: 80px;
         color: #FFFFFF;
         text-align: center;
+
     }
     .layout{
         /*  display: flex;

@@ -508,9 +508,14 @@
                         {
                             if(this.goods.DiscountRate && Number(this.goods.DiscountRate) !=0 ){
                                 this.log("进入输入控制的方法了b")
+                                this.sizelist[i].UnitPrice =parseFloat(this.goods.UnitPrice).toFixed(2)
+                                this.sizelist[i].DiscountRate =parseFloat(this.goods.DiscountRate).toFixed(1)
+
                                 this.sizelist[i].Amount = Number(this.sizelist[i].Quantity) * Number(this.goods.UnitPrice)*Number(this.goods.DiscountRate)/Number(10)
                             }else{
                                 this.log("进入输入控制的方法了c")
+                                //增加单价修改 返回
+                                this.sizelist[i].UnitPrice =parseFloat(this.goods.UnitPrice).toFixed(2)
                                 this.sizelist[i].Amount = Number(this.sizelist[i].Quantity) * Number(this.goods.UnitPrice)
                             }
 

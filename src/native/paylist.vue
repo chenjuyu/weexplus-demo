@@ -10,23 +10,20 @@
                 <div :style='styles' class="swipe-action-center border">
 
                     <!--   <slot :val='{item: item, index: i}'/> -->
-                    <div style="justify-content: center;align-items: center;height: 300px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
+                    <div style="justify-content: center;align-items: center;height: 240px"><text style="font-size: 35px;color:red">{{Number(i)+1}}</text></div>
                     <div class="left">
                         <text style="font-size: 35px;height: 60px;font-weight:bold">{{item.No}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.Customer}}</text>
-                        <text style="font-size: 35px;height: 60px">类型:{{item.Type}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Supplier}}</text>
                         <text style="font-size: 35px;height: 60px">经手人:{{item.Name}}</text>
-                        <text style="font-size: 35px;height: 60px">数量:{{item.QuantitySum}}</text>
+
                     </div>
 
                     <image src="root:img/Audit.png" class="input_bg" v-if="item.AuditFlag"></image>
 
                     <div class="right" style="position: absolute;right: 0">
-                        <text style="font-size: 35px;height: 60px">审核日期:{{item.AuditDate}}</text>
-                        <text style="font-size: 35px;height: 60px">{{item.MadeByDate}}</text>
+                        <text style="font-size: 35px;height: 60px">{{item.Date}}</text>
                         <text style="font-size: 35px;height: 60px">{{item.Department}}</text>
-                        <text style="font-size: 35px;height: 60px">应收余额:{{item.LastNeedRAmount}}</text>
-                        <text style="font-size: 35px;height: 60px">金额:{{item.AmountSum}}</text>
+                        <text style="font-size: 35px;height: 60px">付款金额:{{item.PaymentAmount}}</text>
                     </div>
 
                 </div>
@@ -42,7 +39,6 @@
                 <loading-indicator class="indicator"></loading-indicator>
                 <text class="indicator-text">Loading...</text>
             </loading>
-
 
 
         </list>
@@ -64,14 +60,17 @@
     const  pref=weex.requireModule('pref')
     const  pstatic=weex.requireModule("static")
     const net = weex.requireModule('net');
+
     var date = new Date();//获取当前时间
     date.setDate(date.getDate()-8);//设置天数 -1 天
     let beginTime=module1.formatDate((date),"yyyy-MM-dd")
     let endTime=module1.formatDate((new Date()),"yyyy-MM-dd")
-    var url='/sales.do?saleslist'
-    var auditurl ='/sales.do?auditOrder'
+
+    var url='/payment.do?paylist'
+    var auditurl ='/payment.do?auditOrder'
     export default {
         components: {
+
         },
         props: {
             data: {
@@ -80,7 +79,7 @@
             },
             height: {
                 type: Number,
-                default: 300
+                default: 240
             },
             styles: {
                 type: Object,
@@ -90,7 +89,7 @@
         data() {
             return {
                 rightText:'\ue621',
-                title:'销售发货单',
+                title:'付款单',
                 direction:1,
                 No:'',
                 totalQty:'',
@@ -100,7 +99,8 @@
                 webStarX: 0,
                 saveIdx: null,
                 isAndroid: Utils.env.isAndroid(),
-                loadinging:false
+                loadinging:false,
+                para:{currPage:1,audit:'',no:'',beginDate:'',endDate:'',departmentId:'',supplierId:'',employeeId:''}//提交的查询条件
             };
         },
         methods: {
@@ -112,26 +112,24 @@
                     nav.push('root:GridViewList.js')
                     return
                 })
+
+
                 if(p==null || p==undefined || JSON.stringify(p)=='{}'){
                     return
                 }
                 var that=this
-                var param={}
-                param.currPage=this.currPage
-                param.audit=p.hasOwnProperty('audit')?p.audit:''
-                param.no=''
-                param.beginDate=p.hasOwnProperty('beginDate')?p.beginDate:beginTime
-                param.endDate=p.hasOwnProperty('endDate')?p.endDate:endTime
-                param.departmentId=p.hasOwnProperty('departmentId')?p.departmentId:''
-                param.customerId=p.hasOwnProperty('customerId')?p.customerId:''
-                param.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
-                param.direction=p.hasOwnProperty('direction')?p.direction:1
-                that.direction= p.hasOwnProperty('direction')?p.direction:1
-                if(that.direction ==-1){
-                    that.title='销售退货单'
-                }
-                pstatic.set('salesmaster',param)//用于加载更多使用
-                net.post(pref.getString('ip') + url,param,{},function(){
+                that.para.currPage=this.currPage
+                that.para.audit=p.hasOwnProperty('audit')?p.audit:''
+                that.para.no=p.hasOwnProperty('no')?p.no:''
+                that.para.beginDate=p.hasOwnProperty('beginDate')?p.beginDate:beginTime
+                that.para.endDate=p.hasOwnProperty('endDate')?p.endDate:endTime
+                that.para.departmentId=p.hasOwnProperty('departmentId')?p.departmentId:''
+                that.para.supplierId=p.hasOwnProperty('supplierId')?p.customerId:''
+                that.para.employeeId=p.hasOwnProperty('employeeId')?p.employeeId:''
+
+                pstatic.set('paymaster',that.para)//用于加载更多使用
+
+                net.post(pref.getString('ip') + url,that.para,{},function(){
                     //start
                 },function(e){
                     //success
@@ -144,40 +142,56 @@
                             that.total()
                         }
                     }
+
                 },function(e){
                     //compelete
+
                 },function(){
                     //exception
                 });
+
+
             },total(){
                 var q=Number(0)
                 var a=Number(0)
                 for(var i=0;i<this.data.length;i++){
-                    q=q+Number(this.data[i].QuantitySum)
-                    a=a+Number(this.data[i].AmountSum)
+                    // q=q+Number(this.data[i].QuantitySum)
+                    a=a+Number(this.data[i].PaymentAmount)
                 }
-                this.totalQty =q
+                // this.totalQty =q
                 this.totalAmt =a
                 if(this.totalAmt){ //这里表示 不等于0 与空
                     this.totalAmt =parseFloat(this.totalAmt).toFixed(2)
                 }
             }
             ,add(e){
-                nav.pushParam('root:SalesAdd.js',{direction:this.direction,title:this.title})
+                var that =this
+                //nav.pushParam('root:RecAdd.js',{title:this.title})
+                nav.pushFull({url:'root:RecAdd.js',param:{title:this.title,tag:26},animate:true},(e)=>{
+                    if (e !== undefined) {
+                        if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
+                            return
+                        }
+                        that.data.unshift(e)
+                    }
+                })
+
             },search(){
                 var that=this
-                var param={}
-                param.currPage=this.currPage
-                param.audit=''
-                param.no=that.No
-                param.beginDate=''
-                param.endDate=''
-                param.departmentId=''
-                param.customerId=''
-                param.employeeId=''
-                param.direction=this.direction
+                var p={}
+
+                p.no=that.No
+                p.currPage=this.currPage
+                p.audit=''
+                p.beginDate=''
+                p.endDate=''
+                p.departmentId=''
+                p.customerId=''
+                p.employeeId=''
+
+
                 setTimeout(() => {
-                    net.post(pref.getString('ip') + url,param,{},function(){
+                    net.post(pref.getString('ip') + url,p,{},function(){
                         //start
                     },function(e){
                         //success
@@ -186,8 +200,10 @@
                             that.data =e.res.obj
                             that.total()
                         }
+
                     },function(e){
                         //compelete
+
                     },function(){
                         //exception
                     });
@@ -204,18 +220,22 @@
             onRightNode(pNode, node, i) {
                 var that =this
                 //node.onPress();
+
                 var p={}
+
                 if(pNode.TallyFlag){
                     that.toast('单据已记账，无法修改')
                     return
                 }
+
+
                 if(node.text =='审核'){
                     if(pNode.AuditFlag){
                         that.toast('单据已审核')
                         return
                     }
                     p.direction =that.direction
-                    p.SalesID =pNode.SalesID
+                    p.PaymentID =pNode.PaymentID
                     p.departmentid =pNode.DepartmentID
                     p.AuditFlag =1
                 }else if(node.text =='反审'){
@@ -225,7 +245,7 @@
                     }
                     p.AuditFlag =0
                     p.direction =that.direction
-                    p.SalesID =pNode.SalesID
+                    p.PaymentID =pNode.PaymentID
                     p.departmentid =''
                 }
                 if(node.text =='审核' || node.text =='反审') {
@@ -243,8 +263,10 @@
                             // var page=weex.requireModule("page")
                             // page.reload();
                         }
+
                     }, function (e) {
                         //compelete
+
                     }, function () {
                         //exception
                         that.alert('异常')
@@ -254,6 +276,7 @@
                     this.special(this.$refs.skid[i], {
                         transform: `translate(0, 0)`
                     });
+
             },
             onNodeClick(node, i) {
                 if (this.mobileX < 0) {
@@ -268,25 +291,45 @@
                 } else {
                     //this.$emit("onNodeClick", node, i);
                     var p={}
-                    p.SalesID=node.SalesID
+                    var that=this
+                    p.PaymentID=node.PaymentID
                     p.DepartmentID =node.DepartmentID
                     p.Department =node.Department
                     p.Memo=node.Memo
-                    p.Customer=node.Customer
-                    p.CustomerID=node.CustomerID
+                    p.No=node.No
+                    p.Type=node.Type
+                    p.Supplier=node.Supplier
+                    p.SupplierID=node.SupplierID
                     p.Name=node.Name
                     p.EmployeeID=node.EmployeeID
                     p.Date=node.Date
-                    p.LastNeedRAmount=node.LastNeedRAmount
+                  //  p.ValidBeginDate =node.ValidBeginDate
+                    p.LastMustPayAmount=node.LastMustPayAmount
                     p.AuditFlag =node.AuditFlag
                     p.PaymentTypeID =node.PaymentTypeID
                     p.PaymentType =node.PaymentType
-                    p.ReceivalAmount =node.ReceivalAmount
-                    p.direction =this.direction
+                    p.PaymentAmount =node.PaymentAmount
                     p.title=this.title
-                    this.push('root:SalesAdd.js',p)
+                    p.tag =26 //重要标志
+
+                    nav.pushFull({url:'root:RecAdd.js',param:p,animate:true},(e)=>{
+                        if (e !== undefined) {
+                            if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
+                                return
+                            } //修改
+                            that.log("e的值："+JSON.stringify(e))
+                            for(var i=0;i<that.data.length;i++){
+                                if(that.data[i].PaymentID ==e.PaymentID){
+                                    Vue.set(that.data,i,e) //这种才能更新页面
+                                }
+
+                            }
+                        }
+                    })
+
                 }
             },
+
             onPanEnd(e, node, i) {
                 if (Utils.env.isWeb()) {
                     const webEndX = e.changedTouches[0].pageX;
@@ -345,33 +388,29 @@
                     });
                     this.mobileX = 0;
                 }
-            },rightClick(){
+            },rightClick(){ //高级查询
                 this.log('右击')
                 var that=this
                 var  p={}
-                if(that.direction==1){
-                    p.tag=30
-                }else if(that.direction==-1){
-                    p.tag=97
-                }
+                p.tag=26
                 nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=> {
                     if (e !== undefined) {
                         if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
                             return
                         }
-                        p.customerId=e.CustomerID
-                        p.customer=e.Customer
-                        p.audit =  e.AuditType
-                        p.beginDate=e.BeginDate
-                        p.endDate=e.EndDate
-                        p.departmentId=e.DepartmentID
-                        p.employeeId=e.EmployeeID
-                        that.currPage =1
-                        p.direction =that.direction
-                        p.no=''
-                        that.onLoad(p)
+                        that.para.supplierId=e.SupplierID
+                        that.para.supplier=e.Supplier
+                        that.para.audit =  e.AuditType
+                        that.para.beginDate=e.BeginDate
+                        that.para.endDate=e.EndDate
+                        that.para.departmentId=e.DepartmentID
+                        that.para.employeeId=e.EmployeeID
+                        that.para.currPage=1
+                        that.onLoad(that.para)
                     }
                 })
+
+
             },onloading(event) { //上拉加载更多
                 var that=this
                 this.loadinging = true;
@@ -381,7 +420,7 @@
                 });
                 setTimeout(()=>{
                     this.currPage=Number(this.currPage) +Number(1)
-                    var p=pstatic.get('salesmaster') ||{}
+                    var p=pstatic.get('paymaster') ||{}
                     p.currPage=this.currPage
                     net.post(pref.getString('ip')+url,p,{},function(){
                         //start
@@ -429,10 +468,13 @@
         flex-direction: row;
         align-items: center;
     }
+
     .swipe-action-center {
         width: 750px;
         flex-direction: row;
+
     }
+
     /* .box-center {
       width: 735px;
       line-height: 90px;
@@ -447,12 +489,14 @@
       margin-left: 0;
       padding-left: 15px;
     } */
+
     .swipe-action-child {
         width: 100px;
         text-align: center;
         color: #FFFFFF;
         background-color: #dddddd;
         line-height: 90px;
+
     }
     .swipe-action-text {
         font-size: 30px;
