@@ -4,13 +4,19 @@
         <div class="goodsimg">
             <image  style="width: 250px;height: 250px; border-style: dashed;border-width: 1px"  :src="imgurl"></image>
             <div class="dec">
-                <text class="size" style="height: 60px;margin-top: 10px">货品名称:{{goods.Name}}</text>
-                <text class="size" style="height: 60px;">货品编码:{{goods.Code}}</text>
-                <text class="size" style="height: 60px;">零售价￥:{{goods.RetailSales}}</text>
+                <text class="size" style="height: 50px;">货品名称:{{goods.Name}}</text>
+                <text class="size" style="height: 50px;">货品编码:{{goods.Code}}</text>
+                <text class="size" style="height: 50px;">零售价￥:{{goods.RetailSales}}</text>
                 <div class="unitprice">
-                    <text class="size" style="height:60px;">单价:</text><input type="number" @input="uinput(1)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.UnitPrice">
-                    <text class="size" style="height: 60px;">折扣:</text><input type="number" @input="uinput(2)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.DiscountRate">
+                    <text class="size" style="height:50px;">成本价:</text><input type="number" @input="uinput(1)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.UnitPrice"/>
+                    <text class="size" v-if="direction ==1" style="height:50px;">结算价:</text><input type="number" v-if="direction ==1" @input="uinput(2)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.RelationUnitPrice"/>
                 </div>
+
+               <div style="flex-direction: row;height: 50px">
+                   <text class="size" style="height: 50px;">折扣:</text>
+                   <input type="number" @input="uinput(3)" style="width: 100px;height: 50px;border-bottom-width: 2px;border-color: #eeeeee" v-model="goods.DiscountRate" />
+               </div>
+
             </div>
         </div>
 
@@ -46,7 +52,6 @@
          -->
 
         <div class="demo">
-            <scroller style="height: 200px;">
                 <gridselect ref="glist"
                             :single="true"
                             :cols="5"
@@ -55,7 +60,7 @@
                 </gridselect>
                 <!-- :customStyles="customStyles" 自定义
                      <text class="res">{{res3}}</text>  :style="{'height':getScreenHeight()}" -->
-            </scroller>
+
         </div>
 
 
@@ -82,7 +87,8 @@
             <div class="heji">
                 <text class="size" style="color: #FFFFFF">合计:</text>
                 <text class="size" style="margin-left: 20px; color: #FFFFFF">{{qtytotal}}</text>
-                <text class="size" style="margin-left: 20px; color: #FFFFFF">￥{{Amttotal}}</text>
+                <text class="size" style="margin-left: 20px; color: #FFFFFF">金额:{{Amttotal}}</text>
+                <text class="size" style="margin-left: 20px; color: #FFFFFF">结算金额:{{RelationAmountSum}}</text>
                 <div class="submit" @click="submit"><text class="size" style="color: #FFFFFF">确认</text> </div>
             </div>
 
@@ -103,6 +109,7 @@
     const net = weex.requireModule('net')
     const  pref=weex.requireModule('pref')
     const modal = weex.requireModule('modal')
+    const  pstatic=weex.requireModule("static")
     export default {
         components: {gridselect},
         data(){
@@ -113,6 +120,7 @@
                 retailsales:99.00,
                 unitprice:80.00,
                 discountrate:8.0,
+                direction:-1,
                 imgurl:'root:img/nopic.png',
                 res1: '',
                 res2: '',
@@ -137,6 +145,7 @@
                 selectIndex:'',//数组选中项
                 checkedList:[],
                 qtysum :0,//单个颜色尺码数量和
+                RelationAmountSum:0,
                 sizelist:[
                     {'GoodsID':'00AQ','ColorID':'0BA','SizeID':'0A1','Size':'35','x':'x_1','Quantity':'','Amount':'100'},
                     {'GoodsID':'00AQ','ColorID':'0BA','SizeID':'0A2','Size':'36','x':'x_2','Quantity':'','Amount':'100'},
@@ -196,20 +205,11 @@
 
             }
         },
-       methods: {
+        methods: {
             onLoad(p){
-                var param={}
-                param.GoodsID=p.GoodsID
-                param.DeptID='007'
-                param.onLineId='0000-0000'
-                param.userId=1
-                let  _this=this
-           /*
-                modal.toast({
-                    message: 'GoodsID的值：'+ param.GoodsID,
-                    duration: 0.3
-                }) */
 
+                this.direction = pstatic.get('stockmaster').hasOwnProperty('direction')?pstatic.get('stockmaster').direction:-1
+                let  _this=this
                 _this.addflag =p.hasOwnProperty("addflag")?p.addflag:false
 
                 _this.testData3.splice(0,_this.testData3.length) //清空
@@ -221,11 +221,12 @@
                 _this.goods.Code=(_this.testData3.filter(map=>map.checked))[0].Code
                 _this.imgurl =_this.testData3[0].img || 'root:img/nopic.jpg'
                 _this.goods.Name =(_this.testData3.filter(map=>map.checked))[0].Name
+                _this.goods.RelationUnitPrice =(_this.testData3.filter(map=>map.checked))[0].RelationUnitPrice
                 _this.goods.UnitPrice =(_this.testData3.filter(map=>map.checked))[0].UnitPrice
                 _this.goods.DiscountRate =(_this.testData3.filter(map=>map.checked))[0].DiscountRate
                 _this.goods.RetailSales=(_this.testData3.filter(map=>map.checked))[0].RetailSales
-              //  _this.alert("单价："+ (_this.testData3.filter(map=>map.checked))[0].UnitPrice)
-             //   _this.alert("折扣："+ (_this.testData3.filter(map=>map.checked))[0].DiscountRate)
+                //  _this.alert("单价："+ (_this.testData3.filter(map=>map.checked))[0].UnitPrice)
+                //   _this.alert("折扣："+ (_this.testData3.filter(map=>map.checked))[0].DiscountRate)
                 this.total()
                 /*   net.post(pref.getString('ip')+'/common.do?getColorAndSize', param,{},function () {
 
@@ -255,77 +256,78 @@
                 var _this=this
                 ls.Quantity =Number(ls.Quantity)-1
 
-                if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
-                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
+                if(ls.RelationUnitPrice !=='' && ls.RelationUnitPrice !=undefined){
+                   ls.RelationAmount =Number(ls.RelationUnitPrice) * Number(ls.Quantity)
+                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) //先用于修改，新增先不管 因为这个是成本金额来的
                 }
                 if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
-                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
+                   ls.RelationAmount =Number(ls.RelationUnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
+                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
                 }
 
-                   let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
-                   for (let i = 0; i < dList.length; i++) {
-                       let map = dList[i]
-                       map.tipqty = _this.tipqtytotal(map.GoodsID, map.ColorID)
-                       if (map.tipqty > 99) {
-                           map.tipqty = '99+'
-                       }
-                   }
+                let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
+                for (let i = 0; i < dList.length; i++) {
+                    let map = dList[i]
+                    map.tipqty = _this.tipqtytotal(map.GoodsID, map.ColorID)
+                    if (map.tipqty > 99) {
+                        map.tipqty = '99+'
+                    }
+                }
 
 
                 this.total()
             },add(ls){
-               var _this=this
+                var _this=this
                 ls.Quantity =Number(ls.Quantity)+1
-               if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
-                   ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
-               }
-               if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0){
-                   ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
-               }
 
-                   let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
-                   for (let i = 0; i < dList.length; i++) {
-                       let map = dList[i]
-                       map.tipqty = _this.tipqtytotal(map.GoodsID, map.ColorID)
-                       if (map.tipqty > 99) {
-                           map.tipqty = '99+'
-                       }
-                   }
+                if(ls.RelationUnitPrice !=='' && ls.RelationUnitPrice !=undefined){
+                    ls.RelationAmount =Number(ls.RelationUnitPrice) * Number(ls.Quantity)
+                   //先用于修改，新增先不管 因为这个是成本金额来的
+                }
+                if(ls.DiscountRate !=='' && ls.DiscountRate !=undefined && Number(ls.DiscountRate) !=0 && ls.RelationUnitPrice !=='' && ls.RelationUnitPrice !=undefined && ls.RelationUnitPrice !=0){
+                    ls.RelationAmount =Number(ls.RelationUnitPrice) * Number(ls.Quantity) * Number(ls.DiscountRate)/10.0
+
+                }
+
+                if(ls.UnitPrice !=='' && ls.UnitPrice !=undefined){
+                    ls.Amount =Number(ls.UnitPrice) * Number(ls.Quantity)
+                }
+
+
+                let dList = _this.$refs.glist.dList.filter(item => item.checked === true)
+                for (let i = 0; i < dList.length; i++) {
+                    let map = dList[i]
+                    map.tipqty = _this.tipqtytotal(map.GoodsID, map.ColorID)
+                    if (map.tipqty > 99) {
+                        map.tipqty = '99+'
+                    }
+                }
 
                 this.total()
             },hascolor(arr,map){ //这里是每个颜色的合计与合并
-               for (var j = 0; j < arr.length; j++) {
-                   var m=arr[j]
-                   if (m.GoodsID == map.GoodsID && m.ColorID == map.ColorID) {
-                       m.Quantity = Number(m.Quantity) + Number(map.Quantity)
-                       m.Amount = Number(m.Amount) + Number(map.Amount)
-                       if(m.DiscountRate !=0 && m.DiscountRate !='' && m.DiscountRate !=undefined){
-                           //this.alert('ddddd')
-                           if(m.UnitPrice && m.Quantity) {
-                               m.Discount = Number(m.UnitPrice) * Number(m.Quantity) * (Number(10) - Number(m.DiscountRate)) / 10.0
-                           }else{
-                               m.Discount =''
-                           }
-                       }else{
-                           m.Discount =''
-                       }
-                       return m
-                   }
-               }
-               return undefined
-           },back(e){ //没有按提交返回，这个是点左上角菜单返回的
+                for (var j = 0; j < arr.length; j++) {
+                    var m=arr[j]
+                    if (m.GoodsID == map.GoodsID && m.ColorID == map.ColorID) {
+                        m.Quantity = Number(m.Quantity) + Number(map.Quantity)
+                        m.Amount = Number(m.Amount) + Number(map.Amount)
+                        m.RelationAmount =Number(m.RelationAmount) + Number(map.RelationAmount)
+                        return m
+                    }
+                }
+                return undefined
+            },back(e){ //没有按提交返回，这个是点左上角菜单返回的
 
-           }
+            }
             ,submit(){
-               var _that=this
+                var _that=this
                 var p={}
-               // p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
-               //这里是单个的 改一下，等于0 时可能是修改，
-              //  var templist=this.sizelist.filter(item=>Number(item.Quantity)!==0) ||[]
-             //  _that.alert("cc:"+JSON.stringify(this.sizelist.filter(item=>(item.Quantity===0 || item.Quantity))))
+                // p.sizelist=this.sizelist.filter(item=>Number(item.Quantity)!==0)
+                //这里是单个的 改一下，等于0 时可能是修改，
+                //  var templist=this.sizelist.filter(item=>Number(item.Quantity)!==0) ||[]
+                //  _that.alert("cc:"+JSON.stringify(this.sizelist.filter(item=>(item.Quantity===0 || item.Quantity))))
 
-              // return
-               var templist=JSON.parse(JSON.stringify(this.sizelist.filter(item=>(item.Quantity===0 || item.Quantity)))) ||[]
+                // return
+                var templist=JSON.parse(JSON.stringify(this.sizelist.filter(item=>(item.Quantity===0 || item.Quantity)))) ||[]
                 if(this.isPDA) {
                     pref._SendN(this.sizelist.filter(item => Number(item.Quantity) !== ''))
                 }else {
@@ -338,6 +340,8 @@
                                 ColorID: obj.ColorID,
                                 Quantity: obj.Quantity,
                                 RetailSales:_that.goods.RetailSales,
+                                RelationUnitPrice:obj.RelationUnitPrice,
+                                RelationAmount:obj.RelationAmount,
                                 UnitPrice:obj.UnitPrice,
                                 DiscountRate:obj.DiscountRate,
                                 Discount:'',
@@ -355,61 +359,63 @@
                             map.Quantity = obj[i].Quantity
                             map.RetailSales=obj[i].RetailSales
                             map.UnitPrice =obj[i].UnitPrice
+                            map.RelationUnitPrice=obj[i].RelationUnitPrice
+                            map.RelationAmount=obj[i].RelationAmount
                             map.DiscountRate=obj[i].DiscountRate
                             map.Color = obj[i].Color
                             map.Amount = obj[i].Amount
                             map.sizetitle =_that.testData3[0].sizetitle //显示的颜色尺码组
 
-                                var m = this.hascolor(temparr, map)
-                                if (m == undefined) {
-                                    temparr.unshift(map)
-                                }
+                            var m = this.hascolor(temparr, map)
+                            if (m == undefined) {
+                                temparr.unshift(map)
+                            }
 
 
                         } //for 结束 货品 颜色 总集合
 
 
-                            //再加入尺码
-                            if (temparr.length > 0) {
+                        //再加入尺码
+                        if (temparr.length > 0) {
 
-                                for (var i = 0; i < temparr.length; i++) {
-                                    var map = temparr[i]
-                                    var sizeDatalist = []
-                                    for (var j = 0; j < this.sizelist.length; j++) {
+                            for (var i = 0; i < temparr.length; i++) {
+                                var map = temparr[i]
+                                var sizeDatalist = []
+                                for (var j = 0; j < this.sizelist.length; j++) {
 
-                                        if (map.GoodsID == this.sizelist[j].GoodsID && map.ColorID == this.sizelist[j].ColorID) {
-                                            sizeDatalist.push(this.sizelist[j])
-                                        }
-
+                                    if (map.GoodsID == this.sizelist[j].GoodsID && map.ColorID == this.sizelist[j].ColorID) {
+                                        sizeDatalist.push(this.sizelist[j])
                                     }
-                                    if (sizeDatalist.length > 0) {
-                                        map.sizeData = sizeDatalist
-                                    }
-                                    var right = [  //添加菜单
-                                        /*  {
-                                    text: "置顶",
-                                    onPress: function() {
-                                        modal.toast({
-                                            message: "置顶",
-                                            duration: 0.3
-                                        });
-                                    }
-                                }, */
-                                        {
-                                            text: "删除",
-                                            onPress: () => {
-                                                modal.toast({
-                                                    message: "删除",
-                                                    duration: 0.3
-                                                });
-                                            },
-                                            style: {backgroundColor: "#F4333C", color: "white"}
-                                        }
-                                    ]
-                                    map.right = right
 
                                 }
+                                if (sizeDatalist.length > 0) {
+                                    map.sizeData = sizeDatalist
+                                }
+                                var right = [  //添加菜单
+                                    /*  {
+                                text: "置顶",
+                                onPress: function() {
+                                    modal.toast({
+                                        message: "置顶",
+                                        duration: 0.3
+                                    });
+                                }
+                            }, */
+                                    {
+                                        text: "删除",
+                                        onPress: () => {
+                                            modal.toast({
+                                                message: "删除",
+                                                duration: 0.3
+                                            });
+                                        },
+                                        style: {backgroundColor: "#F4333C", color: "white"}
+                                    }
+                                ]
+                                map.right = right
+
                             }
+                        }
                         //    this.alert("返回的数组："+JSON.stringify(temparr)+",temparr的长度："+temparr.length)
 
 
@@ -417,7 +423,7 @@
                     }
                     this.log('temparr:'+JSON.stringify(temparr))
                     p.detaillist =temparr
-                   // templist.slice(0,templist.length) //清空
+                    // templist.slice(0,templist.length) //清空
                     nav.backFull(p,false)
                 }
             },
@@ -473,26 +479,25 @@
                 return _this.qtysum
 
             },uinput(id){
-               //单价输入
-               this.log("进入输入控制的方法了")
-                    if(this.goods.UnitPrice){
-
-                        this.log("进入输入控制的方法了aaa")
-                        setTimeout(()=>{
+                //单价输入 这里算金额的，与数量无关
+                this.log("进入输入控制的方法了")
+                if(this.goods.RelationUnitPrice && this.direction==1){
+                    this.log("进入输入控制的方法了aaa")
+                    setTimeout(()=>{
 
                         for(let i=0;i<this.sizelist.length;i++)
                         {
                             if(this.goods.DiscountRate && Number(this.goods.DiscountRate) !=0 ){
                                 this.log("进入输入控制的方法了b")
-                                this.sizelist[i].UnitPrice =parseFloat(this.goods.UnitPrice).toFixed(2)
+                                this.sizelist[i].RelationUnitPrice =parseFloat(this.goods.RelationUnitPrice).toFixed(2)
                                 this.sizelist[i].DiscountRate =parseFloat(this.goods.DiscountRate).toFixed(1)
+                                this.sizelist[i].RelationAmount =Number(this.sizelist[i].Quantity) * Number(this.goods.RelationUnitPrice)*Number(this.goods.DiscountRate)/Number(10)
 
-                                this.sizelist[i].Amount = Number(this.sizelist[i].Quantity) * Number(this.goods.UnitPrice)*Number(this.goods.DiscountRate)/Number(10)
                             }else{
                                 this.log("进入输入控制的方法了c")
                                 //增加单价修改 返回
-                                this.sizelist[i].UnitPrice =parseFloat(this.goods.UnitPrice).toFixed(2)
-                                this.sizelist[i].Amount = Number(this.sizelist[i].Quantity) * Number(this.goods.UnitPrice)
+                                this.sizelist[i].RelationUnitPrice =parseFloat(this.goods.RelationUnitPrice).toFixed(2)
+                                this.sizelist[i].RelationAmount =Number(this.sizelist[i].Quantity) * Number(this.goods.RelationUnitPrice)
                             }
 
                         }
@@ -500,18 +505,36 @@
 
                     },2000) //延时两秒后，再更新
 
-                    }
-           } ,total(){
+                }
+                //成本价---------------------------------------
+                if(this.goods.UnitPrice){
+                    this.log("进入输入控制的方法了aaa")
+                    setTimeout(()=>{
+
+                        for(let i=0;i<this.sizelist.length;i++)
+                        {
+                            this.sizelist[i].UnitPrice =parseFloat(this.goods.UnitPrice).toFixed(2)
+                            this.sizelist[i].Amount = Number(this.sizelist[i].Quantity) * Number(this.goods.UnitPrice)
+                        }
+                        this.total()
+
+                    },2000) //延时两秒后，再更新
+
+                }
+
+            } ,total(){
                 let q=Number(0)
                 let a=Number(0)
+                let c=Number(0)
                 for(let i=0;i<this.sizelist.length;i++)
                 {
-
+                    c =c+Number(this.sizelist[i].RelationAmount)
                     q=q+Number(this.sizelist[i].Quantity)
                     a=a+ Number(this.sizelist[i].Amount)
                 }
                 this.qtytotal=q
                 this.Amttotal=a
+                this.RelationAmountSum =c
             },input(ls){ //输入时触发
 
 
@@ -586,18 +609,18 @@
         width: 750px;
     }
     .dec{
-        height: 250px;
+
+
     }
     .unitprice{
         flex-direction: row;
-        height: 100px;
+
 
     }
 
 
     .scroller {
         flex: 1;
-        height: 490px;
     }
     .demo {
         padding-top: 24px;

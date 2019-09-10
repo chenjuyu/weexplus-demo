@@ -63,10 +63,24 @@
             <div class="sudoku_row">
                 <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in stock" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
 
-                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:mediumorchid;justify-content: center;align-items: center;">
+                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:
+#99FF33;justify-content: center;align-items: center;">
                         <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
                     </div>
                     <text v-if="sudoku.id ==1"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+
+                    <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:
+#FF8800;justify-content: center;align-items: center;">
+                        <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
+                    </div>
+                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+
+                    <div v-if="sudoku.id ==3"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:
+
+#B94FFF;justify-content: center;align-items: center;">
+                        <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
+                    </div>
+                    <text v-if="sudoku.id ==3"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
 
                 </div>
             </div>
@@ -88,6 +102,8 @@
             return {
                 stock:[
                     {id:1,name:'转仓单',img_src:'\ue732',url:'stockmovelist.js'},
+                    {id:2,name:'进仓单',img_src:'\ue635',url:'stocklist.js'},
+                    {id:3,name:'出仓单',img_src:'\ue60e',url:'stocklist.js'},
                 ]
                 ,base:[
                     {id:1,name:'货品资料',img_src:'\ue60b',url:'goodsmanager.js'},
@@ -148,9 +164,9 @@
                 var that = this;
                 var direction =1
                 // var url=''
-                if(ls.name=='发货单' || ls.name=='采购收货单'){
+                if(ls.name=='发货单' || ls.name=='采购收货单' || ls.name=='进仓单'){
                     direction =1
-                }else if(ls.name=='退货单' || ls.name=='采购退货单'){
+                }else if(ls.name=='退货单' || ls.name=='采购退货单' || ls.name=='出仓单'){
                     direction =-1
                 }
                 if(ls.url !==''){
