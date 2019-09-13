@@ -167,7 +167,7 @@
                     this.deptlabel='收货部门'
                 }else if(this.tag ==32 || this.tag==24 || this.tag==45){
                     this.deptlabel='仓库名称'
-                }else if(this.tag==34 || this.tag==26){
+                }else if(this.tag==34 || this.tag==26 || this.tag ==408){
                     this.deptlabel='部门名称'
                 }else if(this.tag==95){
                     this.deptlabel='退货部门'
@@ -234,7 +234,7 @@
                     p.Department =this.Department.Department
                     p.EmployeeID =this.Employee.EmployeeID
                     p.Name =this.Employee.Name
-                }else if(this.tag==22 || this.tag==20 || this.tag==95 || this.tag==24){
+                }else if(this.tag==22 || this.tag==20 || this.tag==95 || this.tag==24 || this.tag==408){
                     p.SupplierID =this.Supplier.SupplierID
                     p.Supplier =this.Supplier.Supplier
                     p.AuditType =this.AuditType

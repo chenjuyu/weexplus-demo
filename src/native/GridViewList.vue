@@ -85,7 +85,22 @@
                 </div>
             </div>
 
+            <!-- 零售管理-->
+            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
+                <text style="font-size:40px;font-weight:bold">零售管理</text>
+            </div>
+            <div class="sudoku_row">
+                <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in possales" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
 
+                <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius: 20px;border-width: 1px;border-color:#FFFFFF;background-color:
+#FF8800;justify-content: center;align-items: center;">
+                    <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
+                </div>
+                    <text v-if="sudoku.id ==1"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+
+                </div>
+
+            </div>
 
         </scroller>
     </div>
@@ -123,10 +138,10 @@
                   //  {id:5,name:'费用单',img_src:'\ue609',url:''}
                 ],
                 possales:[
-                    {id:1,name:'销售',img_src:'\ueb4c'},
-                    {id:2,name:'日结',img_src:'\ue6b7'},
+                    {id:1,name:'销售小票',img_src:'\ueb4c',url:'poslist.js'}
+                  /*  {id:2,name:'日结',img_src:'\ue6b7'},
                     {id:3,name:'缴费',img_src:'\ue601'},
-                    {id:4,name:'报表',img_src:'\ue6af'}
+                    {id:4,name:'报表',img_src:'\ue6af'} */
                 ]
             };
         },props:{
