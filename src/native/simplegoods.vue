@@ -193,14 +193,33 @@
 
             </cell>
         </list>
+
+        <div class="footer">
+            <div class="btn" @click="save"><text style="font-size: 40px;color: white">保存</text></div>
+            <div class="btn" @click="addcolor"><text style="font-size: 40px;color: white">新建颜色</text></div>
+        </div>
+
         <wxcpopover ref="wxc-popover"
                     :buttons="btns"
                     :position="popoverPosition"
                     :arrowPosition="popoverArrowPosition"
                     @wxcPopoverButtonClicked="popoverButtonClicked"></wxcpopover>
-        <div class="footer">
-           <div class="btn" @click="save"><text style="font-size: 40px;color: white">保存</text></div>
-        </div>
+
+        <wxc-dialog title="增加颜色"
+                    :show="coloraddFlag"
+                    :single="false"
+                    :is-checked="false"
+                    :show-no-prompt="false"
+                    @wxcDialogCancelBtnClicked="wxcDialogCancelBtnClicked"
+                    @wxcDialogConfirmBtnClicked="wxcDialogConfirmBtnClicked"
+                    @wxcDialogNoPromptClicked="wxcDialogNoPromptClicked">
+
+            <div slot="content" style="align-items: flex-start;line-height: 150px" >
+                <div style="flex-direction: row;height: 80px;align-items: center"><text style="font-size: 35px">颜色编码:</text> <input type="text" class="input" style="width:300px;" v-model="Color.No" /></div>
+                <div style="flex-direction: row;height: 80px;align-items: center"><text style="font-size: 35px">颜色名称:</text><input type="text" class="input" style="width:300px;" v-model="Color.Color" /></div>
+            </div>
+        </wxc-dialog>
+
     </div>
 </template>
 
@@ -208,7 +227,7 @@
     import gridselect from './component/wxc-grid-select.vue'
     import wxccell from './component/wxc-cell.vue'
     import wxcpopover from './component/wxc-popover.vue';
-    import { Utils } from 'weex-ui';
+    import { WxcDialog,Utils } from 'weex-ui';
     import Binding from "weex-bindingx/lib/index.weex.js";
     const animation = weex.requireModule("animation");
     var nav = weex.requireModule('navigator') ;
@@ -220,7 +239,7 @@
 
     var url='/goodsInfo.do?goodsDetail'
     export default {
-        components:{gridselect,wxccell,wxcpopover},
+        components:{gridselect,wxccell,wxcpopover,WxcDialog},
         props: {
             data: {
                 type: Array,
@@ -251,6 +270,8 @@
              saveIdx: null,
              isAndroid: Utils.env.isAndroid(),
              editflag:false,//为真时，这个是修改货品，其他为新增
+             Color:{ColorID:'',No:'',Color:''},//新增颜色暂存字段
+             coloraddFlag:false,
              goods:{
                  GoodsID:'',
                  Code:'',
@@ -857,6 +878,64 @@
                     timingFunction: "ease",
                     delay: 100 //ms
                 });
+            },wxcDialogCancelBtnClicked(){
+                this.coloraddFlag=false
+            },wxcDialogConfirmBtnClicked(){
+
+                if(this.Color.No.trim() ==''){
+                    this.toast('颜色编码不能为空')
+                    return
+                }
+                if(this.Color.Color.trim() ==''){
+                    this.toast('颜色q名称不能为空')
+                    return
+                }
+               var that =this
+                var k={}
+                var map={}
+
+                net.post(pref.getString('ip')+'/color.do?coloradd',{No:this.Color.No,Color:this.Color.Color,GoodsID:that.goods.GoodsID},{},function(){
+                    //start
+                    progress.showFull('提交中',false)
+                },function(e){
+                    //success self.back=e.res;
+
+                    if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+
+                        if(e.res.success){
+                            that.Color.ColorID =e.res.obj
+
+                            k={  'GoodsID':that.goods.GoodsID?that.goods.GoodsID:'',
+                                'ColorID':that.Color.ColorID ,
+                                'title': that.Color.Color ,
+                                'checked': true,
+                                'tipqty':''
+                            }
+                            //再添加到货品颜色中，是否保存由客户决定
+                             map = that.checkcolor(k)
+                            if (map == undefined) { //代表无
+                                that.colorData.unshift(k)
+                            }
+
+                        }
+
+
+                      that.toast(e.res.msg)
+                    }
+                    progress.dismiss()
+                },function(e){
+                    //compelete
+
+                },function(){
+                    //exception
+                    progress.dismiss()
+                    that.toast('地址或者参数错误')
+                });
+
+
+                this.coloraddFlag=false
+            },addcolor(){
+                this.coloraddFlag=true
             }
 
 
@@ -937,10 +1016,11 @@
     justify-content: center;
     align-items: center;
     height: 80px;
+    flex-direction: row;
 }
 .btn{
     background-color: orange;
-    width: 500px;
+    width: 350px;
     height: 80px;
     justify-content: center;
     align-items: center;

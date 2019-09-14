@@ -138,7 +138,7 @@
          -->
         </div>
         <!--单据类别 -->
-        <wxc-mask :height="h"
+        <wxc-mask height="500"
                   width="500"
                   border-radius="0"
                   duration="200"
@@ -148,7 +148,9 @@
                   :show-close="true"
                   :show="show"
                   @wxcMaskSetHidden="wxcMaskSetHidden">
+           <scroller style="flex: 1;">
             <wxc-radio :list="list" @wxcRadioListChecked="wxcRadioListChecked"></wxc-radio>
+           </scroller>
         </wxc-mask>
 
         <!--图片放大 -->
@@ -371,8 +373,6 @@
             onLoad(p){
                 //   this.alert("页面高度:"+this.pageheight) //dom.scrollToElement(el, {offset:0}) 不用到定位功能可以用list 列表flex:1
 
-                page.pressHome()
-
                 var that=this
                 that.detaillist.slice(0,that.detaillist.length) //重新进入都清一次
                 //  this.alert(JSON.stringify(p))
@@ -417,7 +417,7 @@
                         { title: '报溢', value: '报溢' }
                     ]
                 }
-                 this.h =this.list.length>0?Number(this.list.length)*Number(80):500 //单据类别显示框高度
+                // this.h =this.list.length>0?Number(this.list.length)*Number(80):500 //单据类别显示框高度
 
                 this.billType.id=''
                 if(this.direction ==1) {
@@ -515,7 +515,7 @@
                 nav.pushFull({url:'root:base.js',param: p,
                     animate:true,
                     isPortrait:true},(res)=>{
-                    if (res !=undefined) {
+                    if (res !=undefined && JSON.stringify(res) !='{}' && res !=null) {
                         if (id==1){ //发货部门
                             this.Department.DepartmentID=res.id
                             this.Department.Department =res.Name
