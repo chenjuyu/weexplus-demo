@@ -16,7 +16,7 @@
         <div style="flex: 1;">
             <!-- 店铺-->
             <div  :style="{'visibility':selectIndex==0?'visible':'hidden'}" style="position: absolute;left: 20;top: 10;right: 20;bottom: 0">
-                <list style="flex: 1" >
+                <list style="flex: 1" v-if="!noDataFlag">
                     <header>
                         <div class="banner">
                             <text class="txttitle" :style="{width:'187px'}">名次</text>
@@ -27,16 +27,23 @@
                     </header>
                     <cell v-for="(ls,index) in lists" :key="index" >
                         <div class="panel">
-                            <text class="text" :style="{width:'187px'}">{{ls.No}}</text>
+                            <text class="text" :style="{width:'187px'}">{{index+1}}</text>
                             <text class="text" :style="{width:'187px'}">{{ls.Name}}</text>
                             <text class="text" :style="{width:'187px'}">{{ls.Quantity}}</text>
                             <text class="text" :style="{width:'187px'}">{{ls.Amount}}</text>
                         </div>
                     </cell>
+
+                    <!--  用于给列表添加上拉加载更多的功能-->
+                    <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                        <loading-indicator class="indicator"></loading-indicator>
+                        <text class="indicator-text">Loading...</text>
+                    </loading>
+
                 </list>
 
-                <div v-if="lists.length ==0" style="justify-content: center;align-items: center;height: 100">
-                    <text style="color: #ffffff;font-size: 30">未找到下载列表！</text>
+                <div v-if="noDataFlag" style="justify-content: center;align-items: center;height: 100">
+                    <text style="color: #000000;font-size: 30">暂无数据！</text>
                 </div>
             </div>
             <!-- 品类-->
@@ -60,6 +67,13 @@
                             <text class="text" :style="{width:'150px'}">{{ls.LvStr}}</text>
                         </div>
                     </cell>
+
+                    <!--  用于给列表添加上拉加载更多的功能-->
+                    <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                        <loading-indicator class="indicator"></loading-indicator>
+                        <text class="indicator-text">Loading...</text>
+                    </loading>
+
                 </list>
             </div>
 
@@ -84,6 +98,13 @@
                             <text class="text" :style="{width:'150px'}">{{ls.LvStr}}</text>
                         </div>
                     </cell>
+
+                    <!--  用于给列表添加上拉加载更多的功能-->
+                    <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                        <loading-indicator class="indicator"></loading-indicator>
+                        <text class="indicator-text">Loading...</text>
+                    </loading>
+
                 </list>
             </div>
             <!-- 厂商-->
@@ -107,6 +128,14 @@
                             <text class="text" :style="{width:'150px'}">{{ls.LvStr}}</text>
                         </div>
                     </cell>
+
+                    <!--  用于给列表添加上拉加载更多的功能-->
+                    <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                        <loading-indicator class="indicator"></loading-indicator>
+                        <text class="indicator-text">Loading...</text>
+                    </loading>
+
+
                 </list>
             </div>
             <!-- 导购-->
@@ -129,6 +158,13 @@
 
                         </div>
                     </cell>
+
+                    <!--  用于给列表添加上拉加载更多的功能-->
+                    <loading class="loading" @loading="onloading" :display="loadinging ? 'show' : 'hide'">
+                        <loading-indicator class="indicator"></loading-indicator>
+                        <text class="indicator-text">Loading...</text>
+                    </loading>
+
                 </list>
             </div>
             <!-- 货品 销售排行-->
@@ -189,6 +225,8 @@
     var nav = weex.requireModule('navigator')
     const  pref=weex.requireModule('pref')
     const net = weex.requireModule('net');
+    var pstatic=weex.requireModule("static")
+    var modal =weex.requireModule('modal')
     import wxcpopover from './component/wxc-popover.vue'
     export default {
         components:{selecttab,wxcpopover},
@@ -197,37 +235,74 @@
                 btns:[],
                 popoverPosition:{x: 450, y: Utils.env.getPageHeight()-70 },
                 popoverArrowPosition:{pos: 'bottom', x: 0},//160
+                searchType:'Department',//这里代替 是店铺的，汇总，还是其他的品类
                 item:{},
+                currPage:1, //当前页码
                 BeginDate:module1.formatDate(new Date(),'yyyy-MM-dd'),
                 EndDate:module1.formatDate(new Date(),'yyyy-MM-dd'),
                 condition:'',//[],//用于保存查询 条件转换
+                noDataFlag:false,//无数据返回标志
+                loadinging:false,//下拉加载的
                 selectIndex:0,
                 selectIndex2:0,
-                totalQty:7336,
-                totalAmt:22222222,
+                totalQty:0,
+                totalAmt:0,
                 appendFlag:false,//用于标志是否上拉分页加载，默认为假
-                lists:[// 店铺列表
-                    {No:1,id:'ooa',Name:'文山',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山1',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山2',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山2',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山1',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山2',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山2',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山1',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山2',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山2',Quantity:78,Amount:2540.00},
-                    {No:1,id:'ooa',Name:'文山',Quantity:78,Amount:2540.00},
+                lists:[// 店铺列表  当前显示
 
                 ],
+                totallist:[],//所有的数据不分页前都放在这里
                 des:'xxxxx'
             }
         },methods:{
             onLoad(p){
-                this.modifymenu()
-                this.total()
+                this.modifymenu() //不管错误都要改菜单
+                var param={}
+                var that=this
+
+                this.searchType =p.hasOwnProperty('searchType')?p.searchType:'Department'
+                this.log('searchType:'+this.searchType)
+                if(this.searchType =='Department') {
+                    param.searchType =this.searchType
+                    param.BeginDate = this.BeginDate
+                    param.EndDate = this.EndDate
+                    param.Condition = ''//这里之前是，年，月，日，但这里都是给beginddate
+                    param.DisType = '汇总'
+                    param.DepartmentID = ''
+                    param.DistrictID = ''
+                    param.Orderby = '金额'
+                }
+                pstatic.set('report',param)
+                net.post(pref.getString('ip')+'/salesTicket.do?report',param,{},function(){
+                    //start
+                },function(e){
+                    //success self.back=e.res;
+                    that.lists.splice(0,that.lists.length)//因为共用这个
+                    that.totallist.splice(0,that.totallist.length)//因为共用这个
+                    that.currPage =1
+                    if(e.res.success){
+                        that.totallist=e.res.obj || []
+                        if(that.totallist.length==0){
+                           that.noDataFlag =true
+                        }else{
+                            that.noDataFlag= false
+                            that.log('that.currPage：'+that.currPage)
+                            that.lists =that.pagination(that.currPage,15,that.totallist)//that.totallist 原始数组不会改变，这里是第一页
+                            that.total()
+                        }
+
+
+                    }else {
+                        that.toast(e.res.msg)
+                    }
+
+                },function(e){
+                    //compelete
+
+                },function(){
+                    //exception
+                });
+
             },modifymenu(){
                 if(this.selectIndex ==0){
                     this.btns=[
@@ -287,35 +362,81 @@
                 }
             },
             change(index)
-            {
+            {  var p=pstatic.get('report')
                 this.selectIndex=index;
                 this.modifymenu()
                 //切换后要清空，再查询  上拉加载更多除外
                 this.lists.splice(0,this.lists.length)
-
+                if(this.selectIndex ==0){
+                    this.searchType ='Department'
+                }else if(this.selectIndex ==1){
+                    this.searchType='GoodsType'
+                }else if(this.selectIndex ==2){
+                    this.searchType='Brand'
+                }else if(this.selectIndex ==3){
+                    this.searchType='Supplier'
+                }else if(this.selectIndex ==4){
+                    this.searchType='Employee'
+                }else if(this.selectIndex ==5){
+                    this.searchType='Goods'
+                }
+                p.searchType =this.searchType
+                this.log('汇总项目的触发report:'+JSON.stringify(p))
+                pstatic.set('report',p)
+                this.onLoad(p)
             },change2(index){
+                var p={}
+                p=pstatic.get('report')
                 this.selectIndex2 =index;
                 if(this.selectIndex2 ==0){
                     this.BeginDate=module1.formatDate(new Date(),'yyyy-MM-dd')
                     this.EndDate=module1.formatDate(new Date(),'yyyy-MM-dd')
+                    p.BeginDate =this.BeginDate
+                    p.EndDate =this.EndDate
+                    //切换后要清空，再查询  上拉加载更多除外
+                    this.lists.splice(0,this.lists.length)
+                    this.log('reportp:'+JSON.stringify(p))
+                    pstatic.set('report',p)
+                    this.onLoad(p)
                 }else if(this.selectIndex2 ==1){
                     var date =new Date()
                     module1.AddDays(date,-1) //使用了set 方法不会返回值
                     //this.log('昨天的数据：'+date)
                     this.BeginDate=module1.formatDate(date,'yyyy-MM-dd')
                     this.EndDate=module1.formatDate(date,'yyyy-MM-dd')
+                    p.BeginDate =this.BeginDate
+                    p.EndDate =this.EndDate
+                    //切换后要清空，再查询  上拉加载更多除外
+                    this.lists.splice(0,this.lists.length)
+                    this.log('report:'+JSON.stringify(p))
+                    pstatic.set('report',p)
+                    this.onLoad(p)
                 }else if(this.selectIndex2 ==2){
                     var date2 =new Date()
                     module1.AddDays(date2,-7) //使用了set 方法不会返回值
                     this.BeginDate=module1.formatDate(date2,'yyyy-MM-dd')
                     this.EndDate=module1.formatDate(new Date(),'yyyy-MM-dd')
+                    p.BeginDate =this.BeginDate
+                    p.EndDate =this.EndDate
+                    //切换后要清空，再查询  上拉加载更多除外
+                    this.lists.splice(0,this.lists.length)
+                    this.log('report:'+JSON.stringify(p))
+                    pstatic.set('report',p)
+                    this.onLoad(p)
                 }else if(this.selectIndex2 ==3){
                     var date2 =new Date()
                     module1.AddDays(date2,-30) //使用了set 方法不会返回值
                     this.BeginDate=module1.formatDate(date2,'yyyy-MM-dd')
                     this.EndDate=module1.formatDate(new Date(),'yyyy-MM-dd')
+                    p.BeginDate =this.BeginDate
+                    p.EndDate =this.EndDate
+                    //切换后要清空，再查询  上拉加载更多除外
+                    this.lists.splice(0,this.lists.length)
+                    this.log('report:'+JSON.stringify(p))
+                    pstatic.set('report',p)
+                    this.onLoad(p)
                 }else if(this.selectIndex2 ==4){
-                    var p={}
+
                     nav.pushFull({url: 'root:selectdate.js',param:p,animate:true},(e)=>{
                         if (e !== undefined) { //返回结果是尺码集体的，要拆分
                             if (e == null || JSON.stringify(e) == '{}') {//无结果返回，指的是点左上角返回菜单的返回
@@ -323,12 +444,17 @@
                             }
                             this.BeginDate =e.BeginDate
                             this.EndDate=e.EndDate
+                            p.BeginDate =this.BeginDate
+                            p.EndDate =this.EndDate
+                            //切换后要清空，再查询  上拉加载更多除外
+                            this.lists.splice(0,this.lists.length)
+                            this.log('p:'+JSON.stringify(p))
+                            pstatic.set('report',p)
+                            this.onLoad(p)
                         }
 
                     })
                 }
-                //切换后要清空，再查询  上拉加载更多除外
-                this.lists.splice(0,this.lists.length)
 
             },getVisable(it)
             {
@@ -338,9 +464,9 @@
             },total(){
                //数量与金额统一用相同的字段
                 var qtysum=0,amtsum=0
-                for(var i=0;i<this.lists.length;i++){
-                    qtysum =Number(qtysum)+Number(this.lists[i].Quantity)
-                    amtsum =Number(amtsum)+Number(this.lists[i].Amount)
+                for(var i=0;i<this.totallist.length;i++){
+                    qtysum =Number(qtysum)+Number(this.totallist[i].Quantity)
+                    amtsum =Number(amtsum)+Number(this.totallist[i].Amount)
                 }
                 this.totalQty =qtysum
                 if(amtsum) {
@@ -354,7 +480,7 @@
                 //  this.alert(JSON.stringify(obj))
                 //  this.alert(this.btns[obj.index].text)
                 var p={}
-
+                var p1=pstatic.get('report')
                 if(this.btns[obj.index].text =='店铺名称'){
                     p.send ='getWarehouse'
                 }else if(this.btns[obj.index].text =='部门类型'){
@@ -393,31 +519,37 @@
                              this.condition=this.condition.substring(0,this.condition.length-1)
                          }
                          this.log('condition列表字符串:'+this.condition)//this.condition.join() 如果是列表可以这样用
+                        p1.DepartmentID =this.condition
+                        pstatic.set('report',p1)
+                        this.onLoad(p1)
                     }
 
                 })
-            },searchdata(){ //切换 查询数据 加载数据
-               var that =this
-
-                net.post(pref.getString('ip') + '/report.do?',param,{},function(){
-                    //start
-                },function(e){
-                    //success
-                    //  self.back=e.res;
-                    if(e !=null && e !=undefined ){
-                        if(!that.appendFlag) {
-                            that.lists = e.res.obj
-                            that.total()
+            }, pagination(pageNo, pageSize, array) { //分页
+                var offset = (pageNo - 1) * pageSize;
+                return (offset + pageSize >= array.length) ? array.slice(offset, array.length) : array.slice(offset, offset + pageSize);
+            },onloading(event) { //上拉加载更多
+                var that=this
+                this.loadinging = true;
+                modal.toast({
+                    message: "loading",
+                    duration: 1
+                });
+                setTimeout(()=>{
+                    this.currPage=Number(this.currPage) +Number(1)
+                    if(that.totallist.length == that.lists.length){
+                        that.toast('数据已加载完')
+                    }else {
+                        var array = that.pagination(this.currPage,15,that.totallist)|| []
+                        for (var i = 0; i < array.length; i++) {
+                            that.lists.push(array[i])
                         }
+                        //that.total()
                     }
 
-                },function(e){
-                    //compelete
 
-                },function(){
-                    //exception
-                });
-
+                    this.loadinging = false;
+                },2000)
             }
 
         }
@@ -469,5 +601,17 @@
         left: 0;
         right: 0;
         /*    background-color: #0080FF; */
+    }
+    .indicator-text {
+        font-size: 42px;
+        text-align: center;
+        width: 750px;
+    }
+    .indicator {
+        margin-top: 16px;
+        height: 60px;
+        width: 60px;
+        margin-left: 345px;
+        color: blue;
     }
 </style>
