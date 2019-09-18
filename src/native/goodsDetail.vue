@@ -43,19 +43,19 @@
 
                <text class="res">{{res2}}</text>
            </div>
-         -->
+        <scroller style="height: 200px;">  </scroller>-->
 
         <div class="demo">
-            <scroller style="height: 200px;">
+
                 <gridselect ref="glist"
                             :single="true"
-                            :cols="5"
+                            :cols="4"
                             :list="testData3"
                             @select="params => onSelect('res3', params)">
                 </gridselect>
                 <!-- :customStyles="customStyles" 自定义
                      <text class="res">{{res3}}</text>  :style="{'height':getScreenHeight()}" -->
-            </scroller>
+
         </div>
 
 
@@ -80,9 +80,9 @@
 
         <div class="bottom">
             <div class="heji">
-                <text class="size" style="color: #FFFFFF">合计:</text>
-                <text class="size" style="margin-left: 20px; color: #FFFFFF">{{qtytotal}}</text>
-                <text class="size" style="margin-left: 20px; color: #FFFFFF">￥{{Amttotal}}</text>
+                <text class="size" style="color: #666666">合计:</text>
+                <text class="size" style="margin-left: 20px; color: #666666">{{qtytotal}}</text>
+                <text class="size" style="margin-left: 20px; color: #666666">￥{{Amttotal}}</text>
                 <div class="submit" @click="submit"><text class="size" style="color: #FFFFFF">确认</text> </div>
             </div>
 
@@ -600,7 +600,7 @@
         height: 490px;
     }
     .demo {
-        padding-top: 24px;
+        padding-top: 10px;
         padding-right: 24px;
         padding-left: 24px;
         border-bottom-width:1px;
@@ -629,6 +629,7 @@
         align-items: center;
         text-align: center;
         height: 70px;
+
 
     }
 
@@ -712,10 +713,14 @@
         left:0;
         right: 0;
         width: 750px;
-        background-color: #0085ee;
+        background-color: #F5F5F5;
+        border-top-width:1px;
+        border-color:#CCCCCC ;
     }
     .heji{
-        flex-direction: row; background-color: #1EA5FC; position: fixed;bottom: 0;left: 0;right: 0;height: 80px;align-items: center;justify-content:flex-start;
+        flex-direction: row; background-color: #F5F5F5; position: fixed;
+        bottom: 0;left: 0;right: 0;height: 80px;
+        align-items: center;justify-content:flex-start;
 
 
     }

@@ -2,8 +2,8 @@
     <div class="container">
         <head :rightText="rightText" :title="title"  @rightClick="rightClick"></head>
         <div class="search">
-            <input type="text" style="width: 500px;height: 80px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" return-key-type="search" v-model="No" @input="search" placeholder="输入单号查询"/>
-            <div style="border-width: 5px;border-color: #00B4FF;height: 80px;width: 200px;align-items:center;justify-content: center"><text @click="add" style="font-size: 35px;">增加单据</text> </div>
+            <input type="text" style="width: 500px;height: 70px;background-color: #D3D3D3;border-width: 1px;border-color:#f5f5f5;margin-left: 10px" return-key-type="search" v-model="No" @input="search" placeholder="输入单号查询"/>
+            <div style="border-width: 1px;border-color: #D3D3D3;height: 70px;width: 200px;align-items:center;justify-content: center"><text @click="add" style="font-size: 35px;">增加单据</text> </div>
         </div>
         <list style="flex: 1; margin-top: 20px;margin-bottom: 80px;">
             <cell ref="skid" v-for="(item, i) of data" @click="onNodeClick(item, i)" :key="'skid-' + i" class="wxc-skid" :style="{width: (750 + item.right.length * 100) + 'px', height: height + 'px'}" @touchstart="(e) => !isAndroid && onPanStart(e, item, i)" @horizontalpan="(e) => isAndroid && onPanStart(e, item, i)" @touchend="(e) => onPanEnd(e, item, i)">
@@ -45,8 +45,8 @@
 
         </list>
         <div class="footer">
-            <div style="height: 80px;justify-content: center;align-items: center"><text style="font-size: 40px;color: #FFFFFF";>合计：{{totalQty}}</text></div>
-            <div style="height: 80px;justify-content: center;align-items: center;position: absolute;right: 0;bottom: 0"> <text style="font-size: 40px;color: #FFFFFF;">￥{{totalAmt}}</text></div>
+            <div style="height: 80px;justify-content: center;align-items: center"><text style="font-size: 40px;color: #666666";>合计：{{totalQty}}</text></div>
+            <div style="height: 80px;justify-content: center;align-items: center;position: absolute;right: 0;bottom: 0"> <text style="font-size: 40px;color: #666666;">￥{{totalAmt}}</text></div>
         </div>
     </div>
 </template>
@@ -181,6 +181,9 @@
             },search(){
                 var that=this
                 var p={}
+
+                if(that.No.length < 3)
+                    return
 
                 p.no=that.No
                 p.currPage=this.currPage
@@ -370,7 +373,9 @@
                     e => {
                         const { state, deltaX } = e;
                         if (state === "end") {
-                            this.mobileX += deltaX;
+                            if(deltaX !=0) {
+                                this.mobileX = deltaX //deltaX =0时，相关于点击
+                            }
                             this.movingDistance(this.mobileX, node, el);
                         }
                     }
@@ -517,8 +522,10 @@
         bottom: 0;
         width: 750px;
         flex-direction: row;
+        border-top-width:1px;
+        border-color:#CCCCCC ;
         height: 80px;
-        background-color: #1EA5FC;
+        background-color: #F5F5F5;
     }
     .input_bg{ /*position: absolute; background-color: #0085ee; top: 60px;bottom: 60px; 170*/
         top:50;

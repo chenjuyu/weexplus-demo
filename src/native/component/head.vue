@@ -2,7 +2,7 @@
     <div class="wxc-demo">
         <scroller class="scroller">
             <div class="demo"> <!-- #1EA5FC-->
-                <wxc-minibar background-color="#0080FF"
+                <wxc-minibar background-color="#108ee9"
                              @wxcMinibarLeftButtonClicked="backTo"
                              @wxcMinibarRightButtonClicked="rightclick">
                     <image :src="leftButton"
@@ -45,7 +45,7 @@ export default {
         },
 
         bgcolor: {
-            default: '#1EA5FC'
+            default: '#108ee9' /*支付宝颜色*/
 
         },
         autoback: {
@@ -138,7 +138,8 @@ export default {
              'fontFamily': "iconfont",
             'src':"url('http://at.alicdn.com/t/font_1074303_donc9y7zr6f.ttf')" // "url('root:font/iconfont.ttf')"//../ http://at.alicdn.com/t/font_1074303_e64s32fcc65.ttf
          }) */
-
+        let navbar=weex.requireModule('navbar')
+        navbar.setStatusBarStyle('white')//#1EA5FC
         this.adjust();
 
     },
@@ -157,7 +158,7 @@ export default {
         bottom: 0;
         left: 0;
         right: 0;
-        background-color:#0080FF;
+        background-color:#108ee9;
         width: 750px;
         height: 130px;
 

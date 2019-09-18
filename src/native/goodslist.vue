@@ -560,7 +560,7 @@
                     if(e !=undefined) { //返回的一定是已选列表里面有的货品
                            var tempselect =e.detaillist || []
 
-                          this.alert("tempselect:"+JSON.stringify(tempselect))
+                        //  this.alert("tempselect:"+JSON.stringify(tempselect))
 
                             for (var i = 0; i < tempselect.length; i++) {
                                 var tmap=tempselect[i]
@@ -573,7 +573,7 @@
 
                                 }
                             }//tempselect for 结束
-                        this.alert("selectedlist:"+JSON.stringify(this.selectedlist))
+                       // this.alert("selectedlist:"+JSON.stringify(this.selectedlist))
                        //     if(this.goodslist.length>0 && this.selectedlist.length>0) {
                                for(var i2 =0 ; i2<this.selectedlist.length ;i2++){
                                     var map=this.selectedlist[i2]
@@ -663,6 +663,8 @@
             wxcSearchbarInputOnBlur (e) {
                // this.alert("e的值:"+JSON.stringify(e))
                 var that=this
+                if(e.value.length <3)
+                    return
                 // this.value = e.value;
                // this.alert("e的值:"+e.value)
                // if(e.value.length >3) {
@@ -703,7 +705,8 @@
             wxcSearchbarCloseClicked () {
             },
             wxcSearchbarInputOnInput (e) {
-
+             //输入时
+            this.wxcSearchbarInputOnBlur(e)
 
             },
             wxcSearchbarCancelClicked () {

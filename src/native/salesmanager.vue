@@ -50,34 +50,17 @@
 <script>
     var nav = weex.requireModule('navigator') ;
     var page=weex.requireModule("page")
+    var pstatic=weex.requireModule("static")
     export default {
-        name: "GridViveList",
         components:{
         },
         data() {
             return {
+                salesMenuRight:pstatic.get('objkey').salesMenuRight ||[],//发货单菜单权限
+                salesReturnMenuRight:pstatic.get('objkey').salesReturnMenuRight||[],
+                salesOrderMenuRight:pstatic.get('objkey').salesOrderMenuRight||[],
+                receivalMenuRight:pstatic.get('objkey').receivalMenuRight||[],
                 sudokus:[
-                    /*  {
-                      id:0,
-                      name:'飞机',
-                      img_src:'\ue614' //https://gw.alicdn.com/tfs/TB1kCk2SXXXXXXFXFXXXXXXXXXX-72-72.png
-                  },{
-                      id:1,
-                      name:'游戏',
-                      img_src:'\ue614'//require('../static/img/game.png')
-                  },{
-                      id:2,
-                      name:'音乐',
-                      img_src:'\ue614'//require('../static/img/music.png')
-                  },{
-                      id:3,
-                      name:'物流',
-                      img_src:'\ue614'//require('../static/img/logistics.png')
-                  },{
-                      id:4,
-                      name:'医院',
-                      img_src:'\ue614'//require('../static/img/hospital.png')
-                  } */
                 ]
                 ,base:[
                     {id:1,name:'货品资料',img_src:'\ue60b',url:'goodsmanager.js'},
@@ -88,10 +71,6 @@
                     {id:2,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'},
                 ]
                 ,sales:[
-                    {id:1,name:'订单',img_src:'\ue606',url:'salesorderlist.js'},
-                    {id:2,name:'发货单',img_src:'\ue6bc',url:'saleslist.js'},
-                    {id:3,name:'退货单',img_src:'\ue82a',url:'saleslist.js'},
-                    {id:4,name:'收款单',img_src:'\ue71d',url:'reclist.js'}
                    // {id:5,name:'费用单',img_src:'\ue609',url:''}
                 ],
                 possales:[
@@ -106,20 +85,24 @@
                 default:100
             }
         },created(){
-            /*   let domModule = weex.requireModule('dom');
-               domModule.addRule('fontFace',{
-                   'fontFamily': "iconfont",
-                   'src': "url('http://at.alicdn.com/t/font_1074303_e64s32fcc65.ttf')"
-               }) */
+            this.sales.splice(0,this.sales.length) //清空掉 embed 方法引入 ，所以这个要放在 created中才能生效
+
+            if(this.salesOrderMenuRight[0].BrowseRight){
+                this.sales.push({id:1,name:'订单',img_src:'\ue606',url:'salesorderlist.js'})
+            }
+            if(this.salesMenuRight[0].BrowseRight){
+                this.sales.push({id:2,name:'发货单',img_src:'\ue6bc',url:'saleslist.js'})
+            }
+            if(this.salesReturnMenuRight[0].BrowseRight){
+                this.sales.push({id:3,name:'退货单',img_src:'\ue82a',url:'saleslist.js'})
+            }
+            if(this.receivalMenuRight[0].BrowseRight){
+                this.sales.push({id:4,name:'收款单',img_src:'\ue71d',url:'reclist.js'})
+            }
         },
         methods:{
             onLoad(p){
-                /* page.doubleBack();
-                     page.enableBackKey(true);
-                     page.setBackKeyCallback(()=>{
-                         page.exit();
 
-                     }) */
             },
             touchstart:function(e){
                 /* this.alert(e)

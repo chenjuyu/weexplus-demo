@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <head :rightText="rightText" title="已选列表"  @rightClick="rightClick"></head>
-        <list style="height:970px">
+        <list style="flex: 1;margin-bottom: 100px;">
             <cell ref="skid" v-for="(ls,i) in detaillist" @click="onNodeClick(ls, i)" style="flex-direction: row;height:290px;border-bottom-width: 1px;border-color: #dddddd">
                 <!-- 整体包1-->
                 <div :style='styles' class="swipe-action-center border">
@@ -10,7 +10,7 @@
                     <!-- 图片与显示-->
                     <div style="flex-direction: row;width: 750px">
                         <div style="justify-content: center;align-items: center"> <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text> </div>
-                        <image src="https://www.baidu.com/img/bd_logo1.png" style="width: 150px;height: 150px;border-width: 3px"></image>
+                        <image :src="ls.img?ls.img:'root:img/nopic.jpg'" style="width: 150px;height: 150px;"></image>
                         <div style="margin-left: 20px">
                             <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
                             <text style="font-size: 30px;color:#000000;height: 50px">折扣率:</text>
@@ -88,6 +88,7 @@
                         GoodsID: obj.GoodsID,
                         Code:obj.Code,
                         Name:obj.Name,
+                        img:obj.img,
                         RetailSales:obj.RetailSales,
                         ColorID: obj.ColorID,
                         Quantity: obj.Quantity,
@@ -112,6 +113,7 @@
                     map.GoodsID = obj[i].GoodsID
                     map.Code = obj[i].Code
                     map.Name = obj[i].Name
+                    map.img=obj[i].img
                     map.RetailSales=obj[i].RetailSales
                     map.ColorID = obj[i].ColorID
                     map.Quantity = obj[i].Quantity
@@ -172,7 +174,7 @@
 
                 nav.pushFull({url: 'root:goodsDetailforstock.js',param:this.submitmap,animate:true}
                     , (e) => {
-                        if (e !== undefined){ //返回结果
+                        if (e !== undefined && e !=null){ //返回结果
                             // this.alert('返回的数据:'+JSON.stringify(e)+',记录数： '+e.detaillist.length)
                             if(e.detaillist.length >0) {
 

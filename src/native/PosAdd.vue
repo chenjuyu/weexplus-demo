@@ -107,7 +107,7 @@
                 <text class="size">积分</text><input type="number"  v-model="Point" style="width: 300px;height: 70px;border-bottom-width:1px;"/>
                 <text class="size">抵扣</text><input type="number" :disabled="true" v-model="exchange_amount" style="width: 300px;height: 70px;border-bottom-width:1px;">
             </div>
-            <div style="flex-direction: row; background-color: #1EA5FC; position: fixed;bottom: 0;left: 0;right: 0;height: 80px;align-items: center;justify-content:flex-start;">
+            <div style="flex-direction: row;  position: fixed;bottom: 0;left: 0;right: 0;height: 80px;align-items: center;justify-content:flex-start;">
                 <text class="size">合计：</text><text class="size">{{QuantitySum}}</text><text style="margin-left: 100px" class="size">￥{{AmountSum}}</text>
                 <div  v-if="show" style="background-color: orange;position: fixed;right: 0;bottom: 0;width: 250px;height: 80px;align-items: center;justify-content:center"><text @click="save" class="size" style="color: white;">{{savetitle}}</text></div>
             </div>
@@ -125,10 +125,10 @@
                   :show-close="true"
                   :show="stockshow"
                   @wxcMaskSetHidden="wxcMaskSetHidden">
-            <div style="flex-direction: row;height: 80px;width: 750px; justify-content: center;align-items: center; background-color: #0080FF;">
+            <div v-if="stockshow" style="flex-direction: row;height: 80px;width: 750px; justify-content: center;align-items: center; background-color: #0080FF;">
                 <text class="banner">货号</text> <text class="banner">颜色</text><text class="banner">尺码</text><text class="banner">库存</text>
             </div>
-            <list style="flex: 1;width: 750px;">
+            <list style="flex: 1;width: 750px;" v-if="stockshow">
                 <cell style="flex-direction: row;height: 70px;border-color: #eeeeee;border-bottom-width: 1px;justify-content: center;align-items: center;"  v-for="(tmp,i) in tmpList" >
                     <text class="banner1">{{tmp.Code}}</text> <text class="banner1">{{tmp.Color}}</text><text class="banner1">{{tmp.Size}}</text><text class="banner1">{{tmp.StockQty}}</text>
                 </cell>
@@ -437,6 +437,10 @@
             },
             handleLongPress(ls,index){
                 //this.alert("ls"+ls.GoodsCode +",index:"+index)
+                this.log('AuditFlag:'+this.AuditFlag)
+                 if(this.AuditFlag)
+                     return
+
                 this.lmap=ls
                 this.oldqty=ls.Quantity
                 this.show1 = true;
@@ -760,6 +764,11 @@
 
             },
             del(index){
+                if(this.AuditFlag){
+                    this.toast('单据已审核，无法删除')
+                    return
+                }
+
                 this.list.splice(index,1)
                 this.countTotal() //重新计算合计
             }
@@ -876,12 +885,12 @@
     .tabbar{
         display: block;
         height: 230px;width: 750px; position: fixed;bottom: 0;left: 0;right: 0;
-        background-color: #1EA5FC;
+
     }
     .tabbarxr{
         display: block;
         height: 230px;width: 750px; position: fixed;bottom: 44px;left: 0;right: 0;
-        background-color: #1EA5FC;
+
     }
     .text{
         width:100px;

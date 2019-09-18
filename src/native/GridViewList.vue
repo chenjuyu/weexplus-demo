@@ -5,7 +5,7 @@
         <scroller style="flex: 1;">
             <!--九宫格显示  <text class="iconfont bar-ic">&#xe614;</text> 动态显示要 即：字体编码后前四位是Unicode编码，想使用字符串来传递的话,只要将 “&#xe64b;” 改为 “\ue64b” 即可。-->
 
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
+            <div v-if="baseFlag"  style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
                 <text style="font-size:40px;font-weight:bold">基本资料</text>
             </div>
             <div class="sudoku_row">
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <!--九宫格显示 -->
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
+            <div v-if="purchaseFlag" style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
                 <text style="font-size:40px;font-weight:bold">采购管理</text>
             </div>
             <div class="sudoku_row">
@@ -44,7 +44,7 @@
             </div>
 
             <!--九宫格显示 sudoku_item  代替每一个 -->
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
+            <div v-if="salesFlag" style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
                 <text style="font-size:40px;font-weight:bold">分销管理</text>
             </div>
             <div class="sudoku_row">
@@ -57,7 +57,7 @@
             </div>
 
             <!--九宫格显示 -->
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
+            <div v-if="stockFlag" style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
                 <text style="font-size:40px;font-weight:bold">库存管理</text>
             </div>
             <div class="sudoku_row">
@@ -86,7 +86,7 @@
             </div>
 
             <!-- 零售管理-->
-            <div style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
+            <div v-if="possalesFlag" style="margin-top: 10px;padding-left:30px;border-bottom-width: 2px;border-color: #dddddd;background-color: white;height: 100px;justify-content: space-between;align-items: center;flex-direction: row;">
                 <text style="font-size:40px;font-weight:bold">零售管理</text>
             </div>
             <div class="sudoku_row">
@@ -109,32 +109,43 @@
 <script>
     var nav = weex.requireModule('navigator') ;
     var page=weex.requireModule("page")
+    var pstatic=weex.requireModule("static")
     export default {
-        name: "GridViveList",
         components:{
         },
         data() {
             return {
-                stock:[
-                    {id:1,name:'转仓单',img_src:'\ue732',url:'stockmovelist.js'},
-                    {id:2,name:'进仓单',img_src:'\ue635',url:'stocklist.js'},
-                    {id:3,name:'出仓单',img_src:'\ue60e',url:'stocklist.js'},
-                ]
+                baseFlag:false,
+                salesFlag:false,
+                purchaseFlag:false,
+                stockFlag:false,
+                possalesFlag:false,
+                salesMenuRight:pstatic.get('objkey').salesMenuRight ||[],//发货单菜单权限
+                salesReturnMenuRight:pstatic.get('objkey').salesReturnMenuRight||[],
+                salesOrderMenuRight:pstatic.get('objkey').salesOrderMenuRight||[],
+                receivalMenuRight:pstatic.get('objkey').receivalMenuRight||[],
+
+                purchaseMenuRight:pstatic.get('objkey').purchaseMenuRight,
+                purchaseReturnMenuRight:pstatic.get('objkey').purchaseReturnMenuRight,
+                purchaseOrderMenuRight:pstatic.get('objkey').purchaseOrderMenuRight,
+                paymentMenuRight:pstatic.get('objkey').paymentMenuRight,
+
+                stockMoveMenuRight:pstatic.get('objkey').stockMoveMenuRight,
+                stockInMenuRight:pstatic.get('objkey').stockInMenuRight,
+                stockOutMenuRight:pstatic.get('objkey').stockOutMenuRight,
+
+                posSalesMenuRight :pstatic.get('objkey').posSalesMenuRight,
+
+                goodsUserMenuRight:pstatic.get('objkey').goodsUserMenuRight,
+
+                stock:[]
                 ,base:[
-                    {id:1,name:'货品资料',img_src:'\ue60b',url:'goodsmanager.js'},
-                    {id:2,name:'货品拍照',img_src:'\ue7bc',url:'goodsphoto.js'},
+
                 ]
                 ,purchase:[
-                    {id:1,name:'采购订单',img_src:'\ue62d',url:'purchaseorderlist.js'},
-                    {id:2,name:'采购收货单',img_src:'\ue629',url:'purchaselist.js'},
-                    {id:3,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'},
-                    {id:4,name:'付款单',img_src:'\ue636',url:'paylist.js'}
                 ]
                 ,sales:[
-                    {id:1,name:'订单',img_src:'\ue606',url:'salesorderlist.js'},
-                    {id:2,name:'发货单',img_src:'\ue6bc',url:'saleslist.js'},
-                    {id:3,name:'退货单',img_src:'\ue82a',url:'saleslist.js'},
-                    {id:4,name:'收款单',img_src:'\ue71d',url:'reclist.js'}
+
                   //  {id:5,name:'费用单',img_src:'\ue609',url:''}
                 ],
                 possales:[
@@ -149,11 +160,71 @@
                 default:100
             }
         },created(){
-            /*   let domModule = weex.requireModule('dom');
-               domModule.addRule('fontFace',{
-                   'fontFamily': "iconfont",
-                   'src': "url('http://at.alicdn.com/t/font_1074303_e64s32fcc65.ttf')"
-               }) */
+            this.sales.splice(0,this.sales.length) //清空掉 embed 方法引入 ，所以这个要放在 created中才能生效
+
+            if(this.salesOrderMenuRight[0].BrowseRight){
+                this.sales.push({id:1,name:'订单',img_src:'\ue606',url:'salesorderlist.js'})
+                this.salesFlag =true //总标题显示
+            }
+            if(this.salesMenuRight[0].BrowseRight){
+                this.sales.push({id:2,name:'发货单',img_src:'\ue6bc',url:'saleslist.js'})
+                this.salesFlag =true //总标题显示
+            }
+            if(this.salesReturnMenuRight[0].BrowseRight){
+                this.sales.push({id:3,name:'退货单',img_src:'\ue82a',url:'saleslist.js'})
+                this.salesFlag =true //总标题显示
+            }
+            if(this.receivalMenuRight[0].BrowseRight){
+                this.sales.push({id:4,name:'收款单',img_src:'\ue71d',url:'reclist.js'})
+                this.salesFlag =true //总标题显示
+            }
+
+            this.purchase.splice(0,this.purchase.length) //清空掉 embed 方法引入 ，所以这个要放在 created中才能生效
+
+            if(this.purchaseOrderMenuRight[0].BrowseRight){
+                this.purchase.push({id:1,name:'采购订单',img_src:'\ue62d',url:'purchaseorderlist.js'})
+                this.purchaseFlag=true
+            }
+            if(this.purchaseMenuRight[0].BrowseRight){
+                this.purchase.push({id:2,name:'采购收货单',img_src:'\ue629',url:'purchaselist.js'})
+                this.purchaseFlag=true
+            }
+            if(this.purchaseReturnMenuRight[0].BrowseRight){
+                this.purchase.push({id:3,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'})
+            }
+            if(this.paymentMenuRight[0].BrowseRight){
+                this.purchase.push({id:4,name:'付款单',img_src:'\ue636',url:'paylist.js'})
+                this.purchaseFlag=true
+            }
+
+            this.stock.splice(0,this.stock.length)
+           if(this.stockMoveMenuRight[0].BrowseRight){
+               this.stock.push({id:1,name:'转仓单',img_src:'\ue732',url:'stockmovelist.js'})
+               this.stockFlag=true
+           }
+            if(this.stockInMenuRight[0].BrowseRight){
+                this.stock.push({id:2,name:'进仓单',img_src:'\ue635',url:'stocklist.js'})
+                this.stockFlag=true
+            }
+
+            if(this.stockOutMenuRight[0].BrowseRight){
+                this.stock.push({id:3,name:'出仓单',img_src:'\ue60e',url:'stocklist.js'})
+                this.stockFlag=true
+            }
+
+            this.possales.splice(0,this.possales.length)
+            if(this.posSalesMenuRight[0].BrowseRight){
+                this.possales.push({id:1,name:'销售小票',img_src:'\ueb4c',url:'poslist.js'})
+                this.possalesFlag=true
+            }
+
+             this.base.splice(0,this.base.length)
+            if(this.goodsUserMenuRight[0].BrowseRight){ //货品资料操作权限
+              this.base.push({id:1,name:'货品资料',img_src:'\ue60b',url:'goodsmanager.js'})
+              this.base.push({id:2,name:'货品拍照',img_src:'\ue7bc',url:'goodsphoto.js'})
+                this.baseFlag =true//总标题显示
+            }
+
         },
         methods:{
             onLoad(p){

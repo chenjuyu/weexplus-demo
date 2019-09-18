@@ -89,12 +89,25 @@
                             pstatic.setString('DepartmentID',e.res.obj.DepartmentID)
                             pstatic.setString('Department',e.res.obj.Department)
                             var obj={};
-                            obj.salesMenuRight=e.res.obj.salesOrderMenuRight
+                            obj.salesOrderMenuRight=e.res.obj.salesOrderMenuRight
                             obj.salesMenuRight=e.res.obj.salesMenuRight
                             obj.salesReturnMenuRight=e.res.obj.salesReturnMenuRight
                             obj.purchaseMenuRight=e.res.obj.purchaseMenuRight
                             obj.purchaseReturnMenuRight=e.res.obj.purchaseReturnMenuRight
                             obj.stockMoveMenuRight=e.res.obj.stockMoveMenuRight
+                            obj.stocktakingMenuRight=e.res.obj.stocktakingMenuRight
+                            obj.stockInMenuRight =e.res.obj.stockInMenuRight
+                            obj.stockOutMenuRight =e.res.obj.stockOutMenuRight
+                            obj.receivalMenuRight =e.res.obj.receivalMenuRight
+                            obj.paymentMenuRight =e.res.obj.paymentMenuRight
+                            obj.purchaseOrderMenuRight =e.res.obj.purchaseOrderMenuRight
+                            obj.posSalesMenuRight =e.res.obj.posSalesMenuRight
+
+                            obj.goodsUserMenuRight =e.res.obj.goodsUserMenuRight //货品资料操作权限
+
+
+                            obj.purchasePriceRight =e.res.obj.purchasePriceRight //采购单 单价字段权限 子表
+                            obj.salesUnitPriceRight =e.res.obj.salesUnitPriceRight //销售发货单子表单价字段
                             pstatic.set('objkey',obj)
                             self.push('root:testtabbar.js');
                         } else{

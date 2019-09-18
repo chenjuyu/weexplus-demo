@@ -1,7 +1,7 @@
 <template>
     <div class="wxc-demo">
         <head :rightText="rightText" title="资料选择"  @rightClick="rightClick"></head>
-        <div> <input class="input" type="text" placeholder="search" return-key-type="search" @return="search" v-model="text" /></div>
+        <div> <input class="input" type="text" placeholder="search" return-key-type="search" @input="search" @return="search" v-model="text" /></div>
         <list>
         <cell class="cell" v-for="(lst,index) in list" @click="onSelected(lst,index)">
             <text class="item">{{lst.Name}}</text>
@@ -156,84 +156,15 @@
 
                     nav.backFull(lst, false);
             },search(){
-                if(this.text!=''){
+               // if(this.text!=''){ //因为厂商资料可能只有两个字，所以这里不能要三个字长度才查询
                    let self=this  //简化写法
                     self.cmap.condition=self.text
                     self.cmap.mult=self.mult
-                    self.onLoad(self.cmap)
-                /*    const net = weex.requireModule('net');
-                    net.post(pref.getString('ip')+'/select.do?'+send,{"currPage":"1","param":this.text},{},function(){
-                        //start
-                    },function(e){
-                        //success
-                        //  self.back=e.res;
-                        //  self.list.splice(0,self.list);
-                        var array= e.res.obj;
-                        if(array.length>0)
-                        { self.list.splice(0,self.list.length)}
+                    setTimeout(()=>{
+                        self.onLoad(self.cmap)
+                    },3000)//延迟3秒查询
 
-                        for (var i=0;i<array.length;i++) {
-                            var map = {};
-                            if(send==='getEmployee'){
-                                map.id=array[i].EmployeeID;
-                                map.Name = array[i].Name;
-                                self.list.push(map);
-                            }else if(send==='getVip'){
-                                map.id=array[i].vipId;
-                                map.Name = array[i].Name;
-                                map.DiscountRate=array[i].DiscountRate
-                                map.PointRate=array[i].PointRate
-                                map.UsablePoint=array[i].UsablePoint
-                                self.list.push(map);
-                            }else if(p.send==='getPosSalesGoods'){
-                                map.id=array[i].GoodsID;
-                                map.Name = array[i].Name;
-                                map.Code=array[i].Code
-                                map.RetailSales=array[i].RetailSales
-                                map.UnitPrice=array[i].UnitPrice
-                                map.Discount=array[i].Discount
-                                map.DiscountFlag=array[i].DiscountFlag
-                                self.list.push(map);
-                            }else if (p.send==='getGoodsColor'){
-                                map.id=array[i].ColorID;
-                                map.Name = array[i].Name;
-                                self.list.push(map);
-
-                            }
-                            else if (p.send==='getSizeByGoodsCode'){
-                                map.id=array[i].SizeID;
-                                map.Name = array[i].Name;
-                                map.Code=array[i].SizeCode
-                                self.list.push(map);
-
-                            }else if (p.send==='getCustomer'){
-                                map.id=array[i].CustomerID
-                                map.Name =array[i].Name
-                                map.DiscountRate=array[i].DiscountRate
-                                map.DistrictID=array[i].DistrictID
-                                map.OrderDiscount=array[i].OrderDiscount
-                                map.AllotDiscount=array[i].AllotDiscount
-                                map.ReplenishDiscount=array[i].ReplenishDiscount
-                                self.list.push(map);
-                            } else if(p.send==='getWarehouse'){
-                                map.DepartmentID=array[i].DepartmentID
-                                map.Name=array[i].Name
-                                map.MustExistsGoodsFlag=array[i].MustExistsGoodsFlag
-                                self.list.push(map);
-                            } else if (p.send==='getBrand'){
-                                map.BrandID=array[i].BrandID
-                                map.Name=array[i].Name
-                                self.list.push(map);
-                            }
-                        }
-
-                    },function(e){
-                        //compelete
-
-                    },function(){
-                        //exception
-                    });  */
-                }
+              //  }
             },
             showGroupCity () {
                 this.cityStyleType = 'group'

@@ -2,8 +2,8 @@
     <div class="wrapper">
         <head :rightText="rightText" :title="title" @rightClick="rightClick"></head>
     <div class="search" >
-    <input type="text" style="width: 500px;height: 80px;border-width: 5px;border-color: #00B4FF;margin-left: 10px" placeholder="请输入货号查找" @input="input"  v-model="keyword"/>
-     <div style="height: 80px;width: 220px;margin-right: 5px;border-width: 5px;justify-content: center;align-items: center;border-color: #00B4FF;"  @click="search">
+    <input type="text" style="width: 500px;height: 70px;border-width: 1px;background-color:#D3D3D3;border-color: #f5f5f5;margin-left: 10px" placeholder="请输入货号查找" @input="input"  v-model="keyword"/>
+     <div style="height: 70px;width: 220px;margin-right: 5px;border-width: 1px;justify-content: center;align-items: center;border-color: #D3D3D3;"  @click="search">
          <text style="font-size: 35px;">查询</text>
      </div>
     </div>
@@ -65,9 +65,9 @@
             <text style="direction: rtl;margin-right: 10px;font-size: 30px;color: #666666;text-align: right">{{emp.Name}}</text>
         </wxc-cell>
      <div class="listbutton">
-         <text style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-left: 5px;text-align: center">蓝牙增加</text>
-         <text @click="addgoods"  style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;text-align: center">快速增加</text>
-         <text @click="qrcodeclick"  style="font-size: 35px;border-width: 5px;border-color: #00B4FF;height: 60px;width: 220px;margin-right: 5px;text-align: center">扫码增加</text>
+         <div class="mid"><text style="font-size: 35px;color: #FFFFFF">蓝牙增加</text></div>
+         <div class="mid2" @click="addgoods" ><text  style="font-size: 35px;color: #FFFFFF">快速增加</text> </div>
+         <div class="mid3"  @click="qrcodeclick"><text  style="font-size: 35px;color: #FFFFFF">扫码增加</text> </div>
      </div>
     </cell><!--master 结束 border-radius:25px   v-for="num in lists" <list style="height: 200px"> </list>-->
 
@@ -207,6 +207,15 @@
                width: 750px;
                background-color: #f2f3f4;
 
+           }
+           .mid{
+               background-color:  #108ee9;height: 60px;width: 220px;margin-left: 5px;justify-content: center;align-items: center;
+           }
+           .mid2{
+               background-color:  #108ee9;height: 60px;width: 220px;justify-content: center;align-items: center;
+           }
+           .mid3{
+               background-color:  #108ee9;height: 60px;width: 220px;justify-content: center;align-items: center;margin-right: 5px;
            }
            .listbutton{
                display: block;

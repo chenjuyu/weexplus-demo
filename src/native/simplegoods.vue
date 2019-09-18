@@ -28,19 +28,20 @@
             <wxccell title="货品编码"
                       :has-arrow="false"
                       :titlestyle="{color:'red','font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                       :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.Code"  placeholder="输入货号"/>
             </wxccell>
             <wxccell title="货品名称"
                      :has-arrow="false"
                      :titlestyle="{color:'red','font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.Name"  placeholder="输入名称"/>
             </wxccell>
             <wxccell title="货品类别"
                      :has-arrow="true"
+                     :cellStyle="{height:'80px'}"
                      :titlestyle="{color:'red','font-size':'35px'}"
                      @wxcCellClicked="wxcCellClicked(3)"
                      :has-top-border="false">
@@ -49,12 +50,13 @@
             <wxccell title="货品子类别"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.SubType"  placeholder="输入货品子类别"/>
             </wxccell>
             <wxccell title="厂商"
                      :has-arrow="true"
+                     :cellStyle="{height:'80px'}"
                      :titlestyle="{'font-size':'35px'}"
                      @wxcCellClicked="wxcCellClicked(11)"
                      :has-top-border="false">
@@ -62,6 +64,7 @@
             </wxccell>
             <wxccell title="收货部门"
                      :has-arrow="true"
+                     :cellStyle="{height:'80px'}"
                      :titlestyle="{'font-size':'35px'}"
                      @wxcCellClicked="wxcCellClicked(15)"
                      :has-top-border="false">
@@ -70,48 +73,49 @@
             <wxccell title="型号规格"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.Model"  placeholder="型号规格"/>
             </wxccell>
             <wxccell title="材料成分1"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.Model1"  placeholder=""/>
             </wxccell>
             <wxccell title="材料成分2"
                          :has-arrow="false"
                          :titlestyle="{'font-size':'35px'}"
-
+                         :cellStyle="{height:'80px'}"
                          :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.Model2"  placeholder=""/>
             </wxccell>
             <wxccell title="厂商货品编码"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.SupplierCode"  placeholder=""/>
             </wxccell>
             <wxccell title="年份"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.Age"  placeholder=""/>
             </wxccell>
             <wxccell title="季节"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="text" class="input" return-key-type="search" v-model="goods.Season"  placeholder=""/>
             </wxccell>
 
             <wxccell title="品牌"
                      :has-arrow="true"
+                     :cellStyle="{height:'80px'}"
                      :titlestyle="{'font-size':'35px'}"
                      @wxcCellClicked="wxcCellClicked(44)"
                      :has-top-border="false">
@@ -120,14 +124,14 @@
             <wxccell title="参考进价"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="number" class="input" return-key-type="search" v-model="goods.PurchasePrice"  placeholder=""/>
             </wxccell>
             <wxccell title="零售价"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="number" class="input" return-key-type="search" v-model="goods.RetailSales"  placeholder=""/>
             </wxccell>
@@ -135,7 +139,7 @@
             <wxccell title="零售价2"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="number" class="input" return-key-type="search" v-model="goods.RetailSales1"  placeholder=""/>
             </wxccell>
@@ -143,7 +147,7 @@
             <wxccell title="批发价"
                      :has-arrow="false"
                      :titlestyle="{'font-size':'35px'}"
-
+                     :cellStyle="{height:'80px'}"
                      :has-top-border="false">
                 <input type="number" class="input" return-key-type="search" auto-appear="false" v-model="goods.TradePrice"  placeholder=""/>
             </wxccell>
@@ -403,7 +407,7 @@
                 submitmap.mult = false
                 nav.pushFull({url: 'root:base.js', param: submitmap, animate: true, isPortrait: true},
                     (res) => {
-                        this.alert(JSON.stringify(res))
+                      //  this.alert(JSON.stringify(res))
                         if (res == undefined || res == null || JSON.stringify(res) == '{}') {
                             return
                         }

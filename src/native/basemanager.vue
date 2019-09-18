@@ -51,67 +51,27 @@
 <script>
     var nav = weex.requireModule('navigator') ;
     var page=weex.requireModule("page")
+    var pstatic=weex.requireModule("static")
     export default {
-        name: "GridViveList",
         components:{
         },
         data() {
             return {
-                sudokus:[
-                    /*  {
-                      id:0,
-                      name:'飞机',
-                      img_src:'\ue614' //https://gw.alicdn.com/tfs/TB1kCk2SXXXXXXFXFXXXXXXXXXX-72-72.png
-                  },{
-                      id:1,
-                      name:'游戏',
-                      img_src:'\ue614'//require('../static/img/game.png')
-                  },{
-                      id:2,
-                      name:'音乐',
-                      img_src:'\ue614'//require('../static/img/music.png')
-                  },{
-                      id:3,
-                      name:'物流',
-                      img_src:'\ue614'//require('../static/img/logistics.png')
-                  },{
-                      id:4,
-                      name:'医院',
-                      img_src:'\ue614'//require('../static/img/hospital.png')
-                  } */
+                goodsUserMenuRight:pstatic.get('objkey').goodsUserMenuRight,
+                base:[
                 ]
-                ,base:[
-                    {id:1,name:'货品资料',img_src:'\ue60b',url:'goodsmanager.js'},
-                    {id:2,name:'货品拍照',img_src:'\ue7bc',url:'goodsphoto.js'},
-                ]
-                ,purchase:[
-                    {id:1,name:'采购收货单',img_src:'\ue629',url:'purchaselist.js'},
-                    {id:2,name:'采购退货单',img_src:'\ue628',url:'purchaselist.js'},
-                ]
-                ,sales:[
-                    {id:1,name:'订单',img_src:'\ue606',url:''},
-                    {id:2,name:'发货单',img_src:'\ue6bc',url:'saleslist.js'},
-                    {id:3,name:'退货单',img_src:'\ue82a',url:'saleslist.js'},
-                    {id:4,name:'收款单',img_src:'\ue71d',url:''},
-                    {id:5,name:'费用单',img_src:'\ue609',url:''}
-                ],
-                possales:[
-                    {id:1,name:'销售',img_src:'\ueb4c'},
-                    {id:2,name:'日结',img_src:'\ue6b7'},
-                    {id:3,name:'缴费',img_src:'\ue601'},
-                    {id:4,name:'报表',img_src:'\ue6af'}
-                ]
+
             };
         },props:{
             curSelect:{
                 default:100
             }
         },created(){
-            /*   let domModule = weex.requireModule('dom');
-               domModule.addRule('fontFace',{
-                   'fontFamily': "iconfont",
-                   'src': "url('http://at.alicdn.com/t/font_1074303_e64s32fcc65.ttf')"
-               }) */
+            this.base.splice(0,this.base.length)
+            if(this.goodsUserMenuRight[0].BrowseRight){ //货品资料操作权限
+                this.base.push({id:1,name:'货品资料',img_src:'\ue60b',url:'goodsmanager.js'})
+                this.base.push({id:2,name:'货品拍照',img_src:'\ue7bc',url:'goodsphoto.js'})
+            }
         },
         methods:{
             onLoad(p){

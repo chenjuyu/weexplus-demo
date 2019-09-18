@@ -187,6 +187,10 @@
                  modal.toast({ 'message': 'close.click', 'duration': 1 });
              },
              wxcSearchbarInputOnInput (e) {
+
+                 if(e.value.length <3)
+                     return
+
                  this.value = e.value;
                  var self=this
                  setTimeout(()=>{

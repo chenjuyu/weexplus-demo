@@ -470,6 +470,8 @@
             wxcSearchbarInputOnBlur (e) {
                 // this.alert("e的值:"+JSON.stringify(e))
                 var that=this
+                if(e.value.length >3)
+                    return
                 // this.value = e.value;
                 // this.alert("e的值:"+e.value)
                 // if(e.value.length >3) {
@@ -510,7 +512,7 @@
             wxcSearchbarCloseClicked () {
             },
             wxcSearchbarInputOnInput (e) {
-
+             this.wxcSearchbarInputOnBlur (e)
 
             },
             wxcSearchbarCancelClicked () {

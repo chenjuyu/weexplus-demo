@@ -204,6 +204,10 @@
              }
              ,search(){ //输入查询 要加个延时2秒
                  let that=this
+
+                 if(that.Code.length <3)
+                     return
+
                  setTimeout(()=>{
                      net.post(pref.getString('ip') + url,{Code:that.Code,page:that.page},{},function(){
                      },function(e){
