@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" >
         <embed v-for="(item,i) in tabItems"
                :src="item.src"
                :key="i"
@@ -8,7 +8,7 @@
                class="content">
         </embed>
 
-        <div class="tabbar" append="tree">
+        <div class="tabbar" append="tree" :style="{bottom:isIPhoneX?'44px':0}">
             <tabitem
                     v-for="item in tabItems"
                     :key="item.index"
@@ -28,10 +28,11 @@
              background-color:#ffffff;
              display: block;
              position: absolute;
+             bottom: 0;
              top: 0;
              left: 0;
              right: 0;
-             bottom: 0;
+
          /*   justify-content: center;align-items: center  position: absolute; */
          }
          .content {
@@ -46,7 +47,6 @@
          .tabbar {
              flex-direction: row;
              position: fixed;
-             bottom: 0;
              left: 0;
              right: 0;
              height: 120px; /*80px*/
@@ -56,6 +56,7 @@
       </style>
 
       <script>
+        import {Utils} from 'weex-ui';
        import  tabitem from './tabitem.vue'
          export default {
              components: {
@@ -70,13 +71,15 @@
              },
              data: function () {
                  return {
+                     isIPhoneX:false, //适配iphonex
                      selectedIndex: 0
                  }
              },
 
              created() {
-
+                 this.isIPhoneX=Utils.env.isIPhoneX()
                  this.select(this.selectedIndex);
+
              },
              methods: {
                  tabItemOnClick: function (e) {

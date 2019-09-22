@@ -11,9 +11,9 @@
             <div class="sudoku_row">
                 <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in base" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
                     <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color: #0085ee;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 120px;">{{sudoku.name}} </text>
+                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 130px;">{{sudoku.name}} </text>
                     <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:20px;border-width: 1px;border-color:#FFFFFF;background-color: orange;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 120px;">{{sudoku.name}} </text>
+                    <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 130px;">{{sudoku.name}} </text>
 
                 </div>
             </div>

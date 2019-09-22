@@ -4,18 +4,24 @@
         <list style="flex: 1">
         <cell>
         <wxccell title="单号"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  :has-arrow="false"
                  :has-margin="true">
             <text style="font-size: 35px">{{No}}</text>
         </wxccell>
         <wxccell title="应收余额"
+                 :titlestyle="{'font-size':'35px'}"
                  v-if="tag==34"
+                 :cellStyle="{height:'80px'}"
                  :has-arrow="false"
                  :has-margin="true">
             <text style="font-size: 35px">{{LastNeedRAmount}}</text>
         </wxccell>
         <wxccell title="应付余额"
                  v-if="tag==26"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  :has-arrow="false"
                  :has-margin="true">
             <text style="font-size: 35px">{{LastMustPayAmount}}</text>
@@ -25,12 +31,16 @@
         <!--  收付款单放在一起了 34 为收 ，26 为付-->
         <wxccell title="客户名称"
                  v-if="tag==34"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  :has-arrow="true"
                  @wxcCellClicked="wxcCellClicked(1)"
                  :has-margin="true">
             <text style="font-size: 35px">{{Customer.Customer}}</text>
         </wxccell>
         <wxccell title="厂商"
+                 :cellStyle="{height:'80px'}"
+                 :titlestyle="{'font-size':'35px'}"
                  v-if="tag==26"
                  :has-arrow="true"
                  @wxcCellClicked="wxcCellClicked(2)"
@@ -39,6 +49,8 @@
         </wxccell>
 
         <wxccell title="收款金额"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  v-if="tag==34"
                  :has-arrow="false"
                  :has-margin="true">
@@ -46,6 +58,8 @@
         </wxccell>
 
         <wxccell title="付款金额"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  v-if="tag==26"
                  :has-arrow="false"
                  :has-margin="true">
@@ -53,6 +67,8 @@
         </wxccell>
 
         <wxccell title="类别"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  v-if="tag ==34"
                  :has-arrow="true"
                  @wxcCellClicked="selectType(1)"
@@ -61,6 +77,8 @@
         </wxccell>
 
         <wxccell title="日期"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  :has-arrow="false"
                  @wxcCellClicked="choosedate(1)"
                  :has-margin="true">
@@ -69,6 +87,8 @@
 
         <wxccell title="生效日期"
                  v-if="tag==34"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  :has-arrow="false"
                  @wxcCellClicked="choosedate(2)"
                  :has-margin="true">
@@ -77,12 +97,16 @@
 
         <wxccell title="结算方式"
                  :has-arrow="true"
+                 :titlestyle="{'font-size':'35px'}"
+                 :cellStyle="{height:'80px'}"
                  @wxcCellClicked="wxcCellClicked(3)"
                  :has-margin="true">
             <text style="font-size: 35px"> {{PaymentType.PaymentType}}</text>
         </wxccell>
 
         <wxccell title="经手人"
+                 :cellStyle="{height:'80px'}"
+                 :titlestyle="{'font-size':'35px'}"
                  :has-arrow="true"
                  @wxcCellClicked="wxcCellClicked(4)"
                  :has-margin="true">
@@ -90,6 +114,8 @@
         </wxccell>
 
         <wxccell title="备注"
+                 :cellStyle="{height:'80px'}"
+                 :titlestyle="{'font-size':'35px'}"
                  :has-arrow="false"
                  :has-margin="true">
             <input type="text" class="input" return-key-type="default" v-model="Memo"  placeholder=""/>

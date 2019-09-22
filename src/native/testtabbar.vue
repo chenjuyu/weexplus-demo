@@ -1,6 +1,6 @@
 <template>
 
-    <div style="background-color: #5ac3ff" >
+    <div style="background-color:#fff"  >
 
         <tabbar1 :tabItems="tabItems" @tabBarOnClick="tabBarOnClick"  :msg="msg"></tabbar1>
 
@@ -9,6 +9,7 @@
 </template>
 
 <script>
+    import {Utils} from 'weex-ui';
     var page=weex.requireModule("page")
     import tabbar1 from './component/tabbar.vue'
     export default {
@@ -17,7 +18,6 @@
         },
         data () {
             return {
-                dir: 'examples',
                 msg:'kbkbkbfffffff',
                 tabItems: [
                     {
@@ -79,16 +79,18 @@
             //  var baseURL ='root:' //getBaseURL(this) baseURL +
            // this.alert('aaaa');
             this.diplay();
-
         },
         methods: {
             onLoad(p){
-                page.doubleBack()//拦截返回键触发的回调
-                page.enableBackKey(true)
-                page.setBackKeyCallback(()=>{
-                  //  page.enableBackKey(true);
-                    page.exit();
-                })
+                if(Utils.env.isAndroid) {
+                    page.doubleBack()//拦截返回键触发的回调
+                    page.enableBackKey(true)
+                    page.setBackKeyCallback(() => {
+                        //  page.enableBackKey(true);
+                        page.exit();
+                    })
+                }
+
             }
             ,tabBarOnClick: function (e) {
                 this.log('tabBarOnClick:'+e.index)

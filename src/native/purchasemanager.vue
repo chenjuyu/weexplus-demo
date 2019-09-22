@@ -11,17 +11,19 @@
             </div>
             <div class="sudoku_row">
                 <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in purchase" :key="index" @touchstart="touchstart(index)" @touchend="touchend(sudoku)" >
+                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:50px;border-width: 1px;border-color:#FFFFFF;background-color: orange;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
+                    <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+
                     <div v-if="sudoku.id ==2"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:mediumspringgreen;justify-content: center;align-items: center;">
                         <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
                     </div>
-                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
-                    <div v-if="sudoku.id ==1"  style="height: 100px;width: 100px;border-radius:50px;border-width: 1px;border-color:#FFFFFF;background-color: orange;justify-content: center;align-items: center;"><text class="iconfont bar-ic">{{sudoku.img_src}}</text></div>
-                    <text v-if="sudoku.id ==1" style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+                    <text v-if="sudoku.id ==2"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 160px;">{{sudoku.name}} </text>
+
 
                     <div v-if="sudoku.id ==3"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:mediumorchid;justify-content: center;align-items: center;">
                         <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
                     </div>
-                    <text v-if="sudoku.id ==3"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 150px;">{{sudoku.name}} </text>
+                    <text v-if="sudoku.id ==3"  style="font-size: 30px;text-align: center;margin-top: 15px;width: 160px;">{{sudoku.name}} </text>
 
                     <div v-if="sudoku.id ==4"  style="height: 100px;width: 100px;border-radius: 50px;border-width: 1px;border-color:#FFFFFF;background-color:orange;justify-content: center;align-items: center;">
                         <text class="iconfont bar-ic">{{sudoku.img_src}}</text>
@@ -159,7 +161,6 @@
         border-color: #eeeeee;*/
         justify-content: center;
         align-items:center;
-        text-align: center;
         width: 180px;
         height: 180px;
     }
