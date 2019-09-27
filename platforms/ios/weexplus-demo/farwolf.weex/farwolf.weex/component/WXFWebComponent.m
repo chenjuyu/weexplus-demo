@@ -10,7 +10,7 @@
 #import "farwolf.h"
 #import "Weex.h"
 @implementation WXFWebComponent
-
+WX_EXPORT_METHOD(@selector(excuteJs:))
 - (instancetype)initWithRef:(NSString *)ref type:(NSString *)type styles:(NSDictionary *)styles attributes:(NSDictionary *)attributes events:(NSArray *)events weexInstance:(WXSDKInstance *)weexInstance
 {
     if (self = [super initWithRef:ref type:type styles:styles attributes:attributes events:events weexInstance:weexInstance]) {
@@ -50,12 +50,17 @@
 //
 - (void)loadURL:(NSString *)url
 {
+    if([url isEqualToString:@""]){
+        return;
+    }
     if([url startWith:@"root:"]){
         NSString *path=@"";
         NSString *param=@"";
         if([url contains:@"?"]){
             path=[url split:@"?"][0];
             param=[url split:@"?"][1];
+        }else{
+            path=url;
         }
         NSURL *ul=[Weex getFinalUrl:path weexInstance:self.weexInstance];
         url=[[ul.absoluteString add:@"?"]add:param];
@@ -65,29 +70,34 @@
     }else{
         NSString *path=@"";
         NSString *param=@"";
+        if([url startWith:PREFIX_SDCARD]){
+            url=[url replace:PREFIX_SDCARD withString:@""];
+        }
         if([url contains:@"?"]){
             path=[url split:@"?"][0];
             param=[url split:@"?"][1];
+        }else{
+            path=url;
         }
-        
-        
         NSURL *fileUrl = [NSURL fileURLWithPath:path isDirectory:NO];//此部分没有?所以没有问题，isDirectory=YES会导致多一层目录。
         NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:fileUrl resolvingAgainstBaseURL:NO];
         NSMutableArray *ary=[param split:@"&"];
         NSMutableArray *qrys=[NSMutableArray new ];
-        for(NSString *p in ary){
-            NSString *key=@"";
-            NSString *v=@"";
-            NSArray *kv= [p split:@"="];
-            if(kv>0){
-                key=kv[0];
+        if([param contains:@"&"]){
+            for(NSString *p in ary){
+                NSString *key=@"";
+                NSString *v=@"";
+                NSArray *kv= [p split:@"="];
+                if(kv>0){
+                    key=kv[0];
+                }
+                if(kv>1){
+                    v=kv[1];
+                }
+                [qrys addObject:[NSURLQueryItem queryItemWithName:key value:v]];
             }
-            if(kv>1){
-                v=kv[1];
-            }
-            [qrys addObject:[NSURLQueryItem queryItemWithName:key value:v]];
+            [urlComponents setQueryItems:qrys];
         }
-        [urlComponents setQueryItems:qrys];
         [super loadURL:urlComponents.URL.absoluteString];
         
         

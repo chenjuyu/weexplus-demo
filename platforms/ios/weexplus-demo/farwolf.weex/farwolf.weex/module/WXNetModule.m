@@ -79,15 +79,25 @@ WX_EXPORT_METHOD_SYNC(@selector(getSessionId:))
     NSDate *d= [@"1970-01-01" toDate:@"yyyy-MM-dd"];
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] removeCookiesSinceDate:d];
 }
-
++ (NSString *)fileNameWithURL:(NSURL *)url {
+    //使用截取的方法获取url的文件名
+    NSString *path = url.absoluteString;
+    NSRange range = [path rangeOfString:@"/" options:(NSBackwardsSearch)];
+    if( range.location != NSNotFound ){
+        //以下方法会包含起始索引的字符，所以+1
+        return [path substringFromIndex:range.location+1];
+    }
+    
+    return @"";
+}
 -(void)download:(NSString*)url progress:(WXModuleKeepAliveCallback)progress compelete:(WXModuleKeepAliveCallback)compelete error:(WXModuleKeepAliveCallback)error
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *path = [paths objectAtIndex:0];
     path=[path add:@"/download"];
     [path mkdir];
-
-    path=[[path add:@"/"] add:[url toMd5]];
+    NSString *filename= [WXNetModule fileNameWithURL:[NSURL URLWithString:url]];
+    path=[[path add:@"/"] add:filename];
     [path delete];
     //    NSString *url=@"http://59.110.169.246/img/app.zip";
     ZipDownloader *zip= [[ZipDownloader alloc] initWidthUrl:url path:path progress:^(float percent,NSInteger current,NSInteger total) {
@@ -141,8 +151,10 @@ WX_EXPORT_METHOD_SYNC(@selector(getSessionId:))
     {
         NSString *v=d[key];
         v=[v replace:@"sdcard:" withString:@""];
-        UIImage *img=[self getDocumentImage:v];
-        [f addParam:key file:img];
+        v=[v replace:@"file://" withString:@""];
+        NSData *data= [NSData dataWithContentsOfFile:v];
+        [f addWeg:key weg: [self getWeg:v]];
+        [f addParam:key file:data];
         
     }
     [f excuteFile:url start:^{
@@ -165,6 +177,14 @@ WX_EXPORT_METHOD_SYNC(@selector(getSessionId:))
 }
 
 
+-(NSString*)getWeg:(NSString*)path{
+    NSMutableArray *ary=[path split:@"/"];
+    if(ary.count==0){
+        return @"";
+    }
+    return ary[ary.count-1];
+}
+
 -(void)postJson:(NSString*)url param:(NSDictionary*)param header:(NSDictionary*)header start:(WXModuleKeepAliveCallback)start  success:(WXModuleKeepAliveCallback)success  compelete:(WXModuleKeepAliveCallback)compelete exception:(WXModuleKeepAliveCallback)exception
 {
     
@@ -186,6 +206,12 @@ WX_EXPORT_METHOD_SYNC(@selector(getSessionId:))
     //     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     
     NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:url parameters:nil error:nil];
+    NSMutableDictionary *d=   header;
+    for(NSString *key in d.allKeys)
+    {
+        NSString *v=d[key];
+        [request setValue:v forHTTPHeaderField:key];
+    }
     request.timeoutInterval= [[[NSUserDefaults standardUserDefaults] valueForKey:@"timeoutInterval"] longValue];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];

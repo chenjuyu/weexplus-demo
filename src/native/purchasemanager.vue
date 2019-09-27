@@ -35,41 +35,33 @@
             </div>
 
 
-
-            <!--九宫格显示
-            <div style="margin-top: 10px;"><text>库存管理</text></div>
-            <div class="sudoku_row">
-                <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in sudokus" :key="index" @touchstart="touchstart(index)" @touchend="touchend" >
-                    <div> <text class="iconfont bar-ic" style="width: 72px;height: 72px">{{sudoku.img_src}}</text>
-                        <text>{{sudoku.name}} </text>
-                    </div>
-                </div>
-            </div> -->
-
-            <!--九宫格显示
-            <div style="margin-top: 10px;"><text>零售管理</text> <text class="iconfont bar-ic">&#xeb4c;</text> </div>
-            <div class="sudoku_row">
-                <div class="sudoku_item " :class="curSelect===sudoku.id?'opacity':''"   v-for="(sudoku,index) in possales" :key="index" @touchstart="touchstart(index)" @touchend="touchend" >
-                    <div> <text class="iconfont bar-ic" style="width: 72px;height: 72px">{{sudoku.img_src}}</text>
-                        <text>{{sudoku.name}} </text>
-                    </div>
-                </div>
-            </div>
-              -->
+            <!-- 应付汇总表显示-->
+            <div style="justify-content: center;align-items: center; margin-top: 100px;"><text style="font-size: 30px">厂商应付汇总表</text></div>
+            <UChartsView ref="myWeb" @newEvent="newEvent" :path="path" @finish="htmlFinish" style="flex: 1;margin-top: 20px;align-items: center;justify-content:center">
+            </UChartsView>
 
         </scroller>
     </div>
 </template>
 
 <script>
+    var modal=weex.requireModule('modal');
     var nav = weex.requireModule('navigator') ;
     var page=weex.requireModule("page")
     var pstatic=weex.requireModule("static")
+    const progress = weex.requireModule('progress');
+    const net = weex.requireModule('net');
+    const  pref=weex.requireModule('pref')
+    import module1 from './jstools/mytool'// 引用方式
+    let timestr=module1.formatDate((new Date()),"yyyy-MM-dd")
     export default {
         components:{
         },
         data() {
             return {
+                path:{path :'uCharts/pie.html',
+                    poststr:{"series":[/*{"name":"鞍山-王鑫","data":270.00},{"name":"白城-王森","data":1560.00},{"name":"北行-李冬梅","data":5315.00},{"name":"鲅鱼圈-关德亮","data":10270.00},{"name":"鲅鱼圈-刘少美","data":1320.00},{"name":"北镇-李兰","data":4455.00},{"name":"长春-张强","data":25.00},{"name":"昌图-马军","data":35336.00},{"name":"茨榆陀-李辉","data":15430.00},{"name":"朝阳镇-李志国","data":9615.00},{"name":"大连开发区-阿南新玛特","data":4440.00},{"name":"大连-孟静","data":357400.00},{"name":"大石桥-张利新","data":20674.00},{"name":"阜新-陈永良","data":400.00},{"name":"阜新-赵长林","data":3000.00},{"name":"晖春-孙业宏","data":16435.00},{"name":"葫芦岛-李宝良","data":18895.00},{"name":"黑山-李兰","data":17780.00},{"name":"九台-赵红凯","data":5025.00},{"name":"金州-吴业波","data":6159.00},{"name":"开原-陈云飞","data":28745.00},{"name":"凌海-王春风","data":7955.00},{"name":"辽源百乐-杨晓志","data":80.00},{"name":"孟静新店","data":64447.00},{"name":"盘山-老三","data":7880.00},{"name":"绥化阳光地下-姜海洋","data":14725.00},{"name":"绥化正大鞋城-姜海洋","data":121370.00},{"name":"沈阳北行-朴野","data":20034.00},{"name":"沈阳时尚-吕广","data":14520.00},{"name":"沈阳皇寺-老三","data":113160.00},{"name":"沈阳-孟庆峰","data":17750.00},{"name":"沈阳-小明","data":2000.00},{"name":"铁岭-张宏涛","data":7825.00},{"name":"瓦房店-阿南","data":6080.00},{"name":"万和汇-阿南","data":22590.00},{"name":"海城【飞驼】店-王志海","data":7830.00},{"name":"亨达-王志海","data":3480.00},{"name":"新民-范东升","data":1060.00},{"name":"营口-马军","data":29282.00} */]
+                    }},
                 purchaseMenuRight:pstatic.get('objkey').purchaseMenuRight,
                 purchaseReturnMenuRight:pstatic.get('objkey').purchaseReturnMenuRight,
                 purchaseOrderMenuRight:pstatic.get('objkey').purchaseOrderMenuRight,
@@ -128,6 +120,40 @@
                         })
                 }
                 that.curSelect = null;
+            },htmlFinish(){//pref.getString('ip')+'
+                var that=this
+                //请求数据
+
+                net.post(pref.getString('ip') + '/purchase.do?purchasereport',{BeginDate:timestr,EndDate:timestr},{},function(){
+                    //start
+                    progress.showFull('加载中',false)
+                },function(e){
+                    //success
+                    if(e !=undefined && e !=null && JSON.stringify(e) !='{}' ) {
+                        if(e.res.attributes.hasOwnProperty('series')) { //饼形图要求data:222 为数字不能带有引号
+                            for(var i=0;i<e.res.attributes.series.length;i++){
+                                var m=e.res.attributes.series[i]
+                                m.data =Number(m.data)//这里去掉引号的操作
+                                that.path.poststr.series.push(m)
+                            }
+                            //that.log('path:'+JSON.stringify(that.path)) //这里原型输出有引号就有引号
+                            that.$refs.myWeb.submit(that.path,(res)=>{
+                                //that.alert(res)
+                            })
+                        }
+                    }
+                    progress.dismiss()
+                },function(e){
+                    //compelete
+
+                },function(){
+                    //exception
+                    progress.dismiss()
+                });
+
+
+            },excuJS(e){
+
             }
         }
     }
@@ -148,7 +174,7 @@
           align-items: center;
           width:100%;
           flex-wrap: wrap; background-color: #5ac3ff; */
-        background-color:#dddddd;
+        background-color:#FFF;
     }
     .sudoku_row{
         padding-top: 10px;

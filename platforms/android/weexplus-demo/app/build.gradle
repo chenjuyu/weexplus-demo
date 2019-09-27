@@ -103,4 +103,5 @@ dependencies {
     api project(':office')
     api project(':amap')
     api project(':photoplus')
+    api project(':bluetooth')
 }

@@ -168,7 +168,7 @@
                     <div style="flex-direction: row;width: 750px">
                         <div style="justify-content: center;align-items: center;height: 150px"> <text style="font-size: 30px;color:#000000;">{{Number(i)+1}}</text> </div>
                         <image v-if="ls.img" @click="piczoom(ls.img)" :src="ls.img" style="width: 150px;height: 150px;"></image>
-                        <image v-else  src="root:img/home_logo.png" @click="piczoom('root:img/home_logo.png')" style="width: 150px;height: 150px;"></image>
+                        <image v-else  src="root:img/nopic.jpg" @click="piczoom('root:img/nopic.jpg')" style="width: 150px;height: 150px;"></image>
 
                         <div style="margin-left: 20px">
                             <text style="font-size: 30px;color:#000000;height: 50px">颜色:{{ls.Color}}</text>
@@ -224,6 +224,23 @@
             </div>
         </wxc-dialog>
 
+
+        <!--图片放大 -->
+        <wxc-mask height="500"
+                  width="500"
+                  border-radius="0"
+                  duration="200"
+                  mask-bg-color="#FFFFFF"
+                  :has-animation="hasAnimation"
+                  :has-overlay="true"
+                  :show-close="false"
+                  :show="picshow"
+                  @wxcMaskSetHidden="wxcMaskSetHidden">
+            <image :src="showpicurl" style="width: 500px;height: 500px"></image>
+        </wxc-mask>
+
+
+
     </div>
 </template>
 
@@ -231,7 +248,7 @@
     import gridselect from './component/wxc-grid-select.vue'
     import wxccell from './component/wxc-cell.vue'
     import wxcpopover from './component/wxc-popover.vue';
-    import { WxcDialog,Utils } from 'weex-ui';
+    import { WxcDialog,WxcMask,Utils } from 'weex-ui';
     import Binding from "weex-bindingx/lib/index.weex.js";
     const animation = weex.requireModule("animation");
     var nav = weex.requireModule('navigator') ;
@@ -243,7 +260,7 @@
 
     var url='/goodsInfo.do?goodsDetail'
     export default {
-        components:{gridselect,wxccell,wxcpopover,WxcDialog},
+        components:{gridselect,wxccell,wxcpopover,WxcDialog,WxcMask},
         props: {
             data: {
                 type: Array,
@@ -260,6 +277,9 @@
         },
         data(){
          return{
+             picshow:false,
+             showpicurl:'',
+             hasAnimation:false,
              popoverPosition:{x:-14,y:110}
              ,popoverArrowPosition:{pos:'top',x:-14}
              ,btns:[{
@@ -940,8 +960,14 @@
                 this.coloraddFlag=false
             },addcolor(){
                 this.coloraddFlag=true
-            }
+            },piczoom(imgurl){ //放大图片
+                this.picshow=true
+                this.showpicurl =  imgurl
+            },wxcMaskSetHidden(e){
 
+                this.picshow=false //图片放大是否显示
+                this.showpicurl =''//图片放大是否显示
+            }
 
         }//methods 结束
 

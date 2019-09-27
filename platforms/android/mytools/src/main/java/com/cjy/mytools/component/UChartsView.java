@@ -104,7 +104,7 @@ public class UChartsView  extends WXComponent<WebView> {
         webView.setWebChromeClient(new WebChromeClient() {});
 
         webView.loadUrl(url);
-     //   webView.postUrl(url,poststr.getBytes());
+        //   webView.postUrl(url,poststr.getBytes());
         //复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器， 而是在本WebView中显示
         webView.setWebViewClient(new WebViewClient(){
         /*    @Override
@@ -158,11 +158,11 @@ public class UChartsView  extends WXComponent<WebView> {
         }
         //html页面放在手机上的就可了，不要加载服务端了
         if(path.containsKey("poststr")){
-             postmap =(Map<String,Object>) path.get("poststr");
+            postmap =(Map<String,Object>) path.get("poststr");
             System.out.println("本的的Native的postmap:"+String.valueOf(postmap));
-          //  org.json.JSONArray jsonArray =org.json.JSONArray.class.;
+            //  org.json.JSONArray jsonArray =org.json.JSONArray.class.;
             try {
-                 json =new org.json.JSONObject(String.valueOf(postmap));//数组
+                json =new org.json.JSONObject(String.valueOf(postmap));//数组
                 System.out.println("本的的Native的json:"+String.valueOf(json));
             }catch (org.json.JSONException e){
                 e.getMessage();
@@ -178,8 +178,8 @@ public class UChartsView  extends WXComponent<WebView> {
             } */
 
         }
-        webView.loadUrl("file:///android_asset/app/"+this.url);  //利用其他的方法，传进去这个页面
-       // webView.postUrl(url,poststr.getBytes());
+        webView.loadUrl("file:///android_asset/"+this.url);  //"file:///android_asset/app/"利用其他的方法，传进去这个页面
+        // webView.postUrl(url,poststr.getBytes());
         //c
       /*  if (path.indexOf("http")>-1 ||path.indexOf("https")>-1 ) {
             this.url = path;
@@ -189,23 +189,23 @@ public class UChartsView  extends WXComponent<WebView> {
     }
     @JavascriptInterface //这里传数据 给html
     public void JavaData(){
-      try{
-          //org.json.JSONArray jsonArray =json.getJSONArray("list");
-         // final String jsonstr = jsonArray.toString();
-          HttpUtils.runOnUiThread(new Runnable() {
-              @Override
-              public void run() {
-                  /**
-                   * Android WebView执行----> javascript代码
-                   * Java调用----> JavaScript的show方法 把这些列表JSON数据，给JavaScript的show方法，然后HTML就把列表数据展示出来了
-                   */
-                  webView.loadUrl("javascript:show(" + String.valueOf(postmap) + ")");
-              }
-          });
+        try{
+            //org.json.JSONArray jsonArray =json.getJSONArray("list");
+            // final String jsonstr = jsonArray.toString();
+            HttpUtils.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    /**
+                     * Android WebView执行----> javascript代码
+                     * Java调用----> JavaScript的show方法 把这些列表JSON数据，给JavaScript的show方法，然后HTML就把列表数据展示出来了
+                     */
+                    webView.loadUrl("javascript:show(" + String.valueOf(postmap) + ")");
+                }
+            });
 
-       }catch (Exception e){
-           e.printStackTrace();
-       }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -263,7 +263,7 @@ public class UChartsView  extends WXComponent<WebView> {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @JSMethod
-     public  void  submit(HashMap p,final JSCallback callback){
+    public  void  submit(HashMap p,final JSCallback callback){
 
         this.url =String.valueOf(p.get("path"));
         postmap =(Map<String, Object>) p.get("poststr")  ;//条件

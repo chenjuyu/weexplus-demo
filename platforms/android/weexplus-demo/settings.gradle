@@ -53,7 +53,8 @@ include ':mytools'
 project(':mytools').projectDir = new File('../mytools')
 
 
-
+include ':bluetooth'
+project(':bluetooth').projectDir = new File('../bluetooth')
 
 include ':timepicker'
 project(':timepicker').projectDir = new File('../../../plugins/timepicker/android/timepicker')
